@@ -170,6 +170,7 @@ void SpekWindow::open(const wxString& path)
 static const char *audio_extensions[] = {
     "3gp",
     "aac",
+    "ac3",
     "aif",
     "aifc",
     "aiff",
@@ -183,6 +184,8 @@ static const char *audio_extensions[] = {
     "gsm",
     "m4a",
     "m4p",
+    "m4r",
+    "mka",
     "mp3",
     "mp4",
     "mp+",
