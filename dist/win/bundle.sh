@@ -23,7 +23,6 @@ rm -fr dist/win/build && mkdir dist/win/build
 rm -f dist/win/spek.res
 $("$WX_CONFIG" --rescomp) dist/win/spek.rc -O coff -o dist/win/spek.res
 mkdir -p src/dist/win && cp dist/win/spek.res src/dist/win/
-mkdir -p tests/dist/win && cp dist/win/spek.res tests/dist/win/
 
 # Compile spek.exe
 LDFLAGS="-mwindows dist/win/spek.res" ./autogen.sh \
@@ -34,34 +33,17 @@ LDFLAGS="-mwindows dist/win/spek.res" ./autogen.sh \
     "$MAKE" -j$(nproc) JOBS=$(nproc) && \
     "$MAKE" install || exit 1
 
-# Compile test.exe
-LDFLAGS="-mconsole" ./autogen.sh \
-    --host="$HOST" \
-    --disable-valgrind \
-    --with-wx-config="$WX_CONFIG" \
-    --prefix=${PWD}/dist/win/build && \
-    "$MAKE" check -j$(nproc) JOBS=$(nproc) TESTS=
-
 # Copy files to the bundle
 cd dist/win
 rm -fr Spek && mkdir Spek
 cp build/bin/spek.exe Spek/
-cp ../../CREDITS.md Spek/
-cp ../../LICENSE Spek/
 cp ../../README.md Spek/
-mkdir Spek/lic
-cp ../../lic/* Spek/lic/
 for lang in $LANGUAGES; do
     mkdir -p Spek/"$lang"
     cp build/share/locale/"$lang"/LC_MESSAGES/spek.mo Spek/"$lang"/
     cp "$MXE"/"$HOST"/share/locale/"$lang"/LC_MESSAGES/wxstd-3.1.mo Spek/"$lang"/ || echo "No WX translation for $lang"
 done
 rm -fr build
-
-# Copy tests
-rm -fr tests && mkdir tests
-cp ../../tests/.libs/test.exe tests/
-cp -a ../../tests/samples tests/
 
 # Create a zip archive
 rm -f spek.zip
@@ -70,5 +52,4 @@ rm -f spek.zip
 cd ../..
 
 # Clean up
-rm -fr src/dist tests/dist
 rm dist/win/spek.res

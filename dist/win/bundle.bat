@@ -3,11 +3,6 @@ rem Check README.md in this directory for instructions.
 
 set WIX_PATH=c:\Program Files (x86)\WiX Toolset v3.11\bin
 
-cd tests
-test.exe
-if %errorlevel% neq 0 exit /b %errorlevel%
-cd ..
-
 rem Generate a wxs for files in Spek
 del spek.msi
 move Spek\spek.exe .\
