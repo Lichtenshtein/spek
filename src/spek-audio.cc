@@ -138,7 +138,7 @@ std::unique_ptr<AudioFile> Audio::open(const std::string& file_name, int stream)
             // These decoders set both bps and bitrate.
             bits_per_sample = 0;
         }
-        if (bits_per_sample) {
+        if (codec_context->codec_id == AV_CODEC_ID_ALAC) {
             bit_rate = 0;
         }
         channels = codecpar->ch_layout.nb_channels;
