@@ -119,6 +119,10 @@ msgstr "Язык"
 msgid "Check for &updates"
 msgstr "Проверять &обновления"
 
+#: src/spek-preferences-dialog.cc:99
+msgid "Show &filename only"
+msgstr "Показывать только имя &файла"
+
 #: src/spek-spectrogram.cc:216
 #, c-format
 msgid "%d kHz"
