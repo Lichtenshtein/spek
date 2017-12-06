@@ -19,6 +19,8 @@ public:
     void set_language(const wxString& value);
     void set_window_size(int width, int height);
     wxSize get_window_size();
+    bool get_hide_full_path();
+    void set_hide_full_path(bool value);
 
     static const int DEF_WIDTH = 1500;
     static const int DEF_HEIGHT = 1070;
