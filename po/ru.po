@@ -123,6 +123,10 @@ msgstr "Проверять &обновления"
 msgid "Hide full &path"
 msgstr "Скрывать полный путь к &файлу"
 
+#: src/spek-preferences-dialog.cc:105
+msgid "Show detailed &description"
+msgstr "Detaillierte &Beschreibung anzeigen"
+
 #: src/spek-spectrogram.cc:216
 #, c-format
 msgid "%d kHz"
