@@ -123,6 +123,10 @@ msgstr "Проверять &обновления"
 msgid "Show &filename only"
 msgstr "Показывать только имя &файла"
 
+#: src/spek-preferences-dialog.cc:105
+msgid "Show detailed &description"
+msgstr "Показывать детальное &описание"
+
 #: src/spek-spectrogram.cc:216
 #, c-format
 msgid "%d kHz"
