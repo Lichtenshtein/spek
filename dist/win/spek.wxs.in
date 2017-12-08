@@ -17,13 +17,7 @@
     <Property Id="INSTALLDESKTOPSHORTCUT" Value="1" />
     <WixVariable Id="WixUIBannerBmp" Value="banner.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
-    <Upgrade Id="$(var.UpgradeCode)">
-      <UpgradeVersion OnlyDetect="yes" Minimum="$(var.ProductVersion)" Property="NEWERVERSIONDETECTED" IncludeMinimum="no" />
-      <UpgradeVersion OnlyDetect="no" Maximum="$(var.ProductVersion)" Property="OLDERVERSIONBEINGUPGRADED" IncludeMaximum="no" />
-    </Upgrade>
-    <InstallExecuteSequence>
-      <RemoveExistingProducts After="InstallInitialize" />
-    </InstallExecuteSequence>
+    <MajorUpgrade Schedule="afterInstallInitialize" AllowDowngrades="yes" />
     <CustomAction Id="StartAppOnExit" FileKey="spek.exe" ExeCommand="" Execute="immediate" Impersonate ="yes" Return="asyncNoWait" />
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Spek when setup exits" />
     <UI>
