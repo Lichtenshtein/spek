@@ -17,6 +17,7 @@ BEGIN_EVENT_TABLE(SpekSpectrogram, wxWindow)
     EVT_CHAR(SpekSpectrogram::on_char)
     EVT_PAINT(SpekSpectrogram::on_paint)
     EVT_SIZE(SpekSpectrogram::on_size)
+    EVT_TIMER(ID_RESIZE_TIMER, SpekSpectrogram::on_resize_timer)
     SPEK_EVT_HAVE_SAMPLE(SpekSpectrogram::on_have_sample)
 END_EVENT_TABLE()
 
@@ -53,19 +54,22 @@ SpekSpectrogram::SpekSpectrogram(wxFrame *parent) :
     palette(PALETTE_DEFAULT),
     palette_image(),
     image(1, 1),
-    prev_width(-1),
+    prev_size(-1, -1),
+    prev_save_size(-1, -1),
+    m_resizeTimer(this, ID_RESIZE_TIMER),
     fft_bits(FFT_BITS),
     urange(URANGE),
     lrange(LRANGE),
-    LPAD(this->FromDIP(60)),
-    TPAD(this->FromDIP(60)),
-    RPAD(this->FromDIP(90)),
+    LPAD(this->FromDIP(80)),
+    TPAD(this->FromDIP(80)),
+    RPAD(this->FromDIP(115)),
     BPAD(this->FromDIP(40)),
     GAP(this->FromDIP(10)),
     RULER(this->FromDIP(10))
 {
     this->create_palette();
 
+    m_resizeTimer.Start(1000 / 60);
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
     SetFocus();
 }
@@ -174,13 +178,18 @@ void SpekSpectrogram::on_paint(wxPaintEvent&)
     render(dc);
 }
 
-void SpekSpectrogram::on_size(wxSizeEvent&)
+void SpekSpectrogram::on_size(wxSizeEvent& evt)
+{
+    m_resizeTimer.Start(1000 / 60, wxTIMER_ONE_SHOT);
+    evt.Skip();
+}
+
+void SpekSpectrogram::on_resize_timer(wxTimerEvent&)
 {
     wxSize size = GetClientSize();
-    bool width_changed = this->prev_width != size.GetWidth();
-    this->prev_width = size.GetWidth();
-
-    if (width_changed) {
+    bool size_changed = this->prev_size != size;
+    this->prev_size = size;
+    if (size_changed) {
         start();
     }
 }
@@ -254,17 +263,19 @@ void SpekSpectrogram::render(wxDC& dc)
     dc.SetPen(*wxWHITE_PEN);
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.SetTextForeground(wxColour(255, 255, 255));
-    wxFont normal_font = wxFont(
-        (int)round(9 * spek_platform_font_scale()),
+    wxFont normal_font;
+    if (!wxFromString("Iosevka Term SS08", &normal_font)) {
+        normal_font = wxFont(
+        (int)lround(9 * spek_platform_font_scale()),
         wxFONTFAMILY_SWISS,
         wxFONTSTYLE_NORMAL,
-        wxFONTWEIGHT_NORMAL
-    );
+        wxFONTWEIGHT_NORMAL);
+    }
     wxFont large_font = wxFont(normal_font);
-    large_font.SetPointSize((int)round(10 * spek_platform_font_scale()));
+    large_font.SetPointSize((int)lround(10 * spek_platform_font_scale()));
     large_font.SetWeight(wxFONTWEIGHT_BOLD);
     wxFont small_font = wxFont(normal_font);
-    small_font.SetPointSize((int)round(8 * spek_platform_font_scale()));
+    small_font.SetPointSize((int)lround(8 * spek_platform_font_scale()));
     dc.SetFont(normal_font);
     int normal_height = dc.GetTextExtent("dummy").GetHeight();
     dc.SetFont(large_font);

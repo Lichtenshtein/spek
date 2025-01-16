@@ -58,7 +58,11 @@ SpekWindow::SpekWindow(int width, int height, const wxString& path, const wxStri
 {
     this->description = _("Spek - Acoustic Spectrum Analyser");
     SetTitle(this->description);
-    SetSize(this->FromDIP(wxSize(640, 480)));
+    wxSize size = SpekPreferences::get().get_window_size();
+    wxSize defsz = wxSize(SpekPreferences::DEF_WIDTH, SpekPreferences::DEF_HEIGHT);
+    if (!size.GetWidth() || !size.GetHeight()) size = defsz;
+    wxSize newsz = this->FromDIP(size);
+    SetSize(newsz);
 
 #ifndef OS_OSX
     SetIcons(wxArtProvider::GetIconBundle(ART_SPEK, wxART_FRAME_ICON));

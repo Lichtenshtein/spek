@@ -1,4 +1,6 @@
 #include <wx/string.h>
+#include <wx/window.h>
+#include <wx/dcbuffer.h>
 
 #include "spek-platform.h"
 
@@ -47,6 +49,15 @@ bool SpekPreferences::get_check_update()
     bool result = false;
     this->config->Read("/update/check", &result);
     return result;
+}
+
+wxSize SpekPreferences::get_window_size()
+{
+    int width = SpekPreferences::DEF_WIDTH;
+    int height = SpekPreferences::DEF_HEIGHT;
+    this->config->Read("/general/width", &width);
+    this->config->Read("/general/height", &height);
+    return wxSize(width, height);
 }
 
 void SpekPreferences::set_check_update(bool value)
@@ -109,14 +120,14 @@ void SpekPreferences::set_show_detailed_description(bool value)
 
 int SpekPreferences::get_window_width()
 {
-    int result = 1681;
+    int result = SpekPreferences::DEF_WIDTH;
     this->config->Read("/general/width", &result);
     return result;
 }
 
 int SpekPreferences::get_window_height()
 {
-    int result = 1043;
+    int result = SpekPreferences::DEF_HEIGHT;
     this->config->Read("/general/height", &result);
     return result;
 }

@@ -2,6 +2,8 @@
 
 #include <wx/fileconf.h>
 #include <wx/intl.h>
+#include <wx/window.h>
+#include <wx/dcbuffer.h>
 
 class SpekPreferences
 {
@@ -21,6 +23,10 @@ public:
     void set_show_detailed_description(bool value);
     int get_window_width();
     int get_window_height();
+    wxSize get_window_size();
+
+    static const int DEF_WIDTH = 1681;
+    static const int DEF_HEIGHT = 1043;
 
 private:
     SpekPreferences();
