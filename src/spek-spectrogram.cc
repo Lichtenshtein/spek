@@ -185,11 +185,16 @@ void SpekSpectrogram::on_size(wxSizeEvent&)
     }
 }
 
-void SpekSpectrogram::on_have_sample(SpekHaveSampleEvent& event)
+void SpekSpectrogram::on_have_sample(wxEvent& event)
 {
-    int bands = event.get_bands();
-    int sample = event.get_sample();
-    const float *values = event.get_values();
+    SpekHaveSampleEvent *ev = dynamic_cast<SpekHaveSampleEvent *>(&event);
+    if (ev == nullptr) {
+        return;
+    }
+
+    int bands = ev->get_bands();
+    int sample = ev->get_sample();
+    const float *values = ev->get_values();
 
     if (sample == -1) {
         this->stop();
