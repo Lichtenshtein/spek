@@ -22,12 +22,12 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: MXE Cache - Restore from previous Build
       # https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows
       id: cache-bin
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         # cache key only changes when mxe.diff changes, since that's the only reason to rebuild
         key: ${{ runner.os }}-mxe-win-x64-${{ hashFiles('./dist/win/mxe.diff') }}
@@ -93,7 +93,7 @@ jobs:
       run: echo "short_sha=$(git rev-parse --short "${{ github.sha }}")" >> $GITHUB_ENV
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: spek-GH_${{ github.repository_owner }}-Win64+tests-${{ env.short_sha }}
         path: |
@@ -109,7 +109,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
 
     - name: Set WiX paths for candle and light
@@ -130,7 +130,7 @@ jobs:
 
 
     - name: Download artifact from first job
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: spek-GH_${{ github.repository_owner }}-Win64+tests-${{ env.short_sha }}
         # restore it into the expected path
@@ -144,7 +144,7 @@ jobs:
 
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: spek-GH_${{ github.repository_owner }}-Win64+MSI-${{ env.short_sha }}
         path: |
