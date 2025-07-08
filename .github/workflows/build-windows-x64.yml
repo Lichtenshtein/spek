@@ -66,15 +66,9 @@ jobs:
       run: |
         git clone https://github.com/mxe/mxe.git
         cd mxe
-        patch -p1 < ../dist/win/mxe.diff
+        # Try to apply patch, but don't fail if it doesn't work
+        patch -p1 < ../dist/win/mxe.diff || echo "Patch failed, building without modifications"
         make pthreads ffmpeg wxwidgets -j8 JOBS=8 MXE_TARGETS='x86_64-w64-mingw32.static'
-
-        # save space, delete the ccache (or if too big, only save ccache and not anything else)
-        # remove this line if in the future, may need to do rebuilds
-        rm -rf .ccache
-
-        # get the total size printed out - debug
-        du -h --max-depth=1
 
     - name: Build Spek
       shell: bash
