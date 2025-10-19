@@ -69,7 +69,7 @@ jobs:
         cd mxe
         # Try to apply patch, but don't fail if it doesn't work
         patch -p1 < ../dist/win/mxe.diff || echo "Patch failed, building without modifications"
-        make pthreads ffmpeg wxwidgets -j8 JOBS=8 MXE_TARGETS='x86_64-w64-mingw32.static'
+        make pthreads ffmpeg wxwidgets -j$(nproc) JOBS=8 MXE_TARGETS='x86_64-w64-mingw32.static'
 
     - name: Build Spek
       shell: bash
