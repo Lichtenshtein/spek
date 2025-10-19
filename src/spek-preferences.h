@@ -21,7 +21,7 @@ public:
     wxSize get_window_size();
 
     static const int DEF_WIDTH = 1500;
-    static const int DEF_HEIGHT = 843;
+    static const int DEF_HEIGHT = 1070;
 
 private:
     SpekPreferences();
