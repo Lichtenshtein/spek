@@ -50,8 +50,8 @@ cp build/bin/spek.exe Spek/
 # cp ../../CREDITS.md Spek/
 # cp ../../LICENSE Spek/
 cp ../../README.md Spek/
-mkdir Spek/lic
-cp ../../lic/* Spek/lic/
+# mkdir Spek/lic
+# cp ../../lic/* Spek/lic/
 for lang in $LANGUAGES; do
     mkdir -p Spek/"$lang"
     cp build/share/locale/"$lang"/LC_MESSAGES/spek.mo Spek/"$lang"/
