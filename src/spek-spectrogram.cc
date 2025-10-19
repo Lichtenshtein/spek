@@ -23,10 +23,10 @@ END_EVENT_TABLE()
 
 enum
 {
-    MIN_RANGE = -140,
+    MIN_RANGE = -320,
     MAX_RANGE = 0,
     URANGE = 0,
-    LRANGE = -120,
+    LRANGE = -140,
     FFT_BITS = 11,
     MIN_FFT_BITS = 8,
     MAX_FFT_BITS = 14,
@@ -61,10 +61,15 @@ SpekSpectrogram::SpekSpectrogram(wxFrame *parent) :
     fft_bits(FFT_BITS),
     urange(URANGE),
     lrange(LRANGE),
-    LPAD(this->FromDIP(140)),
-    TPAD(this->FromDIP(80)),
-    RPAD(this->FromDIP(180)),
-    BPAD(this->FromDIP(60)),
+//    LPAD(this->FromDIP(140)),
+//    TPAD(this->FromDIP(80)),
+//    RPAD(this->FromDIP(180)),
+//    BPAD(this->FromDIP(60)),
+//    GAP(this->FromDIP(20)),
+    LPAD(this->FromDIP(100)),
+    TPAD(this->FromDIP(100)),
+    RPAD(this->FromDIP(140)),
+    BPAD(this->FromDIP(80)),
     GAP(this->FromDIP(20)),
     RULER(this->FromDIP(10))
 {
@@ -174,7 +179,6 @@ void SpekSpectrogram::on_paint(wxPaintEvent&)
 
 void SpekSpectrogram::on_size(wxSizeEvent& evt)
 {
-    wxLogDebug("on_size");
     m_resizeTimer.Start(1000 / 60, wxTIMER_ONE_SHOT);
     evt.Skip();
 }
@@ -187,7 +191,7 @@ void SpekSpectrogram::on_resize_timer(wxTimerEvent& event)
     if (size_changed) {
         start();
     }
-    wxLogDebug("on_resize_timer size=%dx%d%s", size.GetWidth(), size.GetHeight(),
+    on_resize_timer size=%dx%d%s, size.GetWidth(), size.GetHeight(),
                size_changed ? " (changed)" : "");
 }
 
@@ -198,7 +202,7 @@ void SpekSpectrogram::on_update(wxTimerEvent& event)
     if (this->prev_save_size != size) {
         this->prev_save_size = size;
         SpekPreferences::get().set_window_size(size.GetWidth(), size.GetHeight());
-        wxLogDebug("on_update Config file updated with new size: %dx%d",
+        on_update Config file updated with new size: %dx%d,
                    size.GetWidth(), size.GetHeight());
     }
 }
@@ -268,10 +272,10 @@ void SpekSpectrogram::render(wxDC& dc)
         wxFONTSTYLE_NORMAL,
         wxFONTWEIGHT_NORMAL);
     wxFont large_font = wxFont(normal_font);
-    large_font.SetPointSize((int)round(10 * spek_platform_font_scale()));
+    large_font.SetPointSize((int)lround(10 * spek_platform_font_scale()));
     large_font.SetWeight(wxFONTWEIGHT_BOLD);
     wxFont small_font = wxFont(normal_font);
-    small_font.SetPointSize((int)round(8 * spek_platform_font_scale()));
+    small_font.SetPointSize((int)lround(8 * spek_platform_font_scale()));
     dc.SetFont(normal_font);
     int normal_height = dc.GetTextExtent("dummy").GetHeight();
     dc.SetFont(large_font);
