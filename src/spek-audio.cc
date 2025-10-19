@@ -1,4 +1,4 @@
-
+#include <wx/log.h>
 #include <assert.h>
 
 extern "C" {

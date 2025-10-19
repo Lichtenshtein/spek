@@ -20,8 +20,8 @@ public:
     void set_window_size(int width, int height);
     wxSize get_window_size();
 
-    static const int DEF_WIDTH = 800;
-    static const int DEF_HEIGHT = 600;
+    static const int DEF_WIDTH = 1200;
+    static const int DEF_HEIGHT = 900;
 
 private:
     SpekPreferences();
