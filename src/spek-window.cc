@@ -57,11 +57,11 @@ SpekWindow::SpekWindow(const wxString& path) :
     this->description = _("Spek - Acoustic Spectrum Analyser");
     SetTitle(this->description);
     wxSize size = SpekPreferences::get().get_window_size();
-    wxSize [prefs] = %dx%d, size.GetWidth(), size.GetHeight();
+    wxLogDebug("wxSize [prefs] = %dx%d", size.GetWidth(), size.GetHeight());
     wxSize defsz = wxSize(SpekPreferences::DEF_WIDTH, SpekPreferences::DEF_HEIGHT);
     if (!size.GetWidth() || !size.GetHeight()) size = defsz;
     wxSize newsz = this->FromDIP(size);
-    wxSize [new] =  %dx%d, newsz.GetWidth(), newsz.GetHeight();
+    wxLogDebug("wxSize [new] =  %dx%d", newsz.GetWidth(), newsz.GetHeight());
     SetSize(newsz);
 
 #ifndef OS_OSX
@@ -302,6 +302,7 @@ void SpekWindow::on_help(wxCommandEvent&)
 void SpekWindow::on_about(wxCommandEvent&)
 {
     wxAboutDialogInfo info;
+    info.SetCopyright(_("Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"));
     info.SetDescription(
         "Spek is a simple acoustic spectrum analyzer.\n\n"
         "MP3 file, Bitrate 64 kbps - 11 kHz.\n"
@@ -309,8 +310,7 @@ void SpekWindow::on_about(wxCommandEvent&)
         "MP3 file, Bitrate 192 kbps - 19 kHz.\n"
         "MP3 file, Bitrate 320 kbps - 20 kHz.\n"
         "M4A file, Bitrate 500 kbps - 22 kHz.\n"
-        "FLAC file, Lossless quality (Bitrate usually 1000 kbps or higher).\n"
-		 Graph's drawn continuously, no cut-off."
+        "FLAC file, Lossless quality (Bitrate usually 1000 kbps or higher). Graph's drawn continuously, no cut-off."
     );
 #ifdef OS_UNIX
     info.SetWebSite("https://www.spek.cc/", _("Spek Website"));

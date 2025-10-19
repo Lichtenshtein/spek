@@ -191,7 +191,7 @@ void SpekSpectrogram::on_resize_timer(wxTimerEvent& event)
     if (size_changed) {
         start();
     }
-    on_resize_timer size=%dx%d%s, size.GetWidth(), size.GetHeight(),
+    wxLogDebug("on_resize_timer size=%dx%d%s", size.GetWidth(), size.GetHeight(),
                size_changed ? " (changed)" : "");
 }
 
@@ -202,7 +202,7 @@ void SpekSpectrogram::on_update(wxTimerEvent& event)
     if (this->prev_save_size != size) {
         this->prev_save_size = size;
         SpekPreferences::get().set_window_size(size.GetWidth(), size.GetHeight());
-        on_update Config file updated with new size: %dx%d,
+        wxLogDebug("on_update Config file updated with new size: %dx%d",
                    size.GetWidth(), size.GetHeight());
     }
 }
@@ -266,7 +266,7 @@ void SpekSpectrogram::render(wxDC& dc)
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.SetTextForeground(wxColour(255, 255, 255));
     wxFont normal_font = wxFont(
-        (int)round(9 * spek_platform_font_scale()),
+        (int)lround(9 * spek_platform_font_scale()),
 
         wxFONTFAMILY_SWISS,
         wxFONTSTYLE_NORMAL,
