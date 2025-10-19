@@ -155,7 +155,8 @@ SpekWindow::SpekWindow(const wxString& path) :
     SetSizer(sizer);
 
     pthread_t thread;
-    pthread_create(&thread, NULL, &check_version, this);
+//    pthread_create(&thread, NULL, &check_version, this);
+    pthread_create(&thread, NULL);
 }
 
 void SpekWindow::open(const wxString& path)
