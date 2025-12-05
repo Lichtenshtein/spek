@@ -2,6 +2,19 @@ diff --git a/src/ffmpeg.mk b/src/ffmpeg.mk
 index b486d859..d1d7013d 100644
 --- a/src/ffmpeg.mk
 +++ b/src/ffmpeg.mk
+@@ -8,9 +8,9 @@ $(PKG)_CHECKSUM := 733984395e0dbbe5c046abda2dc49a5544e7e0e1e2366bba849222ae9e3a0
+ $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
+ $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.xz
+ $(PKG)_URL      := https://ffmpeg.org/releases/$($(PKG)_FILE)
+-$(PKG)_DEPS     := cc bzip2 gnutls lame libass libbluray libbs2b libcaca \
+-                   libvpx opencore-amr opus sdl2 speex theora vidstab \
+-                   vo-amrwbenc vorbis x264 x265 xvidcore yasm zlib
++$(PKG)_DEPS     := cc bzip2 lame libbluray \
++                   libvpx opencore-amr opus sdl2 speex \
++                   vorbis yasm zlib
+ 
+ # DO NOT ADD fdk-aac OR openssl SUPPORT.
+ # Although they are free softwares, their licenses are not compatible with
 @@ -42,25 +42,27 @@ define $(PKG)_BUILD
          --disable-doc \
          --enable-gpl \
