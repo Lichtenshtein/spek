@@ -28,6 +28,7 @@ mkdir -p src/dist/win && cp dist/win/spek.res src/dist/win/
 # Compile spek.exe
 LDFLAGS="-mwindows dist/win/spek.res,-Wl,-O3,-flto,-s" ./autogen.sh \
     --host="$HOST" \
+    --enable-shared=no \
     --disable-valgrind \
     --with-wx-config="$WX_CONFIG" \
     --prefix=${PWD}/dist/win/build && \
