@@ -6,6 +6,6 @@ test -n "$srcdir" || srcdir=.
 (
   cd "$srcdir" &&
   touch config.rpath &&
-  autoreconf -fiv
+  autoreconf -fiv -I /usr/share/gettext/m4
 ) || exit
 test -n "$NOCONFIGURE" || "$srcdir/configure" "$@"
