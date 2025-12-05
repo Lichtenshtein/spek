@@ -120,8 +120,8 @@ msgid "Check for &updates"
 msgstr "Проверять &обновления"
 
 #: src/spek-preferences-dialog.cc:99
-msgid "Hide full &path"
-msgstr "Скрывать полный путь к &файлу"
+msgid "Show &filename only"
+msgstr "Показывать только имя &файла"
 
 #: src/spek-preferences-dialog.cc:105
 msgid "Show detailed &description"
