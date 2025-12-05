@@ -7,7 +7,7 @@ AM_SILENT_RULES([yes])
 AC_LANG([C++])
 AM_PROG_AR
 AC_PROG_CXX
-CXXFLAGS="$CXXFLAGS -std=gnu++11 -Wall -Wextra -O2 -march=x86-64 -mtune=x86-64"
+CXXFLAGS="$CXXFLAGS -std=gnu++11 -Wall -Wextra -O2 -march=x86_64-w64-mingw32 -mtune=x86_64-w64-mingw32"
 AC_PROG_CXXCPP
 AC_PROG_LIBTOOL
 AC_PROG_RANLIB
@@ -86,7 +86,6 @@ AC_CONFIG_FILES([
 	man/Makefile
 	po/Makefile.in
 	src/Makefile
-	tests/Makefile
 	web/version
 ])
 AC_OUTPUT

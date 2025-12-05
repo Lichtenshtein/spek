@@ -26,7 +26,7 @@ $("$WX_CONFIG" --rescomp) dist/win/spek.rc -O coff -o dist/win/spek.res
 mkdir -p src/dist/win && cp dist/win/spek.res src/dist/win/
 
 # Compile spek.exe
-LDFLAGS="-mwindows dist/win/spek.res,-Wl,-O3,-flto,-s" ./autogen.sh \
+LDFLAGS="-mwindows dist/win/spek.res,-Wl,-Ofast,-flto,-s,--as-needed" ./autogen.sh \
     --host="$HOST" \
     --enable-shared=no \
     --disable-valgrind \
