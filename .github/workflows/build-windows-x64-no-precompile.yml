@@ -99,8 +99,8 @@ jobs:
         name: spek-GH_${{ github.repository_owner }}-Win64+tests-${{ env.short_sha }}
         path: |
           dist/win/Spek
-#          dist/win/tests
           dist/win/spek.wxs
+          # dist/win/tests
           # there is a dist/win/spek.zip which has the came contents, we don't include as the second stage needs the extracted files
 
 
