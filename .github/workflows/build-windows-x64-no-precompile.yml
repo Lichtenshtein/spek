@@ -64,7 +64,7 @@ jobs:
         sudo apt-get update
         sudo apt-get -y install mxe-x86-64-w64-mingw32.static-cc
         sudo apt-get -y install autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libgl-dev libssl-dev libtool-bin libxml-parser-perl lzip make openssl p7zip-full patch perl python3 python3-mako python3-pkg-resources ruby sed unzip wget xz-utils
-#        sudo apt-get -y install --only-upgrade gettext autopoint
+        sudo apt-get -y install autotools binutils brotli bzip2 cairo cc ccache cmake cmake-conf dbus expat fontconfig freetype freetype-bootstrap gcc gettext glib gmp harfbuzz icu4c isl jpeg lame libbluray libffi libiconv libpng libsamplerate libvpx libwebp libxml2 lzo meson meson-wrapper mpc mpfr ninja ogg opencore-amr opus pcre2 pixman pkgconf sdl sdl2 speex tiff vorbis wxwidgets xz yasm zlib zstd
 
     # this takes a LONG time (~2h) so only do it once
     - name: Clone, patch, and build MXE - Spek Dependencies
@@ -75,7 +75,7 @@ jobs:
         cd mxe
         # Try to apply patch, but don't fail if it doesn't work
         patch -p1 < ../dist/win/mxe.diff || echo "Patch failed, building without modifications"
-        make pthreads ffmpeg -j$(nproc) JOBS=$(nproc) MXE_TARGETS='x86_64-w64-mingw32.static'
+        make pthreads ffmpeg EXCLUDE_PKGS='autotools,binutils,brotli,bzip2,cairo,cc,ccache,cmake,cmake-conf,dbus,expat,fontconfig,freetype,freetype-bootstrap,gcc,gettext,glib,gmp,harfbuzz,icu4c,isl,jpeg,lame,libbluray,libffi,libiconv,libpng,libsamplerate,libvpx,libwebp,libxml2,lzo,meson,meson-wrapper,mpc,mpfr,ninja,ogg,opencore-amr,opus,pcre2,pixman,pkgconf,sdl,sdl2,speex,tiff,vorbis,wxwidgets,xz,yasm,zlib,zstd' -j$(nproc) JOBS=$(nproc) MXE_TARGETS='x86_64-w64-mingw32.static'
 
     - name: Build Spek
       shell: bash
@@ -99,7 +99,7 @@ jobs:
         name: spek-GH_${{ github.repository_owner }}-Win64+tests-${{ env.short_sha }}
         path: |
           dist/win/Spek
-          dist/win/tests
+#          dist/win/tests
           dist/win/spek.wxs
           # there is a dist/win/spek.zip which has the came contents, we don't include as the second stage needs the extracted files
 
