@@ -15,7 +15,7 @@ index b486d859..d1d7013d 100644
  
  # DO NOT ADD fdk-aac OR openssl SUPPORT.
  # Although they are free softwares, their licenses are not compatible with
-@@ -42,25 +42,26 @@ define $(PKG)_BUILD
+@@ -42,25 +42,27 @@ define $(PKG)_BUILD
          --disable-doc \
          --enable-gpl \
          --enable-version3 \
@@ -49,6 +49,7 @@ index b486d859..d1d7013d 100644
 -        --enable-libx265 \
 -        --enable-libxvid \
 +        --enable-small
++        --extra-cflags="-march=native -Ofast -pipe"
          --extra-ldflags="-fstack-protector" \
          $($(PKG)_CONFIGURE_OPTS)
      $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'

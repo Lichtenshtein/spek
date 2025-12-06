@@ -26,8 +26,8 @@ public:
     int get_window_width();
     int get_window_height();
 
-    // static const int DEF_WIDTH = 1500;
-    // static const int DEF_HEIGHT = 1070;
+    // static const int width = 1500;
+    // static const int height = 1070;
 
 private:
     SpekPreferences();

@@ -51,14 +51,14 @@ private:
     SpekWindow *window;
 };
 
-SpekWindow::SpekWindow(int DEF_WIDTH, int DEF_HEIGHT, const wxString& path, const wxString& pngpath) :
-    wxFrame(NULL, -1, wxEmptyString, wxDefaultPosition, wxSize(DEF_WIDTH, DEF_HEIGHT)), path(path), pngpath(pngpath)
+SpekWindow::SpekWindow(int width, int height, const wxString& path, const wxString& pngpath) :
+    wxFrame(NULL, -1, wxEmptyString, wxDefaultPosition, wxSize(width, height)), path(path), pngpath(pngpath)
 {
     this->description = _("Spek - Acoustic Spectrum Analyser");
     SetTitle(this->description);
     wxSize size = SpekPreferences::get().get_window_size();
     wxLogDebug("wxSize [prefs] = %dx%d", size.GetWidth(), size.GetHeight());
-    wxSize defsz = wxSize(SpekPreferences::DEF_WIDTH, SpekPreferences::DEF_HEIGHT);
+    wxSize defsz = wxSize(SpekPreferences::width, SpekPreferences::height);
     if (!size.GetWidth() || !size.GetHeight()) size = defsz;
     wxSize newsz = this->FromDIP(size);
     wxLogDebug("wxSize [new] =  %dx%d", newsz.GetWidth(), newsz.GetHeight());

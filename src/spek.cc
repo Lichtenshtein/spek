@@ -42,8 +42,8 @@ bool Spek::OnInit()
 
     SpekPreferences& prefs = SpekPreferences::get();
     prefs.init();
-    long DEF_WIDTH = prefs.get_window_width();
-    long DEF_HEIGHT = prefs.get_window_height();
+    long width = prefs.get_window_width();
+    long height = prefs.get_window_height();
 
     static const wxCmdLineEntryDesc desc[] = {{
             wxCMD_LINE_SWITCH,
@@ -77,14 +77,14 @@ bool Spek::OnInit()
             wxCMD_LINE_PARAM,
             NULL,
             NULL,
-            "DEF_WIDTH",
+            "width",
             wxCMD_LINE_VAL_NUMBER,
             wxCMD_LINE_PARAM_OPTIONAL
         },{
             wxCMD_LINE_PARAM,
             NULL,
             NULL,
-            "DEF_HEIGHT",
+            "height",
             wxCMD_LINE_VAL_NUMBER,
             wxCMD_LINE_PARAM_OPTIONAL
         },
@@ -148,16 +148,16 @@ bool Spek::OnInit()
         this->pngpath = pngpath;
     }
     if (parser.GetParamCount() > 3) {
-        wxString DEF_WIDTH_str = parser.GetParam(2);
-        wxString DEF_HEIGHT_str = parser.GetParam(3);
+        wxString width_str = parser.GetParam(2);
+        wxString height_str = parser.GetParam(3);
 
-        if (!(DEF_WIDTH_str.ToLong(&DEF_WIDTH) && DEF_HEIGHT_str.ToLong(&DEF_HEIGHT))) {
-            DEF_WIDTH = prefs.get_window_width();
-            DEF_HEIGHT = prefs.get_window_height();
+        if (!(width_str.ToLong(&width) && height_str.ToLong(&height))) {
+            width = prefs.get_window_width();
+            height = prefs.get_window_height();
         }
     }
 
-    this->window = new SpekWindow(DEF_WIDTH, DEF_HEIGHT, this->path, this->pngpath);
+    this->window = new SpekWindow(width, height, this->path, this->pngpath);
     this->window->Show(true);
     SetTopWindow(this->window);
     return true;

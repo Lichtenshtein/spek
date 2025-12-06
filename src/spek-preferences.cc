@@ -53,8 +53,8 @@ bool SpekPreferences::get_check_update()
 
 wxSize SpekPreferences::get_window_size()
 {
-    int width = SpekPreferences::DEF_WIDTH;
-    int height = SpekPreferences::DEF_HEIGHT;
+    int width = SpekPreferences::width;
+    int height = SpekPreferences::height;
     this->config->Read("/window/width", &width);
     this->config->Read("/window/height", &height);
     return wxSize(width, height);
@@ -128,13 +128,13 @@ void SpekPreferences::set_show_detailed_description(bool value)
 int SpekPreferences::get_window_width()
 {
     int result = 1500;
-    this->config->Read("/general/DEF_WIDTH", &result);
+    this->config->Read("/general/width", &result);
     return result;
 }
 
 int SpekPreferences::get_window_height()
 {
     int result = 1070;
-    this->config->Read("/general/DEF_HEIGHT", &result);
+    this->config->Read("/general/height", &result);
     return result;
 }
