@@ -7,7 +7,7 @@ AM_SILENT_RULES([yes])
 AC_LANG([C++])
 AM_PROG_AR
 AC_PROG_CXX
-CXXFLAGS="$CXXFLAGS -std=gnu++11 -Wall -Wextra -O2 -march=x86_64 -mtune=x86_64"
+CXXFLAGS="$CXXFLAGS -std=gnu++11 -Wall -Wextra -O2 -march=broadwell -mtune=broadwell"
 AC_PROG_CXXCPP
 AC_PROG_LIBTOOL
 AC_PROG_RANLIB
