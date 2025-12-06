@@ -49,7 +49,7 @@ index b486d859..d1d7013d 100644
 -        --enable-libx265 \
 -        --enable-libxvid \
 +        --enable-small
-+        --extra-cflags="-march=native -Ofast -pipe"
++        --extra-cflags="-march=native -O3 -pipe"
          --extra-ldflags="-fstack-protector" \
          $($(PKG)_CONFIGURE_OPTS)
      $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
