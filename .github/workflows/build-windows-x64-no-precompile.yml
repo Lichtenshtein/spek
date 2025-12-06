@@ -58,7 +58,11 @@ jobs:
       shell: bash
       run: |
         # https://mxe.cc/#requirements
+        sudo apt-get -y install software-properties-common lsb-release
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 86B72ED9
+        sudo add-apt-repository "deb [arch=amd64] https://pkg.mxe.cc/repos/apt focal main"
         sudo apt-get update
+        sudo apt-get -y install mxe-x86-64-w64-mingw32.static-cc
         sudo apt-get -y install autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libgl-dev libssl-dev libtool-bin libxml-parser-perl lzip make openssl p7zip-full patch perl python3 python3-mako python3-pkg-resources ruby sed unzip wget xz-utils
         sudo apt-get -y install autotools binutils brotli bzip2 cairo cc ccache cmake cmake-conf dbus expat fontconfig freetype freetype-bootstrap gcc gettext glib gmp harfbuzz icu4c isl jpeg lame libbluray libffi libiconv libpng libsamplerate libvpx libwebp libxml2 lzo meson meson-wrapper mpc mpfr ninja ogg opencore-amr opus pcre2 pixman pkgconf sdl sdl2 speex tiff vorbis wxwidgets xz yasm zlib zstd
 
