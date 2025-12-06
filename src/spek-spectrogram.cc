@@ -93,7 +93,14 @@ void SpekSpectrogram::save(const wxString& path)
 
 void SpekSpectrogram::on_char(wxKeyEvent& evt)
 {
-    switch (evt.GetKeyCode()) {
+    // int key_modifier = evt.GetModifiers();
+    int key_code = evt.GetKeyCode();
+
+    if (key_code == WXK_ESCAPE) {
+        this->GetParent()->Close(true);
+        return;
+    }
+    switch (key_code) {
     case 'c':
         if (this->channels) {
             this->channel = (this->channel + 1) % this->channels;
@@ -136,10 +143,10 @@ void SpekSpectrogram::on_char(wxKeyEvent& evt)
         }
         break;
     case 'u':
-        this->urange = spek_min(this->urange + 1, MAX_RANGE);
+        this->urange = spek_max(this->urange - 1, this->lrange + 1);
         break;
     case 'U':
-        this->urange = spek_max(this->urange - 1, this->lrange + 1);
+        this->urange = spek_min(this->urange + 1, MAX_RANGE);
         break;
     case 'w':
         this->fft_bits = spek_min(this->fft_bits + 1, MAX_FFT_BITS);
@@ -255,20 +262,22 @@ void SpekSpectrogram::render(wxDC& dc)
     dc.Clear();
 
     // Spek version
-    dc.SetFont(large_font);
-    wxString package_name(PACKAGE_NAME);
-    dc.DrawText(
-        package_name,
-        w - RPAD + GAP,
-        TPAD - 2 * GAP - normal_height - large_height
-    );
-    int package_name_width = dc.GetTextExtent(package_name + " ").GetWidth();
-    dc.SetFont(small_font);
-    dc.DrawText(
-        PACKAGE_VERSION,
-        w - RPAD + GAP + package_name_width,
-        TPAD - 2 * GAP - normal_height - small_height
-    );
+//    dc.SetFont(small_font);
+//    wxString package_name(PACKAGE_NAME);
+//    dc.DrawText(
+//        package_name,
+//        w - RPAD + GAP,
+//        TPAD - 2 * GAP - normal_height - large_height
+//    );
+//    int package_name_width = dc.GetTextExtent(package_name + " ").GetWidth();
+//    int package_name_width = dc.GetTextExtent(package_name + " ").GetWidth();
+//    dc.SetFont(small_font);
+//    dc.DrawText(
+//        PACKAGE_VERSION,
+//        w - RPAD + GAP + package_name_width,
+//        TPAD - 2 * GAP - normal_height - small_height
+//    );
+
 
     if (this->image.GetWidth() > 1 && this->image.GetHeight() > 1 &&
         w - LPAD - RPAD > 0 && h - TPAD - BPAD > 0) {
@@ -277,7 +286,7 @@ void SpekSpectrogram::render(wxDC& dc)
         dc.DrawBitmap(bmp, LPAD, TPAD);
 
         // File name.
-        dc.SetFont(large_font);
+        dc.SetFont(small_font);
         dc.DrawText(
             trim(dc, this->path, w - LPAD - RPAD, false),
             LPAD,

@@ -90,27 +90,27 @@ SpekWindow::SpekWindow(const wxString& path) :
 
     SetMenuBar(menu);
 
-    wxToolBar *toolbar = CreateToolBar();
-    toolbar->AddTool(
-        wxID_OPEN,
-        wxEmptyString,
-        wxArtProvider::GetBitmap(ART_OPEN, wxART_TOOLBAR),
-        menu_file_open->GetItemLabelText()
-    );
-    toolbar->AddTool(
-        wxID_SAVE,
-        wxEmptyString,
-        wxArtProvider::GetBitmap(ART_SAVE, wxART_TOOLBAR),
-        menu_file_save->GetItemLabelText()
-    );
-    toolbar->AddStretchableSpace();
-    toolbar->AddTool(
-        wxID_HELP,
-        wxEmptyString,
-        wxArtProvider::GetBitmap(ART_HELP, wxART_TOOLBAR),
-        _("Help")
-    );
-    toolbar->Realize();
+//    wxToolBar *toolbar = CreateToolBar();
+//    toolbar->AddTool(
+//        wxID_OPEN,
+//        wxEmptyString,
+//        wxArtProvider::GetBitmap(ART_OPEN, wxART_TOOLBAR),
+//        menu_file_open->GetItemLabelText()
+//    );
+//    toolbar->AddTool(
+//        wxID_SAVE,
+//        wxEmptyString,
+//        wxArtProvider::GetBitmap(ART_SAVE, wxART_TOOLBAR),
+//        menu_file_save->GetItemLabelText()
+//    );
+//    toolbar->AddStretchableSpace();
+//    toolbar->AddTool(
+//        wxID_HELP,
+//        wxEmptyString,
+//        wxArtProvider::GetBitmap(ART_HELP, wxART_TOOLBAR),
+//        _("Help")
+//    );
+//    toolbar->Realize();
 
     wxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -320,7 +320,15 @@ void SpekWindow::on_about(wxCommandEvent&)
     info.SetName("Spek");
     info.SetVersion(PACKAGE_VERSION);
     info.SetCopyright(_("Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"));
-    info.SetDescription(this->description);
+    info.SetDescription(
+        "\n"
+        "MP3:  Bitrate   64 kbps - 11 kHz\n"
+        "MP3:  Bitrate  128 kbps - 16 kHz\n"
+        "MP3:  Bitrate  192 kbps - 19 kHz\n"
+        "MP3:  Bitrate  320 kbps - 20 kHz\n"
+        "M4A:  Bitrate  500 kbps - 22 kHz\n"
+        "FLAC: Bitrate 1000 kbps - Graph's drawn continuously, no cut-off"
+    );
 #ifdef OS_UNIX
     info.SetWebSite("https://www.spek.cc/", _("Spek Website"));
     info.SetIcon(wxArtProvider::GetIcon("spek", wxART_OTHER, wxSize(128, 128)));

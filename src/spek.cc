@@ -1,5 +1,5 @@
 #include <wx/cmdline.h>
-#include <wx/log.h>
+// #include <wx/log.h>
 #include <wx/socket.h>
 
 #include "spek-artwork.h"
