@@ -31,7 +31,7 @@ LDFLAGS="-mwindows dist/win/spek.res" ./autogen.sh \
     --disable-valgrind \
     --with-wx-config="$WX_CONFIG" \
     --prefix=${PWD}/dist/win/build && \
-    "$MAKE" -j8 && \
+    "$MAKE" -j$(nproc) JOBS=$(nproc) && \
     "$MAKE" install || exit 1
 
 # Compile test.exe
@@ -40,7 +40,7 @@ LDFLAGS="-mconsole" ./autogen.sh \
     --disable-valgrind \
     --with-wx-config="$WX_CONFIG" \
     --prefix=${PWD}/dist/win/build && \
-    "$MAKE" check -j8 TESTS=
+    "$MAKE" check -j$(nproc) JOBS=$(nproc) TESTS=
 
 # Copy files to the bundle
 cd dist/win
