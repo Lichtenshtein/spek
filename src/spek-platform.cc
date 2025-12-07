@@ -19,10 +19,15 @@ void spek_platform_init()
 #endif
 }
 
+#ifdef OS_WIN
+wxString spek_platform_config_path(const wxString&)
+#else
 wxString spek_platform_config_path(const wxString& app_name)
+#endif
 {
 #ifdef OS_WIN
-    wxFileName file_name(wxStandardPaths::Get().GetUserConfigDir(), wxEmptyString);
+    wxFileName file_name(wxStandardPaths::Get().GetExecutablePath());
+    file_name.SetFullName("preferences.ini");
 #else
     wxFileName file_name;
     wxString xdg_config_home;
@@ -32,10 +37,10 @@ wxString spek_platform_config_path(const wxString& app_name)
         file_name = wxFileName(wxGetHomeDir(), wxEmptyString);
         file_name.AppendDir(".config");
     }
-#endif
     file_name.AppendDir(app_name);
     file_name.Mkdir(0755, wxPATH_MKDIR_FULL);
-    file_name.SetFullName("preferences");
+    file_name.SetFullName("preferences.ini");
+#endif
     return file_name.GetFullPath();
 }
 
