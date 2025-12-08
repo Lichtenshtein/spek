@@ -1,11 +1,99 @@
 # Spek
 
+*Spek* generates a spectrogram for the input audio file.
+
 Spek is an acoustic spectrum analyser written in C++. It uses FFmpeg
 libraries for audio decoding and wxWidgets for the GUI.
 
 Spek is available on *BSD, GNU/Linux, Windows and Mac OS X.
 
 Find out more about Spek on its website: <https://www.spek.cc/>
+
+# SYNOPSIS
+
+`spek` [*OPTION* *...*] \[*FILE*] \[*PNG*] \[*WIDTH*] \[*HEIGHT*]
+
+## ARGUMENTS
+
+`FILE`
+:   Audio file to be analyzed.
+
+`PNG`
+:   Write spectrogram to this PNG file then exit.
+
+`WIDTH`
+:   Initial width of the spectrum in pixels.
+
+`HEIGHT`
+:   Initial height of the spectrum in pixels.
+
+# OPTIONS
+
+`-h`, `--help`
+:   Output the help message then quit.
+
+`-V`, `--version`
+:   Output version information then quit.
+
+# KEYBINDINGS
+
+## Notes
+
+On OS X use the Command key instead of Ctrl.
+
+## Menu
+
+`Ctrl-O`
+:   Open a new file.
+
+`Ctrl-S`
+:   Save the spectrogram as an image file.
+
+`Ctrl-E`
+:   Show the preferences dialog.
+
+`F1`
+:   Open online manual in the browser.
+
+`Shift-F1`
+:   Show the about dialog.
+
+## Spectrogram
+
+`c`, `C`
+:   Change the audio channel.
+
+`f`, `F`
+:   Change the DFT window function.
+
+`l`, `L` (+Shift to reverse)
+:   Change the lower limit of the dynamic range in dBFS.
+
+`p`, `P`
+:   Change the palette.
+
+`s`, `S`
+:   Change the audio stream.
+
+`u`, `U` (+Shift to reverse)
+:   Change the upper limit of the dynamic range in dBFS.
+
+`w`, `W`
+:   Change the DFT window size.
+
+# FILES
+
+*~/.config/spek/preferences*
+:   The configuration file for *Spek*, stored in a simple INI format.
+
+# AUTHORS
+
+Alexander Kojevnikov <alexander@kojevnikov.com>. Other contributors are listed
+in the CREDITS.md file distributed with the source code.
+
+# DISTRIBUTION
+
+The latest version of *Spek* may be downloaded from <https://www.spek.cc>.
 
 ## Spek 0.8.5 - Released 2023-01-09
 
