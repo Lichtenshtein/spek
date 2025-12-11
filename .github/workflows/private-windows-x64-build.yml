@@ -43,8 +43,7 @@ jobs:
         sudo add-apt-repository "deb [arch=amd64] https://pkg.mxe.cc/repos/apt focal main"
         sudo apt-get update
         sudo apt-get -y install mxe-x86-64-w64-mingw32.static-cc
-        sudo apt-get -y install autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libgl-dev libssl-dev libtool-bin libxml-parser-perl lzip make openssl p7zip-full patch perl python3 python3-mako python3-pkg-resources ruby sed unzip wget xz-utils
-        sudo apt-get -y install binutils brotli bzip2 ccache cmake dbus expat fontconfig gcc gettext lame libxml2 meson mpc pkgconf speex yasm zstd
+        sudo apt-get -y install autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libgl-dev libssl-dev libtool-bin libxml-parser-perl lzip make openssl p7zip-full patch perl python3 python3-mako python3-pkg-resources ruby sed unzip wget xz-utils mingw-w64
 
     - name: Clone, patch, and build MXE - Spek Dependencies
       if: ${{ steps.cache-bin.outputs.cache-hit != 'true' }}
@@ -53,7 +52,7 @@ jobs:
         git clone https://github.com/mxe/mxe.git
         cd mxe
         patch -p1 < ../dist/win/mxe.diff || echo "Patch failed, building without modifications"
-        make wxwidgets pthreads ffmpeg EXCLUDE_PKGS="binutils brotli bzip2 ccache cmake dbus expat fontconfig gcc gettext lame libxml2 meson mpc pkgconf speex yasm zstd" -j$(nproc) JOBS=$(nproc) MXE_TARGETS='x86_64-w64-mingw32.static'
+        make wxwidgets pthreads ffmpeg -j$(nproc) JOBS=$(nproc) MXE_TARGETS='x86_64-w64-mingw32.static'
 
     - name: Build Spek
       shell: bash
@@ -64,8 +63,8 @@ jobs:
 
         ./dist/win/bundle.sh
 
-        find . -iname "config.log"
-        cat ./config.log
+        # find . -iname "config.log"
+        # cat ./config.log
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4

@@ -12,9 +12,10 @@ MAKE=make
 ZIP=zip
 
 HOST=x86_64-w64-mingw32.static
-LANGUAGES="bs ca cs da de el eo es fi fr gl he hr hu id it ja ko lv nb nl nn pl pt_BR ru sk sr@latin sv th tr uk vi zh_CN zh_TW"
+LANGUAGES="ru"
 PATH="$MXE"/bin:$PATH
 WX_CONFIG="$MXE"/"$HOST"/bin/wx-config
+STRIP="$HOST"-strip
 
 cd $(dirname $0)/../..
 rm -fr dist/win/build && mkdir dist/win/build
@@ -32,6 +33,8 @@ LDFLAGS="-mwindows dist/win/spek.res" ./autogen.sh \
     --prefix=${PWD}/dist/win/build && \
     "$MAKE" -j$(nproc) JOBS=$(nproc) && \
     "$MAKE" install || exit 1
+
+"$STRIP" dist/win/build/bin/spek.exe
 
 # Copy files to the bundle
 cd dist/win
