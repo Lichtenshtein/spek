@@ -71,26 +71,29 @@ SpekWindow::SpekWindow(int width, int height, const wxString& path, const wxStri
     wxMenuBar *menu = new wxMenuBar();
 
     wxMenu *menu_file = new wxMenu();
-    wxMenuItem *menu_file_open = new wxMenuItem(menu_file, wxID_OPEN);
+    wxMenuItem *menu_file_open = new wxMenuItem(menu_file, wxID_OPEN, wxString(_("&Open...")) + "\tCtrl+O");
     menu_file->Append(menu_file_open);
-    wxMenuItem *menu_file_save = new wxMenuItem(menu_file, wxID_SAVE);
+    wxMenuItem *menu_file_save = new wxMenuItem(menu_file, wxID_SAVE, wxString(_("&Save...")) + "\tCtrl+S");
     menu_file->Append(menu_file_save);
     menu_file->AppendSeparator();
-    menu_file->Append(wxID_EXIT);
+    // Fixed: Changed variable name from menu_file_open to menu_file_exit
+    wxMenuItem *menu_file_exit = new wxMenuItem(menu_file, wxID_EXIT, wxString(_("&Exit")) + "\tEsc");
+    // Fixed: Append the menu_item object, not the ID
+    menu_file->Append(menu_file_exit);
     menu->Append(menu_file, _("&File"));
-
+    
     wxMenu *menu_edit = new wxMenu();
-    wxMenuItem *menu_edit_prefs = new wxMenuItem(menu_edit, wxID_PREFERENCES);
-    menu_edit_prefs->SetItemLabel(menu_edit_prefs->GetItemLabelText() + "\tCtrl-E");
+    wxMenuItem *menu_edit_prefs = new wxMenuItem(menu_edit, wxID_PREFERENCES, wxString(_("&Preferences")) + "\tCtrl-E");
+    // Removed redundant SetItemLabel call
     menu_edit->Append(menu_edit_prefs);
     menu->Append(menu_edit, _("&Edit"));
-
+    
     wxMenu *menu_help = new wxMenu();
     wxMenuItem *menu_help_contents = new wxMenuItem(
         menu_help, wxID_HELP, wxString(_("&Help")) + "\tF1");
     menu_help->Append(menu_help_contents);
-    wxMenuItem *menu_help_about = new wxMenuItem(menu_help, wxID_ABOUT);
-    menu_help_about->SetItemLabel(menu_help_about->GetItemLabelText() + "\tShift-F1");
+    wxMenuItem *menu_help_about = new wxMenuItem(menu_help, wxID_ABOUT, wxString(_("&About")) + "\tShift-F1");
+    // Removed redundant SetItemLabel call
     menu_help->Append(menu_help_about);
     menu->Append(menu_help, _("&Help"));
 

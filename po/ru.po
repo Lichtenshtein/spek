@@ -170,6 +170,26 @@ msgstr "&Файл"
 msgid "&Edit"
 msgstr "&Правка"
 
+#: src/spek-window.cc:74
+msgid "&Open..."
+msgstr "&Открыть..."
+
+#: src/spek-window.cc:76
+msgid "&Save..."
+msgstr "&Сохранить..."
+
+#: src/spek-window.cc:79
+msgid "&Exit"
+msgstr "&Выйти"
+
+#: src/spek-window.cc:84
+msgid "&Preferences"
+msgstr "&Параметры"
+
+#: src/spek-window.cc:93
+msgid "&About"
+msgstr "&О программе"
+
 #: src/spek-window.cc:90 src/spek-window.cc:95
 msgid "&Help"
 msgstr "&Справка"
