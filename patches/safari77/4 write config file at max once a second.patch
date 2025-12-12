@@ -1,0 +1,125 @@
+From 03830b51846de8090df02281b35a83fc1b164dae Mon Sep 17 00:00:00 2001
+From: Sami Farin <hvtaifwkbgefbaei@gmail.com>
+Date: Fri, 17 Jan 2025 15:39:40 +0200
+Subject: [PATCH] write config file at max once a second
+
+---
+ src/spek-spectrogram.cc | 41 ++++++++++++++++++++++++++++++++---------
+ src/spek-spectrogram.h  | 13 ++++++++++++-
+ 2 files changed, 44 insertions(+), 10 deletions(-)
+
+diff --git a/src/spek-spectrogram.cc b/src/spek-spectrogram.cc
+index 990d2cb..e75b67f 100644
+--- a/src/spek-spectrogram.cc
++++ b/src/spek-spectrogram.cc
+@@ -16,6 +16,8 @@ BEGIN_EVENT_TABLE(SpekSpectrogram, wxWindow)
+     EVT_CHAR(SpekSpectrogram::on_char)
+     EVT_PAINT(SpekSpectrogram::on_paint)
+     EVT_SIZE(SpekSpectrogram::on_size)
++    EVT_TIMER(ID_RESIZE_TIMER, SpekSpectrogram::on_resize_timer)
++    EVT_TIMER(ID_UPDATE_TIMER, SpekSpectrogram::on_update)
+     SPEK_EVT_HAVE_SAMPLE(SpekSpectrogram::on_have_sample)
+ END_EVENT_TABLE()
+ 
+@@ -52,7 +54,10 @@ SpekSpectrogram::SpekSpectrogram(wxFrame *parent) :
+     palette(PALETTE_DEFAULT),
+     palette_image(),
+     image(1, 1),
+-    prev_width(-1),
++    prev_size(-1, -1),
++    prev_save_size(-1, -1),
++    m_resizeTimer(this, ID_RESIZE_TIMER),
++    m_updateTimer(this, ID_UPDATE_TIMER),
+     fft_bits(FFT_BITS),
+     urange(URANGE),
+     lrange(LRANGE),
+@@ -65,6 +70,8 @@ SpekSpectrogram::SpekSpectrogram(wxFrame *parent) :
+ {
+     this->create_palette();
+ 
++    m_updateTimer.Start(1000);
++    m_resizeTimer.Start(1000 / 60);
+     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+     SetFocus();
+ }
+@@ -165,18 +172,34 @@ void SpekSpectrogram::on_paint(wxPaintEvent&)
+     render(dc);
+ }
+ 
+-void SpekSpectrogram::on_size(wxSizeEvent&)
++void SpekSpectrogram::on_size(wxSizeEvent& evt)
++{
++    wxLogDebug("on_size");
++    m_resizeTimer.Start(1000 / 60, wxTIMER_ONE_SHOT);
++    evt.Skip();
++}
++
++void SpekSpectrogram::on_resize_timer(wxTimerEvent& event)
+ {
+     wxSize size = GetClientSize();
+-    wxLogDebug("wxSize [on_size] = %dx%d", size.GetWidth(), size.GetHeight());
+-    bool width_changed = this->prev_width != size.GetWidth();
+-    this->prev_width = size.GetWidth();
++    bool size_changed = this->prev_size != size;
++    this->prev_size = size;
++    if (size_changed) {
++        start();
++    }
++    wxLogDebug("on_resize_timer size=%dx%d%s", size.GetWidth(), size.GetHeight(),
++               size_changed ? " (changed)" : "");
++}
+ 
+-    // Save the new window size
+-    SpekPreferences::get().set_window_size(size.GetWidth(), size.GetHeight());
++void SpekSpectrogram::on_update(wxTimerEvent& event)
++{
++    wxSize size = GetClientSize();
+ 
+-    if (width_changed) {
+-        start();
++    if (this->prev_save_size != size) {
++        this->prev_save_size = size;
++        SpekPreferences::get().set_window_size(size.GetWidth(), size.GetHeight());
++        wxLogDebug("on_update Config file updated with new size: %dx%d",
++                   size.GetWidth(), size.GetHeight());
+     }
+ }
+ 
+diff --git a/src/spek-spectrogram.h b/src/spek-spectrogram.h
+index a657fbd..80e345f 100644
+--- a/src/spek-spectrogram.h
++++ b/src/spek-spectrogram.h
+@@ -12,6 +12,12 @@ class FFT;
+ class SpekHaveSampleEvent;
+ struct spek_pipeline;
+ 
++enum
++{
++    ID_RESIZE_TIMER = wxID_HIGHEST + 1,
++    ID_UPDATE_TIMER
++};
++
+ class SpekSpectrogram : public wxWindow
+ {
+ public:
+@@ -24,6 +30,8 @@ class SpekSpectrogram : public wxWindow
+     void on_char(wxKeyEvent& evt);
+     void on_paint(wxPaintEvent& evt);
+     void on_size(wxSizeEvent& evt);
++    void on_resize_timer(wxTimerEvent& event);
++    void on_update(wxTimerEvent& event);
+     void on_have_sample(SpekHaveSampleEvent& evt);
+     void render(wxDC& dc);
+ 
+@@ -47,7 +55,10 @@ class SpekSpectrogram : public wxWindow
+     enum palette palette;
+     wxImage palette_image;
+     wxImage image;
+-    int prev_width;
++    wxSize prev_size;
++    wxSize prev_save_size;
++    wxTimer m_resizeTimer;
++    wxTimer m_updateTimer;
+     int fft_bits;
+     int urange;
+     int lrange;

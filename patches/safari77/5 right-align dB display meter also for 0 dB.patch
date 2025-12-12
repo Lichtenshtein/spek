@@ -1,0 +1,22 @@
+From fe75a0d3f60836022ede76e1fa0d808a9e807579 Mon Sep 17 00:00:00 2001
+From: Sami Farin <hvtaifwkbgefbaei@gmail.com>
+Date: Fri, 17 Jan 2025 21:39:41 +0200
+Subject: [PATCH] right-align dB display meter also for 0 dB
+
+---
+ src/spek-spectrogram.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/spek-spectrogram.cc b/src/spek-spectrogram.cc
+index e75b67f..2c20ee1 100644
+--- a/src/spek-spectrogram.cc
++++ b/src/spek-spectrogram.cc
+@@ -246,7 +246,7 @@ static wxString freq_formatter(int unit)
+ 
+ static wxString density_formatter(int unit)
+ {
+-    return wxString::Format(_("%d dB"), -unit);
++    return wxString::Format(_("%3d dB"), -unit);
+ }
+ 
+ void SpekSpectrogram::render(wxDC& dc)

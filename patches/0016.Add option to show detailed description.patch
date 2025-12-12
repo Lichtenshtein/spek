@@ -1,0 +1,193 @@
+From d9dba1c7934fd8f44595eabe74ccac057bdf9199 Mon Sep 17 00:00:00 2001
+From: withmorten <morten.with@gmail.com> & Lichtenshtein
+Date: Wed, 6 Dec 2017 20:28:56 +0100
+Subject: [PATCH] Add option to show detailed description
+
+---
+ po/de.po                       |  4 +++
+ po/spek.pot                    |  4 +++
+ src/spek-pipeline.cc           | 48 +++++++++++++++++++---------------
+ src/spek-preferences-dialog.cc | 11 ++++++++
+ src/spek-preferences-dialog.h  |  1 +
+ src/spek-preferences.cc        | 15 ++++++++++-
+ src/spek-preferences.h         |  2 ++
+ 7 files changed, 63 insertions(+), 22 deletions(-)
+
+diff --git a/po/de.po b/po/de.po
+index a6eb58e4..7483864c 100644
+--- a/po/ru.po
++++ b/po/ru.po
+@@ -124,6 +124,10 @@ msgstr "Nach &Aktualisierungen suchen"
+ msgid "Show &filename only"
+ msgstr "Показывать только имя &файла"
+ 
++#: src/spek-preferences-dialog.cc:105
++msgid "Show detailed &description"
++msgstr "Показывать детальное &описание"
++
+ #: src/spek-spectrogram.cc:216
+ #, c-format
+ msgid "%d kHz"
+diff --git a/po/spek.pot b/po/spek.pot
+index 692a305d..d3dd1e2c 100644
+--- a/po/spek.pot
++++ b/po/spek.pot
+@@ -121,6 +121,10 @@ msgstr ""
+ msgid "Show &filename only"
+ msgstr ""
+ 
++#: src/spek-preferences-dialog.cc:105
++msgid "Show detailed &description"
++msgstr ""
++
+ #: src/spek-spectrogram.cc:216
+ #, c-format
+ msgid "%d kHz"
+diff --git a/src/spek-pipeline.cc b/src/spek-pipeline.cc
+index 1f9c6fc8..9f5d4c25 100644
+--- a/src/spek-pipeline.cc
++++ b/src/spek-pipeline.cc
+@@ -11,6 +11,7 @@
+ 
+ #include "spek-audio.h"
+ #include "spek-fft.h"
++#include "spek-preferences.h"
+ 
+ #include "spek-pipeline.h"
+ 
+@@ -208,25 +208,29 @@ std::string spek_pipeline_desc(const struct spek_pipeline *pipeline)
+         ));
+     }
+ 
+-    if (pipeline->file->get_error() == AudioError::OK) {
+-        items.push_back(std::string(wxString::Format(wxT("W:%i"), pipeline->nfft).utf8_str()));
+-
+-        std::string window_function_name;
+-        switch (pipeline->window_function) {
+-        case WINDOW_HANN:
+-            window_function_name = std::string("Hann");
+-            break;
+-        case WINDOW_HAMMING:
+-            window_function_name = std::string("Hamming");
+-            break;
+-        case WINDOW_BLACKMAN_HARRIS:
+-            window_function_name = std::string("Blackman–Harris");
+-            break;
+-        default:
+-            assert(false);
+-        }
+-        if (window_function_name.size()) {
+-            items.push_back("F:" + window_function_name);
++    // Checking prefs can probably be solved differently.
++    SpekPreferences& prefs = SpekPreferences::get();
++    if(prefs.get_show_detailed_description()) {
++        if (pipeline->file->get_error() == AudioError::OK) {
++            items.push_back(std::string(wxString::Format(wxT("W:%i"), pipeline->nfft).utf8_str()));
++
++            std::string window_function_name;
++            switch (pipeline->window_function) {
++            case WINDOW_HANN:
++                window_function_name = std::string("Hann");
++                break;
++            case WINDOW_HAMMING:
++                window_function_name = std::string("Hamming");
++                break;
++            case WINDOW_BLACKMAN_HARRIS:
++                window_function_name = std::string("Blackman-Harris");
++                break;
++            default:
++                assert(false);
++            }
++            if (window_function_name.size()) {
++                items.push_back("F:" + window_function_name);
++            }
+         }
+     }
+ 
+diff --git a/src/spek-preferences-dialog.cc b/src/spek-preferences-dialog.cc
+index cb6cf53b..83333040 100644
+--- a/src/spek-preferences-dialog.cc
++++ b/src/spek-preferences-dialog.cc
+@@ -47,11 +47,13 @@ static const char *available_languages[] =
+ #define ID_LANGUAGE (wxID_HIGHEST + 1)
+ #define ID_CHECK_UPDATE (wxID_HIGHEST + 2)
+ #define ID_CHECK_FULL_PATH (wxID_HIGHEST + 3)
++#define ID_CHECK_DETAILED_DESCRIPTION (wxID_HIGHEST + 4)
+ 
+ BEGIN_EVENT_TABLE(SpekPreferencesDialog, wxDialog)
+     EVT_CHOICE(ID_LANGUAGE, SpekPreferencesDialog::on_language)
+     EVT_CHECKBOX(ID_CHECK_UPDATE, SpekPreferencesDialog::on_check_update)
+     EVT_CHECKBOX(ID_CHECK_FULL_PATH, SpekPreferencesDialog::on_check_hide_full_path)
++    EVT_CHECKBOX(ID_CHECK_DETAILED_DESCRIPTION, SpekPreferencesDialog::on_check_show_detailed_description)
+ END_EVENT_TABLE()
+ 
+ SpekPreferencesDialog::SpekPreferencesDialog(wxWindow *parent) :
+@@ -100,6 +102,10 @@ SpekPreferencesDialog::SpekPreferencesDialog(wxWindow *parent) :
+     inner_sizer->Add(hide_full_path, 0, wxLEFT | wxTOP, 12);
+     hide_full_path->SetValue(SpekPreferences::get().get_hide_full_path());
+ 
++    wxCheckBox *show_detailed_description = new wxCheckBox(this, ID_CHECK_DETAILED_DESCRIPTION, _("Show detailed &description"));
++    inner_sizer->Add(show_detailed_description, 0, wxLEFT | wxTOP, 12);
++    show_detailed_description->SetValue(SpekPreferences::get().get_show_detailed_description());
++
+     sizer->Add(CreateButtonSizer(wxOK), 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
+     sizer->SetSizeHints(this);
+     SetSizer(sizer);
+@@ -119,3 +125,8 @@ void SpekPreferencesDialog::on_check_hide_full_path(wxCommandEvent& event)
+ {
+     SpekPreferences::get().set_hide_full_path(event.IsChecked());
+ }
++
++void SpekPreferencesDialog::on_check_show_detailed_description(wxCommandEvent& event)
++{
++    SpekPreferences::get().set_show_detailed_description(event.IsChecked());
++}
+diff --git a/src/spek-preferences-dialog.h b/src/spek-preferences-dialog.h
+index 2662b0c1..1224df7d 100644
+--- a/src/spek-preferences-dialog.h
++++ b/src/spek-preferences-dialog.h
+@@ -11,6 +11,7 @@ class SpekPreferencesDialog : public wxDialog
+     void on_language(wxCommandEvent& event);
+     void on_check_update(wxCommandEvent& event);
+     void on_check_hide_full_path(wxCommandEvent& event);
++    void on_check_show_detailed_description(wxCommandEvent& event);
+ 
+     wxArrayString languages;
+ 
+diff --git a/src/spek-preferences.cc b/src/spek-preferences.cc
+index 34e6dfb8..92c10cd3 100644
+--- a/src/spek-preferences.cc
++++ b/src/spek-preferences.cc
+@@ -92,4 +92,17 @@ void SpekPreferences::set_hide_full_path(bool value)
+ {
+     this->config->Write("/general/hidepath", value);
+     this->config->Flush();
+-}
+\ No newline at end of file
++}
++
++bool SpekPreferences::get_show_detailed_description()
++{
++    bool result = false;
++    this->config->Read("/general/showdetails", &result);
++    return result;
++}
++
++void SpekPreferences::set_show_detailed_description(bool value)
++{
++    this->config->Write("/general/showdetails", value);
++    this->config->Flush();
++}
+diff --git a/src/spek-preferences.h b/src/spek-preferences.h
+index 1d634f6a..cac7cc9d 100644
+--- a/src/spek-preferences.h
++++ b/src/spek-preferences.h
+@@ -17,6 +17,8 @@ class SpekPreferences
+     void set_language(const wxString& value);
+     bool get_hide_full_path();
+     void set_hide_full_path(bool value);
++    bool get_show_detailed_description();
++    void set_show_detailed_description(bool value);
+ 
+ private:
+     SpekPreferences();

@@ -1,0 +1,99 @@
+From f6052f21d435e7fbb7a39c6e39cf10afadbfffbd Mon Sep 17 00:00:00 2001
+From: Sami Farin <hvtaifwkbgefbaei@gmail.com>
+Date: Thu, 16 Jan 2025 20:02:57 +0200
+Subject: [PATCH] make font bigger and configurable, increase borders so text
+ is not cropped
+
+---
+ .gitignore              |  1 +
+ src/spek-platform.cc    | 12 +++++++-----
+ src/spek-spectrogram.cc | 24 +++++++++++++-----------
+ 3 files changed, 21 insertions(+), 16 deletions(-)
+
+diff --git a/.gitignore b/.gitignore
+index b1b2b14..030ac31 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -8,6 +8,7 @@
+ *~
+ .DS_Store
+ .deps
++tags
+ ABOUT-NLS
+ Makefile
+ Makefile.in
+diff --git a/src/spek-platform.cc b/src/spek-platform.cc
+index 20ba37f..2288789 100644
+--- a/src/spek-platform.cc
++++ b/src/spek-platform.cc
+@@ -7,6 +7,8 @@
+ #include <wx/filename.h>
+ #include <wx/stdpaths.h>
+ #include <wx/utils.h>
++#include <wx/display.h>
++#include <wx/settings.h>
+ 
+ #include "spek-platform.h"
+ 
+@@ -50,9 +52,9 @@ bool spek_platform_can_change_language()
+ 
+ double spek_platform_font_scale()
+ {
+-#ifdef OS_OSX
+-    return 1.3;
+-#else
+-    return 1.0;
+-#endif
++    wxDisplay display;
++    int dpi = display.GetPPI().GetWidth(); // Horizontal DPI
++    int defaultDPI = 96;                   // Standard DPI
++
++    return 2 * static_cast<double>(dpi) / defaultDPI;
+ }
+diff --git a/src/spek-spectrogram.cc b/src/spek-spectrogram.cc
+index 9d025dc..cc8d478 100644
+--- a/src/spek-spectrogram.cc
++++ b/src/spek-spectrogram.cc
+@@ -55,11 +55,11 @@ SpekSpectrogram::SpekSpectrogram(wxFrame *parent) :
+     fft_bits(FFT_BITS),
+     urange(URANGE),
+     lrange(LRANGE),
+-    LPAD(this->FromDIP(60)),
+-    TPAD(this->FromDIP(60)),
+-    RPAD(this->FromDIP(90)),
+-    BPAD(this->FromDIP(40)),
+-    GAP(this->FromDIP(10)),
++    LPAD(this->FromDIP(140)),
++    TPAD(this->FromDIP(80)),
++    RPAD(this->FromDIP(180)),
++    BPAD(this->FromDIP(60)),
++    GAP(this->FromDIP(20)),
+     RULER(this->FromDIP(10))
+ {
+     this->create_palette();
+@@ -233,17 +233,19 @@ void SpekSpectrogram::render(wxDC& dc)
+     dc.SetPen(*wxWHITE_PEN);
+     dc.SetBrush(*wxTRANSPARENT_BRUSH);
+     dc.SetTextForeground(wxColour(255, 255, 255));
+-    wxFont normal_font = wxFont(
+-        (int)round(9 * spek_platform_font_scale()),
++    wxFont normal_font;
++    if (!wxFromString("Iosevka Term SS08", &normal_font)) {
++        normal_font = wxFont(
++        (int)lround(9 * spek_platform_font_scale()),
+         wxFONTFAMILY_SWISS,
+         wxFONTSTYLE_NORMAL,
+-        wxFONTWEIGHT_NORMAL
+-    );
++        wxFONTWEIGHT_NORMAL);
++    }
+     wxFont large_font = wxFont(normal_font);
+-    large_font.SetPointSize((int)round(10 * spek_platform_font_scale()));
++    large_font.SetPointSize((int)lround(10 * spek_platform_font_scale()));
+     large_font.SetWeight(wxFONTWEIGHT_BOLD);
+     wxFont small_font = wxFont(normal_font);
+-    small_font.SetPointSize((int)round(8 * spek_platform_font_scale()));
++    small_font.SetPointSize((int)lround(8 * spek_platform_font_scale()));
+     dc.SetFont(normal_font);
+     int normal_height = dc.GetTextExtent("dummy").GetHeight();
+     dc.SetFont(large_font);

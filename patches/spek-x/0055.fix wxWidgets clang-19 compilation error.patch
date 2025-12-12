@@ -1,0 +1,61 @@
+From 9dfe1515cccd5ab0e157a98a868ae5bcf6f12838 Mon Sep 17 00:00:00 2001
+From: Mike Wang <mikewang000000@gmail.com>
+Date: Thu, 6 Feb 2025 02:53:25 +0800
+Subject: [PATCH] fix: wxWidgets: clang-19 compilation error
+
+---
+ dist/win/install_deps.sh |  3 +++
+ dist/win/wx-wxchar.patch | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 33 insertions(+)
+ create mode 100755 dist/win/wx-wxchar.patch
+
+diff --git a/dist/win/install_deps.sh b/dist/win/install_deps.sh
+index bed6668..bd0edb1 100755
+--- a/dist/win/install_deps.sh
++++ b/dist/win/install_deps.sh
+@@ -31,6 +31,9 @@ cd "wxWidgets-${WX_VER}"
+ # fix: pt_BR zh_CN zh_TW translation not works
+ patch -p1 < ../../wx-translation.patch
+ 
++# fix: clang-19 compilation error
++patch -p1 < ../../wx-wxchar.patch
++
+ mkdir msw-build
+ cd msw-build
+ ../configure \
+diff --git a/dist/win/wx-wxchar.patch b/dist/win/wx-wxchar.patch
+new file mode 100755
+index 0000000..4845a00
+--- /dev/null
++++ b/dist/win/wx-wxchar.patch
+@@ -0,0 +1,30 @@
++diff --git a/include/wx/defs.h b/include/wx/defs.h
++index 39ce129477..32f4d876b8 100644
++--- a/include/wx/defs.h
+++++ b/include/wx/defs.h
++@@ -1159,20 +1159,23 @@ typedef double wxDouble;
++ 
++ /* Define wxChar16 and wxChar32                                              */
++ 
+++#ifdef __cplusplus
+++
++ #if SIZEOF_WCHAR_T == 2
++     #define wxWCHAR_T_IS_WXCHAR16
++     typedef wchar_t wxChar16;
++ #else
++-    typedef wxUint16 wxChar16;
+++    typedef char16_t wxChar16;
++ #endif
++ 
++ #if SIZEOF_WCHAR_T == 4
++     #define wxWCHAR_T_IS_WXCHAR32
++     typedef wchar_t wxChar32;
++ #else
++-    typedef wxUint32 wxChar32;
+++    typedef char32_t wxChar32;
++ #endif
++ 
+++#endif /* __cplusplus */
++ 
++ /*
++     Helper macro expanding into the given "m" macro invoked with each of the

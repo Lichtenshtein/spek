@@ -1,0 +1,23 @@
+From 3ea965f06d5f0ad9141925225479b649bbf37837 Mon Sep 17 00:00:00 2001
+From: MikeWang000000 <mikewang000000@gmail.com>
+Date: Thu, 26 Jan 2023 12:12:31 +0800
+Subject: [PATCH] Fix memory leak
+
+---
+ src/spek-audio.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/spek-audio.cc b/src/spek-audio.cc
+index 55111f9..3acabe6 100644
+--- a/src/spek-audio.cc
++++ b/src/spek-audio.cc
+@@ -222,6 +222,9 @@ AudioFileImpl::~AudioFileImpl()
+     if (this->packet) {
+         av_packet_free(&this->packet);
+     }
++    if (this->codec_context) {
++        avcodec_free_context(&codec_context);
++    }
+     if (this->format_context) {
+         avformat_close_input(&this->format_context);
+     }

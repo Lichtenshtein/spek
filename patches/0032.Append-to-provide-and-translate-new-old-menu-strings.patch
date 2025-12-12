@@ -1,0 +1,89 @@
+From e8185e124d4bc1804010e3ac943b61034345b220 Mon Sep 17 00:00:00 2001
+From: Lichtenshtein <altruumann@protonmail.com>
+Date: Fri, 12 Dec 2025 04:39:39 +0300
+Subject: [PATCH] Append to provide and translate new (old) menu strings
+ unprovided and untraslated earlier (what?)
+
+Attempt failed
+---
+ po/ru.po           | 20 ++++++++++++++++++++
+ src/spek-window.cc | 13 +++++++------
+ 2 files changed, 27 insertions(+), 6 deletions(-)
+
+diff --git a/po/ru.po b/po/ru.po
+index 997f8a9..2cb4d19 100644
+--- a/po/ru.po
++++ b/po/ru.po
+@@ -170,6 +170,26 @@ msgstr "&Файл"
+ msgid "&Edit"
+ msgstr "&Правка"
+ 
++#: src/spek-window.cc:74
++msgid "&Open..."
++msgstr "&Открыть..."
++
++#: src/spek-window.cc:76
++msgid "&Save..."
++msgstr "&Сохранить..."
++
++#: src/spek-window.cc:79
++msgid "&Exit"
++msgstr "&Выйти"
++
++#: src/spek-window.cc:84
++msgid "&Preferences"
++msgstr "&Параметры"
++
++#: src/spek-window.cc:93
++msgid "&About"
++msgstr "&О программе"
++
+ #: src/spek-window.cc:90 src/spek-window.cc:95
+ msgid "&Help"
+ msgstr "&Справка"
+diff --git i/src/spek-window.cc w/src/spek-window.cc
+index 98134f0..8485c69 100644
+--- i/src/spek-window.cc
++++ w/src/spek-window.cc
+@@ -71,26 +71,29 @@ SpekWindow::SpekWindow(int width, int height, const wxString& path, const wxStri
+     wxMenuBar *menu = new wxMenuBar();
+ 
+     wxMenu *menu_file = new wxMenu();
+-    wxMenuItem *menu_file_open = new wxMenuItem(menu_file, wxID_OPEN);
++    wxMenuItem *menu_file_open = new wxMenuItem(menu_file, wxID_OPEN, wxString(_("&Open...")) + "\tCtrl+O");
+     menu_file->Append(menu_file_open);
+-    wxMenuItem *menu_file_save = new wxMenuItem(menu_file, wxID_SAVE);
++    wxMenuItem *menu_file_save = new wxMenuItem(menu_file, wxID_SAVE, wxString(_("&Save...")) + "\tCtrl+S");
+     menu_file->Append(menu_file_save);
+     menu_file->AppendSeparator();
+-    menu_file->Append(wxID_EXIT);
++    // Fixed: Changed variable name from menu_file_open to menu_file_exit
++    wxMenuItem *menu_file_exit = new wxMenuItem(menu_file, wxID_EXIT, wxString(_("&Exit")) + "\tEsc");
++    // Fixed: Append the menu_item object, not the ID
++    menu_file->Append(menu_file_exit);
+     menu->Append(menu_file, _("&File"));
+-
++    
+     wxMenu *menu_edit = new wxMenu();
+-    wxMenuItem *menu_edit_prefs = new wxMenuItem(menu_edit, wxID_PREFERENCES);
+-    menu_edit_prefs->SetItemLabel(menu_edit_prefs->GetItemLabelText() + "\tCtrl-E");
++    wxMenuItem *menu_edit_prefs = new wxMenuItem(menu_edit, wxID_PREFERENCES, wxString(_("&Preferences")) + "\tCtrl-E");
++    // Removed redundant SetItemLabel call
+     menu_edit->Append(menu_edit_prefs);
+     menu->Append(menu_edit, _("&Edit"));
+-
++    
+     wxMenu *menu_help = new wxMenu();
+     wxMenuItem *menu_help_contents = new wxMenuItem(
+         menu_help, wxID_HELP, wxString(_("&Help")) + "\tF1");
+     menu_help->Append(menu_help_contents);
+-    wxMenuItem *menu_help_about = new wxMenuItem(menu_help, wxID_ABOUT);
+-    menu_help_about->SetItemLabel(menu_help_about->GetItemLabelText() + "\tShift-F1");
++    wxMenuItem *menu_help_about = new wxMenuItem(menu_help, wxID_ABOUT, wxString(_("&About")) + "\tShift-F1");
++    // Removed redundant SetItemLabel call
+     menu_help->Append(menu_help_about);
+     menu->Append(menu_help, _("&Help"));
+ 
+-- 
+2.49.0.windows.1
+

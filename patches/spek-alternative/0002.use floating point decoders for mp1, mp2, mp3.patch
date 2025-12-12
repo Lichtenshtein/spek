@@ -1,0 +1,43 @@
+From 4562e5f5446f27421067ddd64a2159810235dd97 Mon Sep 17 00:00:00 2001
+From: withmorten <morten.with@gmail.com>
+Date: Thu, 6 Jul 2017 01:45:05 +0200
+Subject: [PATCH] use floating point decoders for mp1, mp2, mp3
+
+---
+ src/spek-audio.cc | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/src/spek-audio.cc b/src/spek-audio.cc
+index 1247850c..bc4bc463 100644
+--- a/src/spek-audio.cc
++++ b/src/spek-audio.cc
+@@ -111,7 +111,28 @@ std::unique_ptr<AudioFile> Audio::open(const std::string& file_name, int stream)
+     if (!error) {
+         avstream = format_context->streams[audio_stream];
+         codec_context = avstream->codec;
+-        codec = avcodec_find_decoder(codec_context->codec_id);
++
++        switch (codec_context->codec_id) {
++        case AV_CODEC_ID_MP1:
++            codec = avcodec_find_decoder_by_name("mp1float");
++            break;
++        case AV_CODEC_ID_MP2:
++            codec = avcodec_find_decoder_by_name("mp2float");
++            break;
++        case AV_CODEC_ID_MP3:
++            codec = avcodec_find_decoder_by_name("mp3float");
++            break;
++        case AV_CODEC_ID_MP3ADU:
++            codec = avcodec_find_decoder_by_name("mp3adufloat");
++            break;
++        case AV_CODEC_ID_MP3ON4:
++            codec = avcodec_find_decoder_by_name("mp3on4float");
++            break;
++        default:
++            codec = avcodec_find_decoder(codec_context->codec_id);
++            break;
++        }
++
+         if (!codec) {
+             error = AudioError::NO_DECODER;
+         }

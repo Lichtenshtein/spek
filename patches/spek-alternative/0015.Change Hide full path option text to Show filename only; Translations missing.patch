@@ -1,0 +1,51 @@
+From c73c500c613c9b44e4dffac232746d9e977af433 Mon Sep 17 00:00:00 2001
+From: withmorten <morten.with@gmail.com>
+Date: Wed, 21 Mar 2018 16:12:23 +0100
+Subject: [PATCH] Change "Hide full path" option text to "Show filename only";
+ Translations missing
+
+---
+ po/de.po                       | 2 +-
+ po/spek.pot                    | 2 +-
+ src/spek-preferences-dialog.cc | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/po/de.po b/po/de.po
+index 7483864c..8e3913e8 100644
+--- a/po/de.po
++++ b/po/de.po
+@@ -121,7 +121,7 @@ msgid "Check for &updates"
+ msgstr "Nach &Aktualisierungen suchen"
+ 
+ #: ../src/spek-preferences-dialog.cc:99
+-msgid "Hide full &path"
++msgid "Show &filename only"
+ msgstr "Nur &Dateinamen anzeigen"
+ 
+ #: ../src/spek-preferences-dialog.cc:105
+diff --git a/po/spek.pot b/po/spek.pot
+index d3dd1e2c..f2904acd 100644
+--- a/po/spek.pot
++++ b/po/spek.pot
+@@ -118,7 +118,7 @@ msgid "Check for &updates"
+ msgstr ""
+ 
+ #: ../src/spek-preferences-dialog.cc:99
+-msgid "Hide full &path"
++msgid "Show &filename only"
+ msgstr ""
+ 
+ #: ../src/spek-preferences-dialog.cc:105
+diff --git a/src/spek-preferences-dialog.cc b/src/spek-preferences-dialog.cc
+index 83333040..3c68bbb6 100644
+--- a/src/spek-preferences-dialog.cc
++++ b/src/spek-preferences-dialog.cc
+@@ -98,7 +98,7 @@ SpekPreferencesDialog::SpekPreferencesDialog(wxWindow *parent) :
+     inner_sizer->Add(check_update, 0, wxLEFT | wxTOP, 12);
+     check_update->SetValue(SpekPreferences::get().get_check_update());
+ 
+-    wxCheckBox *hide_full_path = new wxCheckBox(this, ID_CHECK_FULL_PATH, _("Hide full &path"));
++    wxCheckBox *hide_full_path = new wxCheckBox(this, ID_CHECK_FULL_PATH, _("Show &filename only"));
+     inner_sizer->Add(hide_full_path, 0, wxLEFT | wxTOP, 12);
+     hide_full_path->SetValue(SpekPreferences::get().get_hide_full_path());
+ 

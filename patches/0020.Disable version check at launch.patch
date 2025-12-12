@@ -1,0 +1,24 @@
+From ffd2980cacc2587f5b432407edea71ea7bacc038 Mon Sep 17 00:00:00 2001
+From: MikeWang000000 <mikewang000000@gmail.com>
+Date: Mon, 23 Jan 2023 15:10:21 +0800
+Subject: [PATCH] Disable version check at launch
+
+---
+ src/spek-window.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/spek-window.cc b/src/spek-window.cc
+index 4516e0e..2e9c21c 100644
+--- a/src/spek-window.cc
++++ b/src/spek-window.cc
+@@ -147,8 +147,8 @@ SpekWindow::SpekWindow(int width, int height, const wxString& path, const wxStri
+ 
+     SetSizer(sizer);
+ 
+-    pthread_t thread;
+-    pthread_create(&thread, NULL, &check_version, this);
++    // pthread_t thread;
++    // pthread_create(&thread, NULL, &check_version, this);
+ }
+ 
+ void SpekWindow::open(const wxString& path)

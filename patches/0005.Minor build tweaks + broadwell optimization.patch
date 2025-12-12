@@ -1,0 +1,52 @@
+From dad81edc1967c8b4c50e736c3ffbd8ac254f5355 Mon Sep 17 00:00:00 2001
+From: Lichtenshtein <altruumann@protonmail.com>
+Date: Sun, 7 Dec 2025 03:13:45 +0300
+Subject: [PATCH] Minor build tweaks + broadwell optimization
+---
+ dist/win/bundle.sh | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/dist/win/bundle.sh b/dist/win/bundle.sh
+index 4a70809..65d0b81 100755
+--- a/dist/win/bundle.sh
++++ b/dist/win/bundle.sh
+@@ -27,12 +27,12 @@ mkdir -p src/dist/win && cp dist/win/spek.res src/dist/win/
+ mkdir -p tests/dist/win && cp dist/win/spek.res tests/dist/win/
+ 
+ # Compile spek.exe
+ LDFLAGS="-mwindows dist/win/spek.res" ./autogen.sh \
+     --host="$HOST" \
+     --disable-valgrind \
+     --with-wx-config="$WX_CONFIG" \
+     --prefix=${PWD}/dist/win/build && \
+-    "$MAKE" -j8 && \
++    "$MAKE" -j$(nproc) JOBS=$(nproc) && \
+     "$MAKE" install || exit 1
+ 
+ # Compile test.exe
+@@ -27,8 +27,8 @@ mkdir -p src/dist/win && cp dist/win/spek.res src/dist/win/
+ LDFLAGS="-mconsole" ./autogen.sh \
+     --host="$HOST" \
+     --disable-valgrind \
+     --with-wx-config="$WX_CONFIG" \
+     --prefix=${PWD}/dist/win/build && \
+-    "$MAKE" check -j8 TESTS=
++    "$MAKE" check -j$(nproc) JOBS=$(nproc) TESTS=
+ 
+ # Copy files to the bundle
+diff --git a/configure.ac b/configure.ac
+index fe95c88..5fa836c 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -7,7 +7,7 @@ AM_SILENT_RULES([yes])
+ AC_LANG([C++])
+ AM_PROG_AR
+ AC_PROG_CXX
+-CXXFLAGS="$CXXFLAGS -std=gnu++11 -Wall -Wextra"
++CXXFLAGS="$CXXFLAGS -std=gnu++11 -Wall -Wextra -O3 -march=broadwell -mtune=broadwell"
+ AC_PROG_CXXCPP
+ AC_PROG_LIBTOOL
+ AC_PROG_RANLIB
+-- 
+2.49.0.windows.1
+

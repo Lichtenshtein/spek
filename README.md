@@ -49,6 +49,9 @@ On OS X use the Command key instead of Ctrl.
 `Ctrl-S`
 :   Save the spectrogram as an image file.
 
+`Esc`
+:   Close Spek.
+
 `Ctrl-E`
 :   Show the preferences dialog.
 
@@ -98,6 +101,18 @@ The latest version of *Spek* may be downloaded from <https://www.spek.cc>.
 ## Spek 0.8.5 - Released 2023-01-09
 
 ### New Features And Enhancements
+
+(this fork)
+
+ * Applied patches from 'patches' folder
+ * Exit on 'Esc'
+ * Store preferences in .ini file in .exe folder
+ * Bigger font and bigger window size, change window size using .ini
+ * Change upper limit in dBFS on pressing 'U' works
+ * Minimal ffmpeg version, .exe can be additionally shrinked to 5mb using UPX
+ * Somehow broke translations, sorry :( Spek just ignores 5 translated entries from main menu (even new added lines for them). 
+
+(original)
 
 New features since 0.8.2:
 

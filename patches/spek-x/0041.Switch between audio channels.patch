@@ -1,0 +1,63 @@
+From 68dd1e8b9989dd8608283fc0a9fd60d66d043f9b Mon Sep 17 00:00:00 2001
+From: MikeWang000000 <mikewang000000@gmail.com>
+Date: Thu, 26 Jan 2023 12:21:49 +0800
+Subject: [PATCH] Switch between audio channels
+
+Co-authored-by: Alexander Kojevnikov <alexander@kojevnikov.com>
+---
+ MANUAL.md               |  3 +++
+ man/spek.1              |  5 +++++
+ src/spek-spectrogram.cc | 10 ++++++++++
+ 3 files changed, 18 insertions(+)
+
+diff --git a/MANUAL.md b/MANUAL.md
+index 9652cf4..fc0ce5a 100644
+--- a/MANUAL.md
++++ b/MANUAL.md
+@@ -59,6 +59,9 @@ On OS X use the Command key instead of Ctrl.
+ 
+ ### Spectrogram
+ 
++`c`, `C`
++:   Change the audio channel.
++
+ `f`, `F`
+ :   Change the DFT window function.
+ 
+diff --git a/man/spek.1 b/man/spek.1
+index 1cf3b52..85658ef 100644
+--- a/man/spek.1
++++ b/man/spek.1
+@@ -64,6 +64,11 @@ Show the about dialog.
+ .RE
+ .SS Spectrogram
+ .TP
++.B \f[C]c\f[], \f[C]C\f[]
++Change the audio channel.
++.RS
++.RE
++.TP
+ .B \f[C]f\f[], \f[C]F\f[]
+ Change the DFT window function.
+ .RS
+diff --git a/src/spek-spectrogram.cc b/src/spek-spectrogram.cc
+index 0e08c12..969170d 100644
+--- a/src/spek-spectrogram.cc
++++ b/src/spek-spectrogram.cc
+@@ -105,6 +105,16 @@ void SpekSpectrogram::on_char(wxKeyEvent& evt)
+     }
+ #endif
+     switch (key_code) {
++    case 'c':
++        if (this->channels) {
++            this->channel = (this->channel + 1) % this->channels;
++        }
++        break;
++    case 'C':
++        if (this->channels) {
++            this->channel = (this->channel - 1 + this->channels) % this->channels;
++        }
++        break;
+     case 'f':
+         this->window_function = (enum window_function) ((this->window_function + 1) % WINDOW_COUNT);
+         break;

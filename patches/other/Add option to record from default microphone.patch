@@ -1,0 +1,405 @@
+From f1921821d807ab42d80c55de4d24e3664e00d982 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Bernhard=20=C3=9Cbelacker?= <bernhardu@mailbox.org>
+Date: Mon, 4 Jul 2016 18:07:15 +0200
+Subject: [PATCH] Add option to record from default microphone.
+
+Adds an additional dependency to libavdevice >= 55.0.
+Was just tested on Debian Jessie.
+Shows a duration of 60 seconds.
+If the end is reached it overwrites from the beginning.
+---
+ configure.ac            |  1 +
+ src/Makefile.am         |  2 ++
+ src/spek-audio.cc       | 32 +++++++++++++++++++++++++++++---
+ src/spek-audio.h        |  3 ++-
+ src/spek-pipeline.cc    |  4 +++-
+ src/spek-spectrogram.cc | 39 +++++++++++++++++++++++++++++----------
+ src/spek-spectrogram.h  |  3 ++-
+ src/spek-window.cc      | 19 ++++++++++---------
+ src/spek-window.h       |  5 +++--
+ src/spek.cc             | 14 +++++++++++++-
+ 10 files changed, 94 insertions(+), 28 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index d2e8b41a..05673335 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -49,6 +49,7 @@ AC_CHECK_LIB(m, log10)
+ PKG_CHECK_MODULES(AVFORMAT, [libavformat >= 53.17])
+ PKG_CHECK_MODULES(AVCODEC, [libavcodec >= 55.46])
+ PKG_CHECK_MODULES(AVUTIL, [libavutil >= 51.17])
++PKG_CHECK_MODULES(AVDEVICE, [libavdevice >= 55.0])
+ 
+ AM_OPTIONS_WXCONFIG
+ reqwx=3.0.0
+diff --git a/src/Makefile.am b/src/Makefile.am
+index c4aba087..025dd7b6 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -21,6 +21,7 @@ libspek_a_CXXFLAGS = \
+ 	$(AVFORMAT_CFLAGS) \
+ 	$(AVCODEC_CFLAGS) \
+ 	$(AVUTIL_CFLAGS) \
++	$(AVDEVICE_CFLAGS) \
+ 	$(WX_CXXFLAGS_ONLY)
+ 
+ bin_PROGRAMS = spek
+@@ -57,6 +58,7 @@ spek_LDADD = \
+ 	$(AVFORMAT_LIBS) \
+ 	$(AVCODEC_LIBS) \
+ 	$(AVUTIL_LIBS) \
++	$(AVDEVICE_LIBS) \
+ 	$(WX_LIBS)
+ 
+ spek_LDFLAGS = \
+diff --git a/src/spek-audio.cc b/src/spek-audio.cc
+index 1247850c..40454cfe 100644
+--- a/src/spek-audio.cc
++++ b/src/spek-audio.cc
+@@ -6,6 +6,7 @@ extern "C" {
+ #include <libavformat/avformat.h>
+ #include <libavcodec/avcodec.h>
+ #include <libavutil/mathematics.h>
++#include <libavdevice/avdevice.h>
+ }
+ 
+ #include "spek-audio.h"
+@@ -72,13 +73,32 @@ Audio::~Audio()
+     av_lockmgr_register(nullptr);
+ }
+ 
+-std::unique_ptr<AudioFile> Audio::open(const std::string& file_name, int stream)
++std::unique_ptr<AudioFile> Audio::open(const std::string& file_name, const std::string& device_name, int stream)
+ {
+     AudioError error = AudioError::OK;
+ 
++    static bool registered;
++    if (!registered) {
++        avdevice_register_all();
++        registered = true;
++    }
++
++    const char* file_or_device = file_name.c_str();
++    AVInputFormat *file_iformat = nullptr;
++    if (!device_name.empty()) {
++        file_or_device = "default";
++        file_iformat = av_find_input_format("alsa");
++        if (!file_iformat) {
++            error = AudioError::CANNOT_OPEN_DEVICE;
++        } else {
++        }
++    }
++
+     AVFormatContext *format_context = nullptr;
+-    if (avformat_open_input(&format_context, file_name.c_str(), nullptr, nullptr) != 0) {
+-        error = AudioError::CANNOT_OPEN_FILE;
++    if (!error) {
++        if (avformat_open_input(&format_context, file_or_device, file_iformat, nullptr) != 0) {
++            error = AudioError::CANNOT_OPEN_FILE;
++        }
+     }
+ 
+     if (!error && avformat_find_stream_info(format_context, nullptr) < 0) {
+@@ -149,6 +169,8 @@ std::unique_ptr<AudioFile> Audio::open(const std::string& file_name, int stream)
+             duration = avstream->duration * av_q2d(avstream->time_base);
+         } else if (format_context->duration != AV_NOPTS_VALUE) {
+             duration = format_context->duration / (double) AV_TIME_BASE;
++        } else if (!device_name.empty()) {
++            duration = 60; /* seconds visible */
+         } else {
+             error = AudioError::NO_DURATION;
+         }
+@@ -172,6 +194,10 @@ std::unique_ptr<AudioFile> Audio::open(const std::string& file_name, int stream)
+         }
+     }
+ 
++    if (format_context) {
++        av_dump_format(format_context, 0, file_name.c_str(), false);
++    }
++
+     return std::unique_ptr<AudioFile>(new AudioFileImpl(
+         error, format_context, audio_stream,
+         codec_name, bit_rate, sample_rate, bits_per_sample,
+diff --git a/src/spek-audio.h b/src/spek-audio.h
+index 53e3cdf2..1f372411 100644
+--- a/src/spek-audio.h
++++ b/src/spek-audio.h
+@@ -13,7 +13,7 @@ class Audio
+     Audio();
+     ~Audio();
+ 
+-    std::unique_ptr<AudioFile> open(const std::string& file_name, int stream);
++    std::unique_ptr<AudioFile> open(const std::string& file_name, const std::string& device_name, int stream);
+ };
+ 
+ class AudioFile
+@@ -42,6 +42,7 @@ enum class AudioError
+ {
+     OK,
+     CANNOT_OPEN_FILE,
++    CANNOT_OPEN_DEVICE,
+     NO_STREAMS,
+     NO_AUDIO,
+     NO_DECODER,
+diff --git a/src/spek-pipeline.cc b/src/spek-pipeline.cc
+index 0cf2c190..863a05b5 100644
+--- a/src/spek-pipeline.cc
++++ b/src/spek-pipeline.cc
+@@ -243,6 +243,9 @@ std::string spek_pipeline_desc(const struct spek_pipeline *pipeline)
+     case AudioError::CANNOT_OPEN_FILE:
+         error = _("Cannot open input file");
+         break;
++    case AudioError::CANNOT_OPEN_DEVICE:
++        error = _("Cannot open input device");
++        break;
+     case AudioError::NO_STREAMS:
+         error = _("Cannot find stream info");
+         break;
+@@ -453,7 +456,6 @@ static void * worker_func(void *pp)
+                     p->output[i] /= num_fft;
+                 }
+ 
+-                if (sample == p->samples) break;
+                 p->cb(p->fft->get_output_size(), sample++, p->output, p->cb_data);
+ 
+                 memset(p->output, 0, sizeof(float) * p->fft->get_output_size());
+diff --git a/src/spek-spectrogram.cc b/src/spek-spectrogram.cc
+index de27beb0..e4ac6120 100644
+--- a/src/spek-spectrogram.cc
++++ b/src/spek-spectrogram.cc
+@@ -73,9 +73,10 @@ SpekSpectrogram::~SpekSpectrogram()
+     this->stop();
+ }
+ 
+-void SpekSpectrogram::open(const wxString& path)
++void SpekSpectrogram::open(const wxString& path, const wxString& device)
+ {
+     this->path = path;
++    this->device = device;
+     this->stream = 0;
+     this->channel = 0;
+     start();
+@@ -192,13 +193,29 @@ void SpekSpectrogram::on_have_sample(SpekHaveSampleEvent& event)
+         double value = fmin(this->urange, fmax(this->lrange, values[y]));
+         double level = (value - this->lrange) / range;
+         uint32_t color = spek_palette(this->palette, level);
+-        this->image.SetRGB(
+-            sample,
+-            bands - y - 1,
+-            color >> 16,
+-            (color >> 8) & 0xFF,
+-            color & 0xFF
+-        );
++        int draw_sample = sample;
++        if (!device.IsEmpty()) {
++            draw_sample = sample % (this->image.GetWidth()-1);
++        }
++        if (draw_sample >= 0 && draw_sample < this->image.GetWidth()) {
++            this->image.SetRGB(
++                draw_sample,
++                bands - y - 1,
++                color >> 16,
++                (color >> 8) & 0xFF,
++                color & 0xFF
++            );
++        }
++        if (!device.IsEmpty()) {
++            draw_sample = (sample+1) % (this->image.GetWidth()-1);
++            this->image.SetRGB(
++                draw_sample,
++                bands - y - 1,
++                0xFF,
++                0xFF,
++                0xFF
++            );
++        }
+     }
+ 
+     // TODO: refresh only one pixel column
+@@ -377,7 +394,8 @@ static void pipeline_cb(int bands, int sample, float *values, void *cb_data)
+ 
+ void SpekSpectrogram::start()
+ {
+-    if (this->path.IsEmpty()) {
++    wxLogMessage("SpekSpectrogram::start");
++    if (this->path.IsEmpty() && this->device.IsEmpty()) {
+         return;
+     }
+ 
+@@ -391,7 +409,7 @@ void SpekSpectrogram::start()
+     if (samples > 0) {
+         this->image.Create(samples, bits_to_bands(this->fft_bits));
+         this->pipeline = spek_pipeline_open(
+-            this->audio->open(std::string(this->path.utf8_str()), this->stream),
++            this->audio->open(std::string(this->path.utf8_str()), std::string(this->device.utf8_str()), this->stream),
+             this->fft->create(this->fft_bits),
+             this->stream,
+             this->channel,
+@@ -414,6 +432,7 @@ void SpekSpectrogram::start()
+ 
+ void SpekSpectrogram::stop()
+ {
++    wxLogMessage("SpekSpectrogram::stop");
+     if (this->pipeline) {
+         spek_pipeline_close(this->pipeline);
+         this->pipeline = NULL;
+diff --git a/src/spek-spectrogram.h b/src/spek-spectrogram.h
+index 7e6b38c9..e21f2f18 100644
+--- a/src/spek-spectrogram.h
++++ b/src/spek-spectrogram.h
+@@ -17,7 +17,7 @@ class SpekSpectrogram : public wxWindow
+ public:
+     SpekSpectrogram(wxFrame *parent);
+     ~SpekSpectrogram();
+-    void open(const wxString& path);
++    void open(const wxString& path, const wxString& device);
+     void save(const wxString& path);
+ 
+ private:
+@@ -41,6 +41,7 @@ class SpekSpectrogram : public wxWindow
+     int channel;
+     enum window_function window_function;
+     wxString path;
++    wxString device;
+     wxString desc;
+     double duration;
+     int sample_rate;
+diff --git a/src/spek-window.cc b/src/spek-window.cc
+index be9a2fbd..87c83bcd 100644
+--- a/src/spek-window.cc
++++ b/src/spek-window.cc
+@@ -41,7 +41,7 @@ class SpekDropTarget : public wxFileDropTarget
+ protected:
+     virtual bool OnDropFiles(wxCoord, wxCoord, const wxArrayString& filenames){
+         if (filenames.GetCount() == 1) {
+-            window->open(filenames[0]);
++            window->open(filenames[0], "");
+             return true;
+         }
+         return false;
+@@ -51,8 +51,8 @@ class SpekDropTarget : public wxFileDropTarget
+     SpekWindow *window;
+ };
+ 
+-SpekWindow::SpekWindow(const wxString& path) :
+-    wxFrame(NULL, -1, wxEmptyString, wxDefaultPosition, wxSize(640, 480)), path(path)
++SpekWindow::SpekWindow(const wxString& path, const wxString& device) :
++    wxFrame(NULL, -1, wxEmptyString, wxDefaultPosition, wxSize(640, 480)), path(path), device(device)
+ {
+     this->description = _("Spek - Acoustic Spectrum Analyser");
+     SetTitle(this->description);
+@@ -139,8 +139,8 @@ SpekWindow::SpekWindow(const wxString& path) :
+ 
+     this->cur_dir = wxGetHomeDir();
+ 
+-    if (!path.IsEmpty()) {
+-        open(path);
++    if (!path.IsEmpty() || !device.IsEmpty()) {
++        open(path, device);
+     }
+ 
+     SetDropTarget(new SpekDropTarget(this));
+@@ -151,17 +151,18 @@ SpekWindow::SpekWindow(const wxString& path) :
+     pthread_create(&thread, NULL, &check_version, this);
+ }
+ 
+-void SpekWindow::open(const wxString& path)
++void SpekWindow::open(const wxString& path, const wxString& device)
+ {
+     wxFileName file_name(path);
+-    if (file_name.FileExists()) {
++    if (file_name.FileExists() || !device.IsEmpty()) {
+         this->path = path;
++        this->device = device;
+         wxString full_name = file_name.GetFullName();
+         // TRANSLATORS: window title, %s is replaced with the file name
+         wxString title = wxString::Format(_("Spek - %s"), full_name.c_str());
+         SetTitle(title);
+ 
+-        this->spectrogram->open(path);
++        this->spectrogram->open(path, device);
+     }
+ }
+ 
+@@ -233,7 +234,7 @@ void SpekWindow::on_open(wxCommandEvent&)
+     if (dlg->ShowModal() == wxID_OK) {
+         this->cur_dir = dlg->GetDirectory();
+         filter_index = dlg->GetFilterIndex();
+-        open(dlg->GetPath());
++        open(dlg->GetPath(), "");
+     }
+ 
+     dlg->Destroy();
+diff --git a/src/spek-window.h b/src/spek-window.h
+index 622b58c4..0f6014a3 100644
+--- a/src/spek-window.h
++++ b/src/spek-window.h
+@@ -7,8 +7,8 @@ class SpekSpectrogram;
+ class SpekWindow : public wxFrame
+ {
+ public:
+-    SpekWindow(const wxString& path);
+-    void open(const wxString& path);
++    SpekWindow(const wxString& path, const wxString& device);
++    void open(const wxString& path, const wxString& device);
+ 
+ private:
+     void on_open(wxCommandEvent& event);
+@@ -23,6 +23,7 @@ class SpekWindow : public wxFrame
+ 
+     SpekSpectrogram *spectrogram;
+     wxString path;
++    wxString device;
+     wxString cur_dir;
+     wxString description;
+ 
+diff --git a/src/spek.cc b/src/spek.cc
+index a7659194..2964966b 100644
+--- a/src/spek.cc
++++ b/src/spek.cc
+@@ -23,6 +23,7 @@ class Spek: public wxApp
+ private:
+     SpekWindow *window;
+     wxString path;
++    wxString device;
+     bool quit;
+ };
+ 
+@@ -30,6 +31,7 @@ IMPLEMENT_APP(Spek)
+ 
+ bool Spek::OnInit()
+ {
++    delete wxLog::SetActiveTarget(new wxLogStderr()) ;
+     wxInitAllImageHandlers();
+     wxSocketBase::Initialize();
+ 
+@@ -51,6 +53,13 @@ bool Spek::OnInit()
+             "Display the version and exit",
+             wxCMD_LINE_VAL_NONE,
+             wxCMD_LINE_PARAM_OPTIONAL,
++        }, {
++            wxCMD_LINE_SWITCH,
++            NULL,
++            "microphone",
++            "Show continuous graph recorded from mircophone",
++            wxCMD_LINE_VAL_NONE,
++            wxCMD_LINE_PARAM_OPTIONAL,
+         }, {
+             wxCMD_LINE_PARAM,
+             NULL,
+@@ -78,11 +87,14 @@ bool Spek::OnInit()
+         this->quit = true;
+         return true;
+     }
++    if (parser.Found("microphone")) {
++        this->device = "default";
++    }
+     if (parser.GetParamCount()) {
+         this->path = parser.GetParam();
+     }
+ 
+-    this->window = new SpekWindow(this->path);
++    this->window = new SpekWindow(this->path, this->device);
+     this->window->Show(true);
+     SetTopWindow(this->window);
+     return true;

@@ -1,0 +1,23 @@
+From ac42a857038f91c3b796cdbf0f7213b33d70e1b4 Mon Sep 17 00:00:00 2001
+From: Mike Wang <mikewang000000@gmail.com>
+Date: Thu, 6 Feb 2025 03:14:57 +0800
+Subject: [PATCH] fix: Replace deprecated FFmpeg avfft.h APIs
+
+---
+ src/spek-fft.cc | 28 +++++++++++++++++++++++++++-
+ src/spek-fft.h  |  2 +-
+ 2 files changed, 28 insertions(+), 2 deletions(-)
+
+diff --git a/src/spek-fft.h b/src/spek-fft.h
+index 409263e..9a16c87 100644
+--- a/src/spek-fft.h
++++ b/src/spek-fft.h
+@@ -26,7 +26,7 @@ class FFTPlan
+     {
+         // FFmpeg uses various assembly optimizations which expect
+         // input data to be aligned by up to 32 bytes (e.g. AVX)
+-        this->input = (float*) av_malloc(sizeof(float) * input_size);
++        this->input = (float*) av_malloc(sizeof(float) * (input_size + 2));
+     }
+ 
+     virtual ~FFTPlan()

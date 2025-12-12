@@ -1,0 +1,80 @@
+From 329f1a937852cdaedee859ea91e4d32d50e2e669 Mon Sep 17 00:00:00 2001
+From: MikeWang000000 <mikewang000000@gmail.com>
+Date: Thu, 26 Jan 2023 21:52:27 +0800
+Subject: [PATCH] Use caching to speed up CI
+
+---
+ .github/workflows/caching.yml | 30 ++++++++++++++++++++++++++++++
+ .github/workflows/ci.yml      | 15 ++++++++-------
+ 2 files changed, 38 insertions(+), 7 deletions(-)
+ create mode 100644 .github/workflows/caching.yml
+
+diff --git a/.github/workflows/caching.yml b/.github/workflows/caching.yml
+new file mode 100644
+index 0000000..2d51ec5
+--- /dev/null
++++ b/.github/workflows/caching.yml
+@@ -0,0 +1,30 @@
++name: Caching
++run-name: Caching
++on:
++  workflow_dispatch:
++  schedule:
++    - cron: "0 6 * * 3,6"
++jobs:
++  Windows-MSYS2-MINGW64-Caching:
++    name: Windows MSYS2/MINGW64 Caching
++    runs-on: windows-2022
++    defaults:
++      run:
++        shell: msys2 {0}
++    steps:
++      - name: Check out repository code
++        uses: actions/checkout@v3
++      - name: Setup MSYS2
++        uses: msys2/setup-msys2@v2
++        with:
++          msystem: mingw64
++          location: C:\msys2
++      - name: Install dependencies
++        run: |
++          cd '${{ github.workspace }}' && ./dist/win/install_deps.sh
++          du -sh 'C:\msys2'
++      - name: Cache MSYS2
++        uses: actions/cache@v3
++        with:
++          key: spek-x-msys2-mingw64
++          path: C:\msys2
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 492e76d..81f110e 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -36,20 +36,21 @@ jobs:
+     runs-on: windows-2022
+     defaults:
+       run:
+-        shell: msys2 {0}
++        shell: cmd
+     steps:
+       - name: Check out repository code
+         uses: actions/checkout@v3
+-      - name: Setup MSYS2
+-        uses: msys2/setup-msys2@v2
++      - name: Get dependencies from cache
++        uses: actions/cache/restore@v3
+         with:
+-          msystem: mingw64
+-      - name: Install dependencies
++          key: spek-x-msys2-mingw64
++          path: C:\msys2
++      - name: Check whether MSYS2 is working
+         run: |
+-          cd '${{ github.workspace }}' && ./dist/win/install_deps.sh
++          "C:\msys2\msys64\usr\bin\env.exe" MSYSTEM=MINGW64 /usr/bin/bash -lc "echo OK"
+       - name: Compile and bundle application
+         run: |
+-          cd '${{ github.workspace }}' && ./dist/win/bundle.sh
++          "C:\msys2\msys64\usr\bin\env.exe" MSYSTEM=MINGW64 /usr/bin/bash -lc "cd '${{ github.workspace }}' && ./dist/win/bundle.sh"
+       - name: Archive production artifacts
+         uses: actions/upload-artifact@v3
+         with:

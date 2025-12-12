@@ -1,0 +1,484 @@
+From 1c6294ee72ae7ae0606f87c6f825f065629700a1 Mon Sep 17 00:00:00 2001
+From: MikeWang000000 <mikewang000000@gmail.com>
+Date: Thu, 7 Jul 2022 16:25:11 +0800
+Subject: [PATCH] Update documents
+
+---
+ INSTALL.md                                    | 24 ++++----
+ MANUAL.md                                     | 42 +++++++++-----
+ README.md                                     |  2 +-
+ dist/debian/control                           | 16 +++---
+ dist/debian/patches/ffmpeg_2.9.patch          | 34 -----------
+ .../fix-compilation-with-libav-8.patch        | 14 -----
+ dist/debian/patches/series                    |  3 -
+ dist/freebsd/Makefile                         | 47 ----------------
+ dist/freebsd/distinfo                         |  2 -
+ dist/freebsd/pkg-descr                        |  4 --
+ dist/freebsd/pkg-plist                        | 56 -------------------
+ man/spek.1                                    | 39 ++++++++++++-
+ 12 files changed, 84 insertions(+), 199 deletions(-)
+ delete mode 100755 dist/debian/patches/ffmpeg_2.9.patch
+ delete mode 100644 dist/debian/patches/fix-compilation-with-libav-8.patch
+ delete mode 100644 dist/debian/patches/series
+ delete mode 100644 dist/freebsd/Makefile
+ delete mode 100644 dist/freebsd/distinfo
+ delete mode 100644 dist/freebsd/pkg-descr
+ delete mode 100644 dist/freebsd/pkg-plist
+
+diff --git a/INSTALL.md b/INSTALL.md
+index 643464d..dea22fb 100644
+--- a/INSTALL.md
++++ b/INSTALL.md
+@@ -2,24 +2,26 @@
+ 
+ ## Windows
+ 
+-Download section offers two packages: an MSI installer and a ZIP archive. To
+-install Spek, download the MSI installer, double-click it and follow the
+-instructions.
++Download section offers two packages: a ZIP archive for x64 processors and a
++ZIP archive for Arm64 processors. 32-bit Windows is not supported.
+ 
+-If you don't want to use the installer, you can download the ZIP archive, unpack
+-it somewhere on your disk and run `Spek\spek.exe`.
++Download the ZIP archive, unpack it somewhere on your disk and run `spek.exe`.
+ 
+-## Mac OS X
++## macOS
+ 
+-Spek for Mac OS X is available in the download section. Download and open the
+-DMG package, then drag the Spek icon to Applications.
++Download section offers two packages: a ZIP archive for Intel processors and a
++ZIP archive for Apple Silicon. Spek requires macOS 10.5+.
+ 
+-Spek requires OS X 10.5+ and an Intel-based Mac.
++Download and unpack the ZIP archive, then drag the Spek icon to Applications.
+ 
+-## *BSD and GNU/Linux
++## Linux and other Unix-like systems
+ 
+ ### Binary packages
+ 
++Spek-X
++ * Debian (deb-multimedia): [spek-x](https://deb-multimedia.org/pool/main/s/spek-x-dmo/), Tsinghua mirror: [spek-x](https://mirrors.tuna.tsinghua.edu.cn/debian-multimedia/pool/main/s/spek-x-dmo/)
++
++Original Spek (Outdated)
+  * Arch: [spek](https://aur.archlinux.org/packages/spek/) and
+    [spek-git](https://aur.archlinux.org/packages/spek-git/)
+  * Debian: [spek](https://packages.debian.org/search?keywords=spek)
+@@ -36,7 +38,7 @@ Spek requires OS X 10.5+ and an Intel-based Mac.
+     make
+ 
+ To build you will need wxWidgets and FFmpeg packages. On Debian/Ubuntu you also
+-need development packages: `libwxgtk2.8-dev`, `wx-common`, `libavcodec-dev` and
++need development packages: `libwxgtk3.0-dev`, `wx-common`, `libavcodec-dev` and
+ `libavformat-dev`.
+ 
+ To start Spek, run:
+diff --git a/MANUAL.md b/MANUAL.md
+index 7b2766a..eca8724 100644
+--- a/MANUAL.md
++++ b/MANUAL.md
+@@ -1,20 +1,32 @@
+-% SPEK(1) User's Guide | Version 0.8.2.3
+-%
+-% 2017-12-08
++# SPEK(1) User's Guide | Version 0.9.0
+ 
+-# NAME
++## NAME
+ 
+ Spek - Acoustic Spectrum Analyser
+ 
+-# SYNOPSIS
++## SYNOPSIS
+ 
+-`spek` [*OPTION* *...*] \[*FILE*]
++`spek` [*OPTION* *...*] \[*FILE*] \[*PNG*] \[*WIDTH*] \[*HEIGHT*]
+ 
+-# DESCRIPTION
++## DESCRIPTION
+ 
+ *Spek* generates a spectrogram for the input audio file.
+ 
+-# OPTIONS
++## ARGUMENTS
++
++`FILE`
++:   Audio file to be analyzed.
++
++`PNG`
++:   Write spectrogram to this PNG file then exit.
++
++`WIDTH`
++:   Initial width of the spectrum in pixels.
++
++`HEIGHT`
++:   Initial height of the spectrum in pixels.
++
++## OPTIONS
+ 
+ `-h`, `--help`
+ :   Output the help message then quit.
+@@ -22,13 +34,13 @@ Spek - Acoustic Spectrum Analyser
+ `-V`, `--version`
+ :   Output version information then quit.
+ 
+-# KEYBINDINGS
++## KEYBINDINGS
+ 
+-## Notes
++### Notes
+ 
+ On OS X use the Command key instead of Ctrl.
+ 
+-## Menu
++### Menu
+ 
+ `Ctrl-O`
+ :   Open a new file.
+@@ -45,7 +57,7 @@ On OS X use the Command key instead of Ctrl.
+ `Shift-F1`
+ :   Show the about dialog.
+ 
+-## Spectrogram
++### Spectrogram
+ 
+ `f`, `F`
+ :   Change the DFT window function.
+@@ -65,16 +77,16 @@ On OS X use the Command key instead of Ctrl.
+ `w`, `W`
+ :   Change the DFT window size.
+ 
+-# FILES
++## FILES
+ 
+ *~/.config/spek/preferences*
+ :   The configuration file for *Spek*, stored in a simple INI format.
+ 
+-# AUTHORS
++## AUTHORS
+ 
+ Alexander Kojevnikov <alexander@kojevnikov.com>. Other contributors are listed
+ in the LICENCE.md file distributed with the source code.
+ 
+-# DISTRIBUTION
++## DISTRIBUTION
+ 
+ The latest version of this *Spek* fork may be downloaded from <https://github.com/withmorten/spek/releases>.
+diff --git a/README.md b/README.md
+index 023db14..c5587dc 100644
+--- a/README.md
++++ b/README.md
+@@ -42,7 +42,7 @@ Debian packages:
+  * <https://deb-multimedia.org/pool/main/s/spek-x-dmo/>
+ 
+ ### Build Instructions
+-[Windows](./dist/win/README.md) | [macOS](./dist/osx/README.md) | [Linux and other unix-like systems](./INSTALL.md)
++[Windows](./dist/win/README.md) | [macOS](./dist/osx/README.md) | [Linux and other Unix-like systems](./INSTALL.md)
+ 
+ ### Dependencies
+ 
+diff --git a/dist/debian/control b/dist/debian/control
+index 411c526..87ec9f4 100644
+--- a/dist/debian/control
++++ b/dist/debian/control
+@@ -1,22 +1,20 @@
+-Source: spek
++Source: spek-x
+ Section: sound
+ Priority: optional
+-Maintainer: Alexander Kojevnikov <alexander@kojevnikov.com>
++Maintainer: MikeWang000000 <mikewang000000@gmail.com>
+ Build-Depends: debhelper (>= 9),
+                autotools-dev,
+                pkg-config,
+                intltool (>= 0.35),
+-               libavcodec-dev (>= 6:0.8),
+-               libavformat-dev (>= 6:0.8),
+-               libavutil-dev (>= 6:0.8),
++               libavcodec-dev (>= 10:5.0~),
++               libavformat-dev (>= 10:5.0~),
++               libavutil-dev (>= 10:5.0~),
+                libwxgtk3.0-dev,
+                wx-common
+ Standards-Version: 3.9.6
+-Homepage: http://spek.cc/
+-Vcs-Git: git://github.com/alexkay/spek.git
+-Vcs-Browser: https://github.com/alexkay/spek
++Homepage: https://github.com/MikeWang000000/spek-X
+ 
+-Package: spek
++Package: spek-x
+ Architecture: any
+ Depends: ${shlibs:Depends},
+          ${misc:Depends}
+diff --git a/dist/debian/patches/ffmpeg_2.9.patch b/dist/debian/patches/ffmpeg_2.9.patch
+deleted file mode 100755
+index e5c493a..0000000
+--- a/dist/debian/patches/ffmpeg_2.9.patch
++++ /dev/null
+@@ -1,34 +0,0 @@
+-Description: Replace deprecated FFmpeg API
+-Author: Andreas Cadhalpun <Andreas.Cadhalpun@googlemail.com>
+-Last-Update: <2015-11-02>
+-
+---- spek-0.8.2.orig/src/spek-audio.cc
+-+++ spek-0.8.2/src/spek-audio.cc
+-@@ -199,7 +199,7 @@ AudioFileImpl::AudioFileImpl(
+-     this->packet.data = nullptr;
+-     this->packet.size = 0;
+-     this->offset = 0;
+--    this->frame = avcodec_alloc_frame();
+-+    this->frame = av_frame_alloc();
+-     this->buffer_size = 0;
+-     this->buffer = nullptr;
+-     this->frames_per_interval = 0;
+-@@ -215,7 +215,7 @@ AudioFileImpl::~AudioFileImpl()
+-     if (this->frame) {
+-         // TODO: Remove this check after Debian switches to libav 9.
+- #if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(54, 28, 0)
+--        avcodec_free_frame(&this->frame);
+-+        av_frame_free(&this->frame);
+- #else
+-         av_freep(&this->frame);
+- #endif
+-@@ -255,7 +255,7 @@ int AudioFileImpl::read()
+- 
+-     for (;;) {
+-         while (this->packet.size > 0) {
+--            avcodec_get_frame_defaults(this->frame);
+-+            av_frame_unref(this->frame);
+-             auto codec_context = this->format_context->streams[this->audio_stream]->codec;
+-             int got_frame = 0;
+-             int len = avcodec_decode_audio4(codec_context, this->frame, &got_frame, &this->packet);
+-
+diff --git a/dist/debian/patches/fix-compilation-with-libav-8.patch b/dist/debian/patches/fix-compilation-with-libav-8.patch
+deleted file mode 100644
+index 429c214..0000000
+--- a/dist/debian/patches/fix-compilation-with-libav-8.patch
++++ /dev/null
+@@ -1,14 +0,0 @@
+-Author: Alexander Kojevnikov <alexander@kojevnikov.com>
+-Description: Fix compilation with Libav 8
+-Bug-Debian: http://bugs.debian.org/721025
+-
+---- a/src/spek-fft.cc
+-+++ b/src/spek-fft.cc
+-@@ -17,6 +17,7 @@
+-  */
+- 
+- #include <math.h>
+-+#include <stdlib.h>
+- 
+- #define __STDC_CONSTANT_MACROS
+- extern "C" {
+diff --git a/dist/debian/patches/series b/dist/debian/patches/series
+deleted file mode 100644
+index a1e29d9..0000000
+--- a/dist/debian/patches/series
++++ /dev/null
+@@ -1,3 +0,0 @@
+-fix-compilation-with-libav-8.patch
+-ffmpeg_2.9.patch
+-
+diff --git a/dist/freebsd/Makefile b/dist/freebsd/Makefile
+deleted file mode 100644
+index 2a0c1d9..0000000
+--- a/dist/freebsd/Makefile
++++ /dev/null
+@@ -1,47 +0,0 @@
+-# Created by: Alexander Kojevnikov <alexander@kojevnikov.com>
+-# $FreeBSD$
+-
+-PORTNAME=	spek
+-PORTVERSION=	0.8.2
+-PORTREVISION=	2
+-CATEGORIES=	audio
+-MASTER_SITES=	${MASTER_SITE_GOOGLE_CODE}
+-
+-MAINTAINER=	alexander@kojevnikov.com
+-COMMENT=	Acoustic spectrum analyser
+-
+-LICENSE=	GPLv3
+-
+-LIB_DEPENDS=	libavcodec.so:${PORTSDIR}/multimedia/ffmpeg
+-
+-MAN1=		spek.1
+-
+-USE_XZ=		yes
+-NO_STAGE=	yes
+-USE_GCC=	4.7+
+-USES=		gettext gmake pkgconfig
+-USE_GNOME=	desktopfileutils intltool
+-USE_WX=	3.0
+-WX_UNICODE=	yes
+-WX_CONF_ARGS=	absolute
+-GNU_CONFIGURE=	yes
+-INSTALLS_ICONS=	yes
+-OPTIONS_DEFINE=	NLS
+-
+-post-install:
+-	-@update-desktop-database
+-
+-post-patch:
+-	@${REINPLACE_CMD} -e "s,^itlocaledir =.*$$,itlocaledir = ${PREFIX}/share/locale,g" ${WRKSRC}/po/Makefile.in.in
+-
+-.include <bsd.port.options.mk>
+-
+-.if ${PORT_OPTIONS:MNLS}
+-USES+=		gettext
+-PLIST_SUB+=	NLS=""
+-.else
+-CONFIGURE_ARGS+=--disable-nls
+-PLIST_SUB+=	NLS="@comment "
+-.endif
+-
+-.include <bsd.port.mk>
+diff --git a/dist/freebsd/distinfo b/dist/freebsd/distinfo
+deleted file mode 100644
+index dbbfeb6..0000000
+--- a/dist/freebsd/distinfo
++++ /dev/null
+@@ -1,2 +0,0 @@
+-SHA256 (spek-0.8.2.tar.xz) = 59f69b41155ee1a4552eb9f66b602fc059de8f31e3f05889f24d362b3e6c78ae
+-SIZE (spek-0.8.2.tar.xz) = 171628
+diff --git a/dist/freebsd/pkg-descr b/dist/freebsd/pkg-descr
+deleted file mode 100644
+index 34a80bb..0000000
+--- a/dist/freebsd/pkg-descr
++++ /dev/null
+@@ -1,4 +0,0 @@
+-Spek helps to analyse your audio files by showing their spectrogram.
+-Spek supports all popular lossy and lossless audio file formats.
+-
+-WWW: http://spek.cc/
+diff --git a/dist/freebsd/pkg-plist b/dist/freebsd/pkg-plist
+deleted file mode 100644
+index 87b938e..0000000
+--- a/dist/freebsd/pkg-plist
++++ /dev/null
+@@ -1,56 +0,0 @@
+-bin/spek
+-share/applications/spek.desktop
+-share/icons/hicolor/16x16/apps/spek.png
+-share/icons/hicolor/22x22/apps/spek.png
+-share/icons/hicolor/24x24/apps/spek.png
+-share/icons/hicolor/32x32/apps/spek.png
+-share/icons/hicolor/48x48/apps/spek.png
+-share/icons/hicolor/scalable/apps/spek.svg
+-%%NLS%%share/locale/bs/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/ca/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/cs/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/da/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/de/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/el/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/eo/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/es/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/fi/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/fr/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/gl/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/he/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/hu/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/id/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/it/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/ja/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/ko/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/lv/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/nb/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/nl/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/pl/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/pt_BR/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/ru/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/sk/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/sr@latin/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/sv/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/th/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/tr/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/uk/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/vi/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/zh_CN/LC_MESSAGES/spek.mo
+-%%NLS%%share/locale/zh_TW/LC_MESSAGES/spek.mo
+-@dirrmtry share/icons/hicolor/16x16/apps
+-@dirrmtry share/icons/hicolor/16x16
+-@dirrmtry share/icons/hicolor/22x22/apps
+-@dirrmtry share/icons/hicolor/22x22
+-@dirrmtry share/icons/hicolor/24x24/apps
+-@dirrmtry share/icons/hicolor/24x24
+-@dirrmtry share/icons/hicolor/32x32/apps
+-@dirrmtry share/icons/hicolor/32x32
+-@dirrmtry share/icons/hicolor/48x48/apps
+-@dirrmtry share/icons/hicolor/48x48
+-@dirrmtry share/icons/hicolor/scalable/apps
+-@dirrmtry share/icons/hicolor/scalable
+-@dirrmtry share/icons/hicolor
+-@dirrmtry share/icons
+-@exec %%LOCALBASE%%/bin/update-desktop-database > /dev/null || /usr/bin/true
+-@unexec %%LOCALBASE%%/bin/update-desktop-database > /dev/null || /usr/bin/true
+diff --git a/man/spek.1 b/man/spek.1
+index fda470d..1cf3b52 100644
+--- a/man/spek.1
++++ b/man/spek.1
+@@ -4,10 +4,23 @@
+ Spek \- Acoustic Spectrum Analyser
+ .SH SYNOPSIS
+ .PP
+-\f[C]spek\f[] [\f[I]OPTION\f[] \f[I]\&...\f[]] [\f[I]FILE\f[]]
++\f[C]spek\f[] [\f[I]OPTION\f[] \f[I]\&...\f[]] [\f[I]FILE\f[]] [\f[I]PNG\f[]] [\f[I]WIDTH\f[]] [\f[I]HEIGHT\f[]]
+ .SH DESCRIPTION
+ .PP
+ \f[I]Spek\f[] generates a spectrogram for the input audio file.
++.SH ARGUMENTS
++.TP
++\f[I]FILE\f[]
++Audio file to be analyzed.
++.TP
++\f[I]PNG\f[]
++Write spectrogram to this PNG file then exit.
++.TP
++\f[I]WIDTH\f[]
++Initial width of the spectrum in pixels.
++.TP
++\f[I]HEIGHT\f[]
++Initial height of the spectrum in pixels.
+ .SH OPTIONS
+ .TP
+ .B \f[C]\-h\f[], \f[C]\-\-help\f[]
+@@ -51,15 +64,35 @@ Show the about dialog.
+ .RE
+ .SS Spectrogram
+ .TP
+-.B \f[C]Ctrl\-up\f[], \f[C]Ctrl\-down\f[]
++.B \f[C]f\f[], \f[C]F\f[]
++Change the DFT window function.
++.RS
++.RE
++.TP
++.B \f[C]l\f[], \f[C]L\f[]
+ Change the lower limit of the dynamic range in dBFS.
+ .RS
+ .RE
+ .TP
+-.B \f[C]Ctrl\-Shift\-up\f[], \f[C]Ctrl\-Shift\-down\f[]
++.B \f[C]p\f[], \f[C]P\f[]
++Change the palette.
++.RS
++.RE
++.TP
++.B \f[C]s\f[], \f[C]S\f[]
++Change the audio stream.
++.RS
++.RE
++.TP
++.B \f[C]u\f[], \f[C]U\f[]
+ Change the upper limit of the dynamic range in dBFS.
+ .RS
+ .RE
++.TP
++.B \f[C]w\f[], \f[C]W\f[]
++Change the DFT window size.
++.RS
++.RE
+ .SH FILES
+ .TP
+ .B \f[I]~/.config/spek/preferences\f[]

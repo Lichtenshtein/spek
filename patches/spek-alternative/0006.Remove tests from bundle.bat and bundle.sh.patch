@@ -1,0 +1,71 @@
+From a02fa32963005b8c5ec6d3d12133a1d4f1708859 Mon Sep 17 00:00:00 2001
+From: withmorten <morten.with@gmail.com>
+Date: Fri, 7 Jul 2017 02:18:54 +0200
+Subject: [PATCH] Remove tests from bundle.bat and bundle.sh
+
+---
+ dist/win/bundle.bat |  5 -----
+ dist/win/bundle.sh  | 15 ---------------
+ 2 files changed, 20 deletions(-)
+
+diff --git a/dist/win/bundle.bat b/dist/win/bundle.bat
+index dfb2d68f..a20f970d 100644
+--- a/dist/win/bundle.bat
++++ b/dist/win/bundle.bat
+@@ -3,11 +3,6 @@ rem Check README.md in this directory for instructions.
+ 
+ set WIX_PATH="C:\Program Files (x86)\Windows Installer XML v3.5\bin"
+ 
+-cd tests
+-test.exe
+-if %errorlevel% neq 0 exit /b %errorlevel%
+-cd ..
+-
+ rem Generate a wxs for files in Spek
+ del spek.msi
+ move Spek\spek.exe .\
+diff --git a/dist/win/bundle.sh b/dist/win/bundle.sh
+index 7665d0fe..f123ed0c 100755
+--- a/dist/win/bundle.sh
++++ b/dist/win/bundle.sh
+@@ -24,7 +24,6 @@ rm -fr dist/win/build && mkdir dist/win/build
+ rm -f dist/win/spek.res
+ "$WINDRES" dist/win/spek.rc -O coff -o dist/win/spek.res
+ mkdir -p src/dist/win && cp dist/win/spek.res src/dist/win/
+-mkdir -p tests/dist/win && cp dist/win/spek.res tests/dist/win/
+ 
+ # Compile spek.exe
+ LDFLAGS="-mwindows dist/win/spek.res" ./autogen.sh \
+@@ -38,14 +37,6 @@ LDFLAGS="-mwindows dist/win/spek.res" ./autogen.sh \
+     "$MAKE" install || exit 1
+ "$STRIP" dist/win/build/bin/spek.exe
+ 
+-# Compile test.exe
+-LDFLAGS="-mconsole" ./autogen.sh \
+-    --host="$HOST" \
+-    --disable-valgrind \
+-    --with-wx-config="$WX_CONFIG" \
+-    --prefix=${PWD}/dist/win/build && \
+-    "$MAKE" check -j8 TESTS=
+-
+ # Copy files to the bundle
+ cd dist/win
+ rm -fr Spek && mkdir Spek
+@@ -61,11 +52,6 @@ for lang in $LANGUAGES; do
+ done
+ rm -fr build
+ 
+-# Copy tests
+-rm -fr tests && mkdir tests
+-cp ../../tests/.libs/test.exe tests/
+-cp -a ../../tests/samples tests/
+-
+ # Create a zip archive
+ rm -f spek.zip
+ "$ZIP" -r spek.zip Spek
+@@ -73,5 +59,4 @@ rm -f spek.zip
+ cd ../..
+ 
+ # Clean up
+-rm -fr src/dist tests/dist
+ rm dist/win/spek.res

@@ -1,0 +1,55 @@
+From d33c611235027e48a1fd04a4fbaf273b1a783efc Mon Sep 17 00:00:00 2001
+From: MikeWang000000 <mikewang000000@gmail.com>
+Date: Thu, 26 Jan 2023 13:56:08 +0800
+Subject: [PATCH] Obsolete check_version
+
+---
+ src/spek-preferences-dialog.cc | 6 ++++--
+ src/spek-preferences.cc        | 2 +-
+ src/spek-window.cc             | 3 +++
+ 3 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/src/spek-preferences-dialog.cc b/src/spek-preferences-dialog.cc
+index 3c68bbb..c7261e3 100644
+--- a/src/spek-preferences-dialog.cc
++++ b/src/spek-preferences-dialog.cc
+@@ -95,8 +95,10 @@ SpekPreferencesDialog::SpekPreferencesDialog(wxWindow *parent) :
+     }
+ 
+     wxCheckBox *check_update = new wxCheckBox(this, ID_CHECK_UPDATE, _("Check for &updates"));
+-    inner_sizer->Add(check_update, 0, wxLEFT | wxTOP, 12);
+-    check_update->SetValue(SpekPreferences::get().get_check_update());
++    /* Spek-X do not support check_update */
++    check_update->SetValue(false);
++    // inner_sizer->Add(check_update, 0, wxLEFT | wxTOP, 12);
++    // check_update->SetValue(SpekPreferences::get().get_check_update());
+ 
+     wxCheckBox *hide_full_path = new wxCheckBox(this, ID_CHECK_FULL_PATH, _("Show &filename only"));
+     inner_sizer->Add(hide_full_path, 0, wxLEFT | wxTOP, 12);
+diff --git a/src/spek-preferences.cc b/src/spek-preferences.cc
+index 0c694e8..b94955f 100644
+--- a/src/spek-preferences.cc
++++ b/src/spek-preferences.cc
+@@ -55,7 +55,7 @@ SpekPreferences::SpekPreferences() : locale(NULL)
+ 
+ bool SpekPreferences::get_check_update()
+ {
+-    bool result = true;
++    bool result = false;
+     this->config->Read("/update/check", &result);
+     return result;
+ }
+diff --git a/src/spek-window.cc b/src/spek-window.cc
+index 7030a4b..975742a 100644
+--- a/src/spek-window.cc
++++ b/src/spek-window.cc
+@@ -353,6 +353,9 @@ void SpekWindow::on_close(wxCommandEvent& event)
+ 
+ static void * check_version(void *p)
+ {
++    /* Spek-X do not support check_update */
++    return NULL;
++
+     // Does the user want to check for updates?
+     SpekPreferences& prefs = SpekPreferences::get();
+     if (!prefs.get_check_update()) {

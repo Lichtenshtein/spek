@@ -1,0 +1,21 @@
+From 52caec1b78c3b6512689dab2d6ddefb958491da9 Mon Sep 17 00:00:00 2001
+From: MikeWang000000 <mikewang000000@gmail.com>
+Date: Thu, 26 Jan 2023 21:18:36 +0800
+Subject: [PATCH] Hide 'Check for updates' from preferences dialog
+
+---
+ src/spek-preferences-dialog.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/spek-preferences-dialog.cc b/src/spek-preferences-dialog.cc
+index c7261e3..8de48d4 100644
+--- a/src/spek-preferences-dialog.cc
++++ b/src/spek-preferences-dialog.cc
+@@ -97,6 +97,7 @@ SpekPreferencesDialog::SpekPreferencesDialog(wxWindow *parent) :
+     wxCheckBox *check_update = new wxCheckBox(this, ID_CHECK_UPDATE, _("Check for &updates"));
+     /* Spek-X do not support check_update */
+     check_update->SetValue(false);
++    check_update->Show(false);
+     // inner_sizer->Add(check_update, 0, wxLEFT | wxTOP, 12);
+     // check_update->SetValue(SpekPreferences::get().get_check_update());
+ 

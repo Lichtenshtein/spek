@@ -1,0 +1,44 @@
+From fa1031074693605d58cf6849f4b8c1651b7be564 Mon Sep 17 00:00:00 2001
+From: Mike Wang <mikewang000000@gmail.com>
+Date: Thu, 6 Feb 2025 02:59:42 +0800
+Subject: [PATCH] build: Enable FFmpeg assembly codes for Windows Arm64
+
+---
+ dist/win/install_deps.sh | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/dist/win/install_deps.sh b/dist/win/install_deps.sh
+index bd0edb1..98bdeea 100755
+--- a/dist/win/install_deps.sh
++++ b/dist/win/install_deps.sh
+@@ -52,16 +52,27 @@ make -j$(nproc) && make install
+ cd ../..
+ 
+ # === FFmpeg ===
+-# There are some problems assembling aarch64 code. Just disable it.
+-[ "$MSYSTEM" = "CLANGARM64" ] && FFMPEG_ASM_OPTION="--disable-asm" || FFMPEG_ASM_OPTION=""
+ echo "# Installing FFmpeg..."
++if gcc -v >/dev/null 2>&1; then
++    CC=gcc
++elif clang -v >/dev/null 2>&1; then
++    CC=clang
++else
++    CC=cc
++fi
++if [ "$MSYSTEM" = "CLANGARM64" ]; then
++    ARCH=arm64
++else
++    ARCH=x86_64
++fi
+ wget "$FFMPEG_URL"
+ echo "$FFMPEG_SHA ffmpeg-${FFMPEG_VER}.tar.bz2" | sha256sum -c
+ tar xf "ffmpeg-${FFMPEG_VER}.tar.bz2"
+ cd "ffmpeg-${FFMPEG_VER}"
+ ./configure \
+     --prefix="$PREFIX" \
+-    $FFMPEG_ASM_OPTION \
++    --cc="$CC" \
++    --arch="$ARCH" \
+     --enable-version3 \
+     --enable-gpl \
+     --disable-programs \

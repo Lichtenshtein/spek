@@ -1,0 +1,146 @@
+From 4a994a1604ff4aa29a6442cf2ac9de13ccb632e7 Mon Sep 17 00:00:00 2001
+From: Lichtenshtein <altruumann@protonmail.com>
+Date: Mon, 8 Dec 2025 17:02:44 +0300
+Subject: [PATCH] update readme
+
+---
+ README.md | 88 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 88 insertions(+)
+
+diff --git a/README.md b/README.md
+index 0e9cb83..0a94864 100644
+--- a/README.md
++++ b/README.md
+@@ -1,5 +1,7 @@
+ # Spek
+ 
++*Spek* generates a spectrogram for the input audio file.
++
+ Spek is an acoustic spectrum analyser written in C++. It uses FFmpeg
+ libraries for audio decoding and wxWidgets for the GUI.
+ 
+@@ -7,6 +9,92 @@ Spek is available on *BSD, GNU/Linux, Windows and Mac OS X.
+ 
+ Find out more about Spek on its website: <https://www.spek.cc/>
+ 
++# SYNOPSIS
++
++`spek` [*OPTION* *...*] \[*FILE*] \[*PNG*] \[*WIDTH*] \[*HEIGHT*]
++
++## ARGUMENTS
++
++`FILE`
++:   Audio file to be analyzed.
++
++`PNG`
++:   Write spectrogram to this PNG file then exit.
++
++`WIDTH`
++:   Initial width of the spectrum in pixels.
++
++`HEIGHT`
++:   Initial height of the spectrum in pixels.
++
++# OPTIONS
++
++`-h`, `--help`
++:   Output the help message then quit.
++
++`-V`, `--version`
++:   Output version information then quit.
++
++# KEYBINDINGS
++
++## Notes
++
++On OS X use the Command key instead of Ctrl.
++
++## Menu
++
++`Ctrl-O`
++:   Open a new file.
++
++`Ctrl-S`
++:   Save the spectrogram as an image file.
++
++`Ctrl-E`
++:   Show the preferences dialog.
++
++`F1`
++:   Open online manual in the browser.
++
++`Shift-F1`
++:   Show the about dialog.
++
++## Spectrogram
++
++`c`, `C`
++:   Change the audio channel.
++
++`f`, `F`
++:   Change the DFT window function.
++
++`l`, `L` (+Shift to reverse)
++:   Change the lower limit of the dynamic range in dBFS.
++
++`p`, `P`
++:   Change the palette.
++
++`s`, `S`
++:   Change the audio stream.
++
++`u`, `U` (+Shift to reverse)
++:   Change the upper limit of the dynamic range in dBFS.
++
++`w`, `W`
++:   Change the DFT window size.
++
++# FILES
++
++*~/.config/spek/preferences*
++:   The configuration file for *Spek*, stored in a simple INI format.
++
++# AUTHORS
++
++Alexander Kojevnikov <alexander@kojevnikov.com>. Other contributors are listed
++in the CREDITS.md file distributed with the source code.
++
++# DISTRIBUTION
++
++The latest version of *Spek* may be downloaded from <https://www.spek.cc>.
++
+ ## Spek 0.8.5 - Released 2023-01-09
+ 
+ ### New Features And Enhancements
+diff --git a/man/spek.1 b/man/spek.1
+index fda470d..1cf3b52 100644
+--- a/man/spek.1
++++ b/man/spek.1
+@@ -4,10 +4,23 @@
+ Spek - Acoustic Spectrum Analyser
+ .SH SYNOPSIS
+ .PP
+-\f[C]spek\f[R] [\f[I]OPTION\f[R] \f[I]\&...\f[R]] [\f[I]FILE\f[R]]
++\f[C]spek\f[] [\f[I]OPTION\f[] \f[I]\&...\f[]] [\f[I]FILE\f[]] [\f[I]PNG\f[]] [\f[I]WIDTH\f[]] [\f[I]HEIGHT\f[]]
+ .SH DESCRIPTION
+ .PP
+ \f[I]Spek\f[R] generates a spectrogram for the input audio file.
++.SH ARGUMENTS
++.TP
++\f[I]FILE\f[]
++Audio file to be analyzed.
++.TP
++\f[I]PNG\f[]
++Write spectrogram to this PNG file then exit.
++.TP
++\f[I]WIDTH\f[]
++Initial width of the spectrum in pixels.
++.TP
++\f[I]HEIGHT\f[]
++Initial height of the spectrum in pixels.
+ .SH OPTIONS
+ .TP
+ \f[B]\f[CB]-h\f[B]\f[R], \f[B]\f[CB]--help\f[B]\f[R]
+-- 
+2.49.0.windows.1
+

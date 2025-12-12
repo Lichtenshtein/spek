@@ -1,0 +1,108 @@
+From cd618de6d616e9ed90df0e84958a7af578164cc0 Mon Sep 17 00:00:00 2001
+From: withmorten <morten.with@gmail.com>
+Date: Thu, 6 Jul 2017 13:49:59 +0200
+Subject: [PATCH] Version tick to 0.8.2.2
+
+---
+ MANUAL.md          |  4 ++--
+ configure.ac       |  2 +-
+ dist/win/spek      |  1 +
+ src/spek-window.cc | 15 ++++++++-------
+ 4 files changed, 12 insertions(+), 10 deletions(-)
+ create mode 100644 dist/win/spek
+
+diff --git a/MANUAL.md b/MANUAL.md
+index 25202430..2287ffd2 100644
+--- a/MANUAL.md
++++ b/MANUAL.md
+@@ -1,4 +1,4 @@
+-% SPEK(1) User's Guide | Version 0.8.2
++% SPEK(1) User's Guide | Version 0.8.2.2
+ %
+ % 2013-04-18
+ 
+@@ -80,4 +80,4 @@ in the LICENCE.md file distributed with the source code.
+ 
+ # DISTRIBUTION
+ 
+-The latest version of *Spek* may be downloaded from <http://spek.cc>.
++The latest version of this *Spek* fork may be downloaded from <https://github.com/withmorten/spek/releases>.
+diff --git a/configure.ac b/configure.ac
+index d2e8b41a..ff750b2a 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1,4 +1,4 @@
+-AC_INIT([spek],[0.8.2])
++AC_INIT([spek],[0.8.2.2])
+ AC_CONFIG_SRCDIR([src/spek.cc])
+ AC_CONFIG_HEADERS([config.h])
+ AM_INIT_AUTOMAKE([1.11.1 foreign no-dist-gzip dist-xz serial-tests])
+diff --git a/dist/win/spek b/dist/win/spek
+new file mode 100644
+index 00000000..baf8c8f3
+--- /dev/null
++++ b/dist/win/spek
+@@ -0,0 +1 @@
++0.8.2.2
+\ No newline at end of file
+diff --git a/src/spek-window.cc b/src/spek-window.cc
+index be9a2fbd..9a9d52dc 100644
+--- a/src/spek-window.cc
++++ b/src/spek-window.cc
+@@ -169,6 +169,7 @@ void SpekWindow::open(const wxString& path)
+ static const char *audio_extensions[] = {
+     "3gp",
+     "aac",
++    "ac3",
+     "aif",
+     "aifc",
+     "aiff",
+@@ -178,10 +179,10 @@ static const char *audio_extensions[] = {
+     "au",
+     "dts",
+     "flac",
+-    "flv",
+     "gsm",
+     "m4a",
+-    "m4p",
++    "m4r",
++    "mka",
+     "mp3",
+     "mp4",
+     "mp+",
+@@ -288,7 +289,7 @@ void SpekWindow::on_preferences(wxCommandEvent&)
+ void SpekWindow::on_help(wxCommandEvent&)
+ {
+     wxLaunchDefaultBrowser(
+-        wxString::Format("http://spek.cc/man-%s.html", PACKAGE_VERSION)
++        wxString::Format("https://github.com/withmorten/spek/blob/release/%s/MANUAL.md", PACKAGE_VERSION)
+     );
+ }
+ 
+@@ -329,7 +330,7 @@ void SpekWindow::on_notify(wxCommandEvent&)
+ 
+ void SpekWindow::on_visit(wxCommandEvent&)
+ {
+-    wxLaunchDefaultBrowser("http://spek.cc");
++    wxLaunchDefaultBrowser("https://github.com/withmorten/spek/releases");
+ }
+ 
+ void SpekWindow::on_close(wxCommandEvent& event)
+@@ -365,8 +366,8 @@ static void * check_version(void *p)
+     // Get the version number.
+     wxString version;
+     wxHTTP http;
+-    if (http.Connect("spek.cc")) {
+-        wxInputStream *stream = http.GetInputStream("/version");
++    if (http.Connect("morten.with.de")) {
++        wxInputStream *stream = http.GetInputStream("/spek");
+         if (stream) {
+             wxStringOutputStream out(&version);
+             stream->Read(out);
+@@ -390,4 +391,4 @@ static void * check_version(void *p)
+     prefs.set_check_update(true);
+     prefs.set_last_update(days);
+     return NULL;
+-}
++}
+\ No newline at end of file

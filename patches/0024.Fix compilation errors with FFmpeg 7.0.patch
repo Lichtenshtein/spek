@@ -1,0 +1,26 @@
+From 8b73c5235af495b666093e46492ab4c52c85e687 Mon Sep 17 00:00:00 2001
+From: Mike Wang <mikewang000000@gmail.com>
+Date: Fri, 24 May 2024 01:57:45 +0800
+Subject: [PATCH] Fix: compilation errors with FFmpeg 7.0
+
+---
+ src/spek-audio.cc | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/src/spek-audio.cc b/src/spek-audio.cc
+index 3acabe6..f1ff41c 100644
+--- a/src/spek-audio.cc
++++ b/src/spek-audio.cc
+@@ -142,8 +142,12 @@ std::unique_ptr<AudioFile> Audio::open(const std::string& file_name, int stream)
+         if (bits_per_sample) {
+             bit_rate = 0;
+         }
++#if (LIBAVFORMAT_VERSION_MAJOR) < 61
++        channels = codecpar->channels;
++#else
+         channels = codecpar->ch_layout.nb_channels;
++#endif
+ 
+         if (avstream->duration != AV_NOPTS_VALUE) {
+             duration = avstream->duration * av_q2d(avstream->time_base);
+         } else if (format_context->duration != AV_NOPTS_VALUE) {

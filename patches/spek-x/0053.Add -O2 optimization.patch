@@ -1,0 +1,22 @@
+From 1b484d8321c7e5c6a1e3a86da8e0a74deb9f9b22 Mon Sep 17 00:00:00 2001
+From: Mike Wang <mikewang000000@gmail.com>
+Date: Thu, 6 Feb 2025 02:03:18 +0800
+Subject: [PATCH] build: Add -O2 optimization
+
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 5c87f0d..34d1c86 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -6,7 +6,7 @@ AM_SILENT_RULES([yes])
+ 
+ AC_LANG([C++])
+ AC_PROG_CXX
+-CXXFLAGS="$CXXFLAGS -std=gnu++11 -Wall -Wextra"
++CXXFLAGS="$CXXFLAGS -O2 -std=gnu++11 -Wall -Wextra"
+ AC_PROG_CXXCPP
+ AC_PROG_LIBTOOL
+ AC_PROG_RANLIB

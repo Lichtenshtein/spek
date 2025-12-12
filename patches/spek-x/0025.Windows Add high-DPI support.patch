@@ -1,0 +1,150 @@
+From 655d2be58eb30309da750f7d0e1111b850bf8702 Mon Sep 17 00:00:00 2001
+From: MikeWang000000 <mikewang000000@gmail.com>
+Date: Fri, 1 Jul 2022 02:18:15 +0800
+Subject: [PATCH] Windows: Add high-DPI support
+
+Fix alexkay/spek#33, alexkay/spek#66, alexkay/spek#164, alexkay/spek#226, withmorten/spek-alternative#2
+---
+ dist/win/spek.rc        |  3 +++
+ src/spek-platform.cc    | 11 +++++++++++
+ src/spek-platform.h     |  3 +++
+ src/spek-preferences.cc |  4 ++--
+ src/spek-spectrogram.cc | 30 ++++++++++++++----------------
+ src/spek-spectrogram.h  | 14 ++++++++++++++
+ 6 files changed, 47 insertions(+), 18 deletions(-)
+
+diff --git a/dist/win/spek.rc b/dist/win/spek.rc
+index f8c525c..59b3292 100644
+--- a/dist/win/spek.rc
++++ b/dist/win/spek.rc
+@@ -1,3 +1,6 @@
++#define wxUSE_DPI_AWARE_MANIFEST 2
++#include <wx/msw/wx.rc>
++
+ aaaa ICON "spek.ico"
+ help ICON "help.ico"
+ open ICON "open.ico"
+diff --git a/src/spek-platform.cc b/src/spek-platform.cc
+index 2ab1a25..00aec51 100644
+--- a/src/spek-platform.cc
++++ b/src/spek-platform.cc
+@@ -7,6 +7,7 @@
+ #include <wx/filename.h>
+ #include <wx/stdpaths.h>
+ #include <wx/utils.h>
++#include <wx/window.h>
+ 
+ #include "spek-platform.h"
+ 
+@@ -49,3 +50,13 @@ double spek_platform_font_scale()
+     return 1.0;
+ #endif
+ }
++
++double spek_platform_dpi_scale()
++{
++#ifdef OS_WIN
++    static double factor = wxWindow().GetDPIScaleFactor();
++    return factor;
++#else
++    return 1.0;
++#endif
++}
+diff --git a/src/spek-platform.h b/src/spek-platform.h
+index ec94bdf..35e4d60 100644
+--- a/src/spek-platform.h
++++ b/src/spek-platform.h
+@@ -14,3 +14,6 @@ bool spek_platform_can_change_language();
+ 
+ // Fonts are smaller on OSX.
+ double spek_platform_font_scale();
++
++// Gets DPI scale factor.
++double spek_platform_dpi_scale();
+diff --git a/src/spek-preferences.cc b/src/spek-preferences.cc
+index ba3c315..03fcb32 100644
+--- a/src/spek-preferences.cc
++++ b/src/spek-preferences.cc
+@@ -109,14 +109,14 @@ void SpekPreferences::set_show_detailed_description(bool value)
+ 
+ int SpekPreferences::get_window_width()
+ {
+-    int result = 640;
++    int result = 640 * spek_platform_dpi_scale();
+     this->config->Read("/general/width", &result);
+     return result;
+ }
+ 
+ int SpekPreferences::get_window_height()
+ {
+-    int result = 480;
++    int result = 480 * spek_platform_dpi_scale();
+     this->config->Read("/general/height", &result);
+     return result;
+ }
+diff --git a/src/spek-spectrogram.cc b/src/spek-spectrogram.cc
+index b2ba763..e5ef94b 100644
+--- a/src/spek-spectrogram.cc
++++ b/src/spek-spectrogram.cc
+@@ -20,22 +20,20 @@ BEGIN_EVENT_TABLE(SpekSpectrogram, wxWindow)
+     SPEK_EVT_HAVE_SAMPLE(SpekSpectrogram::on_have_sample)
+ END_EVENT_TABLE()
+ 
+-enum
+-{
+-    MIN_RANGE = -140,
+-    MAX_RANGE = 0,
+-    URANGE = 0,
+-    LRANGE = -120,
+-    FFT_BITS = 11,
+-    MIN_FFT_BITS = 8,
+-    MAX_FFT_BITS = 14,
+-    LPAD = 60,
+-    TPAD = 60,
+-    RPAD = 90,
+-    BPAD = 40,
+-    GAP = 10,
+-    RULER = 10,
+-};
++// Constants
++const int SpekSpectrogram::MIN_RANGE = -140;
++const int SpekSpectrogram::MAX_RANGE = 0;
++const int SpekSpectrogram::URANGE = 0;
++const int SpekSpectrogram::LRANGE = -120;
++const int SpekSpectrogram::FFT_BITS = 11;
++const int SpekSpectrogram::MIN_FFT_BITS = 8;
++const int SpekSpectrogram::MAX_FFT_BITS = 14;
++const int SpekSpectrogram::LPAD = 60 * spek_platform_dpi_scale();
++const int SpekSpectrogram::TPAD = 60 * spek_platform_dpi_scale();
++const int SpekSpectrogram::RPAD = 90 * spek_platform_dpi_scale();
++const int SpekSpectrogram::BPAD = 40 * spek_platform_dpi_scale();
++const int SpekSpectrogram::GAP = 10 * spek_platform_dpi_scale();
++const int SpekSpectrogram::RULER = 10 * spek_platform_dpi_scale();
+ 
+ // Forward declarations.
+ static wxString trim(wxDC& dc, const wxString& s, int length, bool trim_end);
+diff --git a/src/spek-spectrogram.h b/src/spek-spectrogram.h
+index 478a29e..a303df3 100644
+--- a/src/spek-spectrogram.h
++++ b/src/spek-spectrogram.h
+@@ -32,6 +32,20 @@ class SpekSpectrogram : public wxWindow
+ 
+     void create_palette();
+ 
++    static const int MIN_RANGE;
++    static const int MAX_RANGE;
++    static const int URANGE;
++    static const int LRANGE;
++    static const int FFT_BITS;
++    static const int MIN_FFT_BITS;
++    static const int MAX_FFT_BITS;
++    static const int LPAD;
++    static const int TPAD;
++    static const int RPAD;
++    static const int BPAD;
++    static const int GAP;
++    static const int RULER;
++
+     std::unique_ptr<Audio> audio;
+     std::unique_ptr<FFT> fft;
+     spek_pipeline *pipeline;

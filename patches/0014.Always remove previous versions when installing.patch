@@ -1,0 +1,28 @@
+From 49ad34126129c552c4daa2759d548bea371e100e Mon Sep 17 00:00:00 2001
+From: withmorten <morten.with@gmail.com>
+Date: Fri, 8 Dec 2017 03:46:43 +0100
+Subject: [PATCH] Windows: Always remove previous versions when installing
+
+---
+ dist/win/spek.wxs.in | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
+
+diff --git a/dist/win/spek.wxs.in b/dist/win/spek.wxs.in
+index fbdb0cb6..64e3c5bc 100644
+--- a/dist/win/spek.wxs.in
++++ b/dist/win/spek.wxs.in
+@@ -17,13 +17,7 @@
+     <Property Id="INSTALLDESKTOPSHORTCUT" Value="1" />
+     <WixVariable Id="WixUIBannerBmp" Value="banner.bmp" />
+     <WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
+-    <Upgrade Id="$(var.UpgradeCode)">
+-      <UpgradeVersion OnlyDetect="yes" Minimum="$(var.ProductVersion)" Property="NEWERVERSIONDETECTED" IncludeMinimum="no" />
+-      <UpgradeVersion OnlyDetect="no" Maximum="$(var.ProductVersion)" Property="OLDERVERSIONBEINGUPGRADED" IncludeMaximum="no" />
+-    </Upgrade>
+-    <InstallExecuteSequence>
+-      <RemoveExistingProducts After="InstallInitialize" />
+-    </InstallExecuteSequence>
++    <MajorUpgrade Schedule="afterInstallInitialize" AllowDowngrades="yes" />
+     <CustomAction Id="StartAppOnExit" FileKey="spek.exe" ExeCommand="" Execute="immediate" Impersonate ="yes" Return="asyncNoWait" />
+     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Spek when setup exits" />
+     <UI>

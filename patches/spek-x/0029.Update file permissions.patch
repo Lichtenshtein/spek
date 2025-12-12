@@ -1,0 +1,28 @@
+From 51c6629609378dbf1315c8c1098afa98d8bced3e Mon Sep 17 00:00:00 2001
+From: MikeWang000000 <mikewang000000@gmail.com>
+Date: Sun, 10 Jul 2022 01:20:25 +0800
+Subject: [PATCH] Update file permissions
+
+---
+ dist/osx/install_deps.sh | 0
+ dist/win/bundle.sh       | 0
+ dist/win/compile-rc.py   | 0
+ dist/win/install_deps.sh | 0
+ 4 files changed, 0 insertions(+), 0 deletions(-)
+ mode change 100644 => 100755 dist/osx/install_deps.sh
+ mode change 100644 => 100755 dist/win/bundle.sh
+ mode change 100644 => 100755 dist/win/compile-rc.py
+ mode change 100644 => 100755 dist/win/install_deps.sh
+
+diff --git a/dist/osx/install_deps.sh b/dist/osx/install_deps.sh
+old mode 100644
+new mode 100755
+diff --git a/dist/win/bundle.sh b/dist/win/bundle.sh
+old mode 100644
+new mode 100755
+diff --git a/dist/win/compile-rc.py b/dist/win/compile-rc.py
+old mode 100644
+new mode 100755
+diff --git a/dist/win/install_deps.sh b/dist/win/install_deps.sh
+old mode 100644
+new mode 100755

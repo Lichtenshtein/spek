@@ -1,0 +1,95 @@
+From 8dd821e1e61dd894485c0445987fbeec5b3685e4 Mon Sep 17 00:00:00 2001
+From: Lichtenshtein <altruumann@protonmail.com>
+Date: Fri, 5 Dec 2025 09:42:07 +0300
+Subject: [PATCH] Add test workflow with lesser precompilations
+
+---
+ .../build-windows-x64-no-precompile.yml       | 154 ++++++++++++++++++
+ autogen.sh                                    |   2 +-
+ 2 files changed, 155 insertions(+), 1 deletion(-)
+ create mode 100644 .github/workflows/build-windows-x64-no-precompile.yml
+
+diff --git a/.github/workflows/private-windows-x64-build.yml b/.github/workflows/private-windows-x64-build.yml
+new file mode 100644
+index 0000000..f222c2b
+--- /dev/null
++++ b/.github/workflows/private-windows-x64-build.yml
+@@ -0,0 +1,75 @@
++name: Private Windows x64 Build
++
++on:
++  workflow_dispatch:
++
++jobs:
++  linux-mxe-build:
++    runs-on: ubuntu-22.04
++
++    steps:
++    - name: Checkout code
++      uses: actions/checkout@v4
++
++    - name: MXE Cache - Restore from previous Build
++      id: cache-bin
++      uses: actions/cache@v4
++      with:
++        key: ${{ runner.os }}-mxe-win-x64-${{ hashFiles('./dist/win/mxe.diff') }}
++        path: |
++          mxe
++
++    - name: Create MXE directory if not exist, and set up soft link
++      shell: bash
++      run: |
++        if [ ! -d "mxe" ]; then
++          # create dir if not exist
++          mkdir mxe
++        fi
++
++        # get the size (to debug if the cache worked)
++        du -h --max-depth=1 mxe
++
++        ln -s `pwd`/mxe ../mxe
++
++        # check softlink (for easier debugging)
++        ls -alF ../mxe
++
++    - name: Install Dependencies to build MXE and Spek
++      shell: bash
++      run: |
++        sudo apt-get -y install software-properties-common lsb-release
++        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 86B72ED9
++        sudo add-apt-repository "deb [arch=amd64] https://pkg.mxe.cc/repos/apt focal main"
++        sudo apt-get update
++        sudo apt-get -y install mxe-x86-64-w64-mingw32.static-cc
++        sudo apt-get -y install autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libgl-dev libssl-dev libtool-bin libxml-parser-perl lzip make openssl p7zip-full patch perl python3 python3-mako python3-pkg-resources ruby sed unzip wget xz-utils
++        sudo apt-get -y install binutils brotli bzip2 ccache cmake dbus expat fontconfig gcc gettext lame libxml2 meson mpc pkgconf speex yasm zstd
++
++    - name: Clone, patch, and build MXE - Spek Dependencies
++      if: ${{ steps.cache-bin.outputs.cache-hit != 'true' }}
++      shell: bash
++      run: |
++        git clone https://github.com/mxe/mxe.git
++        cd mxe
++        patch -p1 < ../dist/win/mxe.diff || echo "Patch failed, building without modifications"
++        make wxwidgets pthreads ffmpeg EXCLUDE_PKGS="binutils brotli bzip2 ccache cmake dbus expat fontconfig gcc gettext lame libxml2 meson mpc pkgconf speex yasm zstd" -j$(nproc) JOBS=$(nproc) MXE_TARGETS='x86_64-w64-mingw32.static'
++
++    - name: Build Spek
++      shell: bash
++      run: |
++        sed -i "s|autoreconf -fiv|autoreconf -fiv -I ../mxe/usr/x86_64-w64-mingw32.static/share/aclocal/|g" autogen.sh
++
++        ls -alF  ../mxe/usr/x86_64-w64-mingw32.static/share/aclocal
++
++        ./dist/win/bundle.sh
++
++        find . -iname "config.log"
++        cat ./config.log
++
++    - name: Upload artifact
++      uses: actions/upload-artifact@v4
++      with:
++        name: spek-Win64
++        path: |
++          dist/win/Spek
+-- 
+2.49.0.windows.1
+

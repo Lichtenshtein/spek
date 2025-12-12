@@ -1,0 +1,87 @@
+From a404153d212b811628c7fad6bb8631a8b9cb7ec9 Mon Sep 17 00:00:00 2001
+From: Mike Wang <mikewang000000@gmail.com>
+Date: Fri, 24 May 2024 00:26:23 +0800
+Subject: [PATCH] chore: Bump dependencies
+
+---
+ .github/workflows/ci.yml       | 6 ++----
+ dist/osx/cross/install_deps.sh | 2 +-
+ dist/osx/install_deps.sh       | 2 +-
+ dist/win/install_deps.sh       | 4 ++--
+ 4 files changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index aa64844..bcb76f9 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -8,13 +8,12 @@ env:
+ jobs:
+   Build-Debian-x86_64:
+     name: Build Spek-X (Debian, x86_64)
+-    runs-on: ubuntu-22.04
++    runs-on: ubuntu-24.04
+     steps:
+       - name: Check out repository code
+         uses: actions/checkout@v3
+       - name: Install dependencies
+         run: |
+-          sudo sed -i 's/jammy/lunar/g' /etc/apt/sources.list
+           sudo apt update
+           sudo apt install -y intltool libwxgtk3.2-dev wx-common libavcodec-dev libavformat-dev
+       - name: Compile and bundle application
+@@ -101,13 +100,12 @@ jobs:
+ 
+   Unit-Test:
+     name: Unit Tests
+-    runs-on: ubuntu-22.04
++    runs-on: ubuntu-24.04
+     steps:
+       - name: Check out repository code
+         uses: actions/checkout@v3
+       - name: Install dependencies
+         run: |
+-          sudo sed -i 's/jammy/lunar/g' /etc/apt/sources.list
+           sudo apt update
+           sudo apt install -y intltool libwxgtk3.2-dev wx-common libavcodec-dev libavformat-dev
+       - name: Run tests
+diff --git a/dist/osx/cross/install_deps.sh b/dist/osx/cross/install_deps.sh
+index 3582276..f2be7c7 100755
+--- a/dist/osx/cross/install_deps.sh
++++ b/dist/osx/cross/install_deps.sh
+@@ -13,7 +13,7 @@ EOF
+     exit 1
+ fi
+ 
+-FFMPEG_VER="6.0"
++FFMPEG_VER="7.0"
+ PREFIX="/usr/local"
+ 
+ # Check Homebrew
+diff --git a/dist/osx/install_deps.sh b/dist/osx/install_deps.sh
+index 8b7cd0e..728a838 100755
+--- a/dist/osx/install_deps.sh
++++ b/dist/osx/install_deps.sh
+@@ -4,7 +4,7 @@
+ # Check README.md in this directory for instructions.
+ 
+ # Adjust these variables if necessary.
+-FFMPEG_VER="6.1.1"
++FFMPEG_VER="7.0"
+ PREFIX="/usr/local"
+ 
+ # Check Homebrew
+diff --git a/dist/win/install_deps.sh b/dist/win/install_deps.sh
+index 0b35476..89ef463 100755
+--- a/dist/win/install_deps.sh
++++ b/dist/win/install_deps.sh
+@@ -4,8 +4,8 @@
+ # Check README.md in this directory for instructions.
+ 
+ # Adjust these variables if necessary.
+-WX_VER="3.2.4"
+-FFMPEG_VER="6.1.1"
++WX_VER="3.2.5"
++FFMPEG_VER="7.0"
+ PREFIX="$MINGW_PREFIX"
+ 
+ # Check the envrionment variables

@@ -1,0 +1,44 @@
+From dcd8a6217fb0715293f404b9566879225a9dcfd2 Mon Sep 17 00:00:00 2001
+From: withmorten <morten.with@gmail.com>
+Date: Fri, 6 Apr 2018 00:21:09 +0200
+Subject: [PATCH] Fix commandline output on Windows
+
+---
+ src/spek.cc | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/src/spek.cc b/src/spek.cc
+index e5e3e59f..76f93ea6 100644
+--- a/src/spek.cc
++++ b/src/spek.cc
+@@ -62,19 +62,28 @@ bool Spek::OnInit()
+         wxCMD_LINE_DESC_END,
+     };
+ 
++    wxMessageOutput *msgout = wxMessageOutput::Get();
+     wxCmdLineParser parser(desc, argc, argv);
+     int ret = parser.Parse(true);
+     if (ret == 1) {
++#ifndef OS_WIN
++        msgout->Printf("\n");
++#endif
+         return false;
+     }
+     if (ret == -1) {
++#ifndef OS_WIN
++        msgout->Printf("\n");
++#endif
+         this->quit = true;
+         return true;
+     }
+     if (parser.Found("version")) {
+         // TRANSLATORS: the %s is the package version.
+-        wxPrintf(_("Spek version %s"), PACKAGE_VERSION);
+-        wxPrintf("\n");
++        msgout->Printf(_("Spek version %s"), PACKAGE_VERSION);
++#ifndef OS_WIN
++        msgout->Printf("\n");
++#endif
+         this->quit = true;
+         return true;
+     }

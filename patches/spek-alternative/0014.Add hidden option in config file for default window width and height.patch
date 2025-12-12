@@ -1,0 +1,94 @@
+From c953e07a6afcbf94be4993fe36e9b4e4b9a100a6 Mon Sep 17 00:00:00 2001
+From: withmorten <morten.with@gmail.com>
+Date: Sat, 17 Mar 2018 17:15:14 +0100
+Subject: [PATCH] Add hidden option in config file for default window width and
+ height Usage: add width=640 and height=480 or any other values in general
+ section of "spek/preferences" file
+
+---
+ src/spek-preferences.cc | 14 ++++++++++++++
+ src/spek-preferences.h  |  2 ++
+ src/spek-window.cc      |  4 ++--
+ src/spek-window.h       |  2 +-
+ src/spek.cc             |  5 ++++-
+ 5 files changed, 23 insertions(+), 4 deletions(-)
+
+diff --git a/src/spek-preferences.cc b/src/spek-preferences.cc
+index 92c10cd3..ba3c3158 100644
+--- a/src/spek-preferences.cc
++++ b/src/spek-preferences.cc
+@@ -106,3 +106,17 @@ void SpekPreferences::set_show_detailed_description(bool value)
+     this->config->Write("/general/showdetails", value);
+     this->config->Flush();
+ }
++
++int SpekPreferences::get_window_width()
++{
++    int result = 640;
++    this->config->Read("/general/width", &result);
++    return result;
++}
++
++int SpekPreferences::get_window_height()
++{
++    int result = 480;
++    this->config->Read("/general/height", &result);
++    return result;
++}
+diff --git a/src/spek-preferences.h b/src/spek-preferences.h
+index cac7cc9d..d993f996 100644
+--- a/src/spek-preferences.h
++++ b/src/spek-preferences.h
+@@ -19,6 +19,8 @@ class SpekPreferences
+     void set_hide_full_path(bool value);
+     bool get_show_detailed_description();
+     void set_show_detailed_description(bool value);
++    int get_window_width();
++    int get_window_height();
+ 
+ private:
+     SpekPreferences();
+diff --git a/src/spek-window.cc b/src/spek-window.cc
+index 592d7936..b44937f5 100644
+--- a/src/spek-window.cc
++++ b/src/spek-window.cc
+@@ -51,8 +51,8 @@ class SpekDropTarget : public wxFileDropTarget
+     SpekWindow *window;
+ };
+ 
+-SpekWindow::SpekWindow(const wxString& path) :
+-    wxFrame(NULL, -1, wxEmptyString, wxDefaultPosition, wxSize(640, 480)), path(path)
++SpekWindow::SpekWindow(int width, int height, const wxString& path) :
++    wxFrame(NULL, -1, wxEmptyString, wxDefaultPosition, wxSize(width, height)), path(path)
+ {
+     this->description = _("Spek - Acoustic Spectrum Analyser");
+     SetTitle(this->description);
+diff --git a/src/spek-window.h b/src/spek-window.h
+index 622b58c4..94e65c37 100644
+--- a/src/spek-window.h
++++ b/src/spek-window.h
+@@ -7,7 +7,7 @@ class SpekSpectrogram;
+ class SpekWindow : public wxFrame
+ {
+ public:
+-    SpekWindow(const wxString& path);
++    SpekWindow(int width, int height, const wxString& path);
+     void open(const wxString& path);
+ 
+ private:
+diff --git a/src/spek.cc b/src/spek.cc
+index a7659194..e5e3e59f 100644
+--- a/src/spek.cc
++++ b/src/spek.cc
+@@ -82,7 +82,10 @@ bool Spek::OnInit()
+         this->path = parser.GetParam();
+     }
+ 
+-    this->window = new SpekWindow(this->path);
++    // Checking prefs can probably be solved differently.
++    SpekPreferences& prefs = SpekPreferences::get();
++
++    this->window = new SpekWindow(prefs.get_window_width(), prefs.get_window_height(), this->path);
+     this->window->Show(true);
+     SetTopWindow(this->window);
+     return true;

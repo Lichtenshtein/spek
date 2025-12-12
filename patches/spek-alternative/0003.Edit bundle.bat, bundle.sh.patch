@@ -1,0 +1,80 @@
+From c4952438481c8f9ff54a5a426123fd1aeb553cf5 Mon Sep 17 00:00:00 2001
+From: withmorten <morten.with@gmail.com>
+Date: Thu, 6 Jul 2017 13:19:05 +0200
+Subject: [PATCH] Edit bundle.bat, bundle.sh
+
+---
+ dist/win/bundle.bat | 10 +++++-----
+ dist/win/bundle.sh  | 11 ++++++++---
+ 2 files changed, 13 insertions(+), 8 deletions(-)
+
+diff --git a/dist/win/bundle.bat b/dist/win/bundle.bat
+index fbcae0cf..dfb2d68f 100644
+--- a/dist/win/bundle.bat
++++ b/dist/win/bundle.bat
+@@ -1,7 +1,7 @@
+ rem This script will build an MSI installer for Win32.
+ rem Check README.md in this directory for instructions.
+ 
+-set WIX_PATH=c:\Program Files\Windows Installer XML v3.5\bin
++set WIX_PATH="C:\Program Files (x86)\Windows Installer XML v3.5\bin"
+ 
+ cd tests
+ test.exe
+@@ -11,13 +11,13 @@ cd ..
+ rem Generate a wxs for files in Spek
+ del spek.msi
+ move Spek\spek.exe .\
+-"%WIX_PATH%"\heat dir Spek -gg -ke -srd -cg Files -dr INSTALLLOCATION -template fragment -o files.wxs
++%WIX_PATH%\heat dir Spek -gg -ke -srd -cg Files -dr INSTALLLOCATION -template fragment -o files.wxs
+ move spek.exe Spek\
+ 
+ rem Make the MSI package
+-"%WIX_PATH%"\candle SpekInstallDirDlg.wxs SpekInstallDir.wxs spek.wxs files.wxs
+-"%WIX_PATH%"\light -b Spek SpekInstallDirDlg.wixobj SpekInstallDir.wixobj spek.wixobj files.wixobj -ext WixUIExtension.dll -o spek.msi
+-start /wait fix-msi.js spek.msi
++%WIX_PATH%\candle SpekInstallDirDlg.wxs SpekInstallDir.wxs spek.wxs files.wxs
++%WIX_PATH%\light -b Spek SpekInstallDirDlg.wixobj SpekInstallDir.wixobj spek.wixobj files.wixobj -ext WixUIExtension.dll -o spek.msi
++cscript /E:JScript fix-msi.js spek.msi
+ 
+ rem Clean up
+ del files.wxs
+diff --git a/dist/win/bundle.sh b/dist/win/bundle.sh
+index ddbb6236..7665d0fe 100755
+--- a/dist/win/bundle.sh
++++ b/dist/win/bundle.sh
+@@ -5,13 +5,15 @@
+ # Check README.md in this directory for instructions.
+ 
+ # Adjust these variables if necessary.
+-MXE=$(realpath $(dirname $0)/../../../mxe/usr)
+-MAKE=gmake
++MXE=/opt/mxe-spek/usr
++MAKE=make
++JOBS=3
+ ZIP=zip
+ 
+ HOST=i686-w64-mingw32.static
+ LANGUAGES="ca cs da de el eo es fi fr gl it ja lv nb nl pl pt_BR ru sk sr@latin sv tr uk vi zh_CN zh_TW"
+ PATH="$MXE"/bin:$PATH
++STRIP="$HOST"-strip
+ WINDRES="$HOST"-windres
+ WX_CONFIG="$MXE"/"$HOST"/bin/wx-config
+ 
+@@ -26,12 +28,15 @@ mkdir -p tests/dist/win && cp dist/win/spek.res tests/dist/win/
+ 
+ # Compile spek.exe
+ LDFLAGS="-mwindows dist/win/spek.res" ./autogen.sh \
++    --enable-shared=no \
+     --host="$HOST" \
+     --disable-valgrind \
+     --with-wx-config="$WX_CONFIG" \
+     --prefix=${PWD}/dist/win/build && \
+-    "$MAKE" -j8 && \
++    "$MAKE" clean && \
++    "$MAKE" -j $JOBS && \
+     "$MAKE" install || exit 1
++"$STRIP" dist/win/build/bin/spek.exe
+ 
+ # Compile test.exe
+ LDFLAGS="-mconsole" ./autogen.sh \

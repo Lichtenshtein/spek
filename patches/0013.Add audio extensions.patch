@@ -1,0 +1,37 @@
+From cd618de6d616e9ed90df0e84958a7af578164cc0 Mon Sep 17 00:00:00 2001
+From: withmorten <morten.with@gmail.com>
+Date: Thu, 6 Jul 2017 13:49:59 +0200
+Subject: [PATCH] Add audio extensions
+
+---
+ MANUAL.md          |  4 ++--
+ configure.ac       |  2 +-
+ dist/win/spek      |  1 +
+ src/spek-window.cc | 15 ++++++++-------
+ 4 files changed, 12 insertions(+), 10 deletions(-)
+ create mode 100644 dist/win/spek
+diff --git a/src/spek-window.cc b/src/spek-window.cc
+index be9a2fbd..9a9d52dc 100644
+--- a/src/spek-window.cc
++++ b/src/spek-window.cc
+@@ -169,6 +169,7 @@ void SpekWindow::open(const wxString& path)
+ static const char *audio_extensions[] = {
+     "3gp",
+     "aac",
++    "ac3",
+     "aif",
+     "aifc",
+     "aiff",
+@@ -178,10 +179,12 @@ static const char *audio_extensions[] = {
+     "au",
+     "dts",
+     "flac",
+     "flv",
+     "gsm",
+     "m4a",
+     "m4p",
++    "m4r",
++    "mka",
+     "mp3",
+     "mp4",
+     "mp+",

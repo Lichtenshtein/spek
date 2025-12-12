@@ -1,0 +1,251 @@
+From f6052f21d435e7fbb7a39c6e39cf10afadbfffbd Mon Sep 17 00:00:00 2001
+From: Sami Farin <hvtaifwkbgefbaei@gmail.com> & Lichtenshtein
+Date: Thu, 16 Jan 2025 20:02:57 +0200
+Subject: [PATCH] Make font bigger and configurable, increase borders so text
+ is not cropped
+
+---
+ .gitignore              |  1 +
+ src/spek-platform.cc    | 12 +++++++-----
+ src/spek-spectrogram.cc | 24 +++++++++++++-----------
+ 3 files changed, 21 insertions(+), 16 deletions(-)
+
+diff --git a/src/spek-platform.cc b/src/spek-platform.cc
+index 20ba37f..2288789 100644
+--- a/src/spek-platform.cc
++++ b/src/spek-platform.cc
+@@ -7,6 +7,8 @@
+ #include <wx/filename.h>
+ #include <wx/stdpaths.h>
+ #include <wx/utils.h>
++#include <wx/display.h>
++#include <wx/settings.h>
+ 
+ #include "spek-platform.h"
+ 
+@@ -50,9 +52,9 @@ bool spek_platform_can_change_language()
+ 
+ double spek_platform_font_scale()
+ {
+-#ifdef OS_OSX
+-    return 1.3;
+-#else
+-    return 1.0;
+-#endif
++    wxDisplay display;
++    int dpi = display.GetPPI().GetWidth(); // Horizontal DPI
++    int defaultDPI = 96;                   // Standard DPI
++
++    return 2 * static_cast<double>(dpi) / defaultDPI;
+ }
+diff --git a/src/spek-preferences.cc b/src/spek-preferences.cc
+index 67cbd098..0650d338 100644
+--- a/src/spek-preferences.cc
++++ b/src/spek-preferences.cc
+@@ -1,4 +1,6 @@
+ #include <wx/string.h>
++#include <wx/window.h>
++#include <wx/dcbuffer.h>
+ 
+ #include "spek-platform.h"
+ 
+@@ -49,6 +51,15 @@ bool SpekPreferences::get_check_update()
+     return result;
+ }
+ 
++wxSize SpekPreferences::get_window_size()
++{
++    int width = SpekPreferences::DEF_WIDTH;
++    int height = SpekPreferences::DEF_HEIGHT;
++    this->config->Read("/general/width", &width);
++    this->config->Read("/general/height", &height);
++    return wxSize(width, height);
++}
++
+ void SpekPreferences::set_check_update(bool value)
+ {
+     this->config->Write("/update/check", value);
+@@ -109,14 +109,14 @@ void SpekPreferences::set_show_detailed_description(bool value)
+ 
+ int SpekPreferences::get_window_width()
+ {
+-    int result = 1681;
++    int result = SpekPreferences::DEF_WIDTH;
+     this->config->Read("/general/width", &result);
+     return result;
+ }
+ 
+ int SpekPreferences::get_window_height()
+ {
+-    int result = 1043;
++    int result = SpekPreferences::DEF_HEIGHT;
+     this->config->Read("/general/height", &result);
+     return result;
+ }
+diff --git a/src/spek-preferences.h b/src/spek-preferences.h
+index 3ccc5ca8..733f65b2 100644
+--- a/src/spek-preferences.h
++++ b/src/spek-preferences.h
+@@ -2,6 +2,8 @@
+ 
+ #include <wx/fileconf.h>
+ #include <wx/intl.h>
++#include <wx/window.h>
++#include <wx/dcbuffer.h>
+ 
+ class SpekPreferences
+ {
+@@ -15,6 +17,10 @@ class SpekPreferences
+     void set_show_detailed_description(bool value);
+     int get_window_width();
+     int get_window_height();
++    wxSize get_window_size();
++
++    static const int DEF_WIDTH = 1681;
++    static const int DEF_HEIGHT = 1043;
+ 
+ private:
+     SpekPreferences();
+diff --git a/src/spek-spectrogram.cc b/src/spek-spectrogram.cc
+index 9d025dc..cc8d478 100644
+--- a/src/spek-spectrogram.cc
++++ b/src/spek-spectrogram.cc
+@@ -16,6 +16,7 @@ BEGIN_EVENT_TABLE(SpekSpectrogram, wxWindow)
+     EVT_CHAR(SpekSpectrogram::on_char)
+     EVT_PAINT(SpekSpectrogram::on_paint)
+     EVT_SIZE(SpekSpectrogram::on_size)
++    EVT_TIMER(ID_RESIZE_TIMER, SpekSpectrogram::on_resize_timer)
+     SPEK_EVT_HAVE_SAMPLE(SpekSpectrogram::on_have_sample)
+ END_EVENT_TABLE()
+ 
+@@ -55,19 +55,22 @@ SpekSpectrogram::SpekSpectrogram(wxFrame *parent) :
+     palette(PALETTE_DEFAULT),
+     palette_image(),
+     image(1, 1),
+-    prev_width(-1),
++    prev_size(-1, -1),
++    prev_save_size(-1, -1),
++    m_resizeTimer(this, ID_RESIZE_TIMER),
+     fft_bits(FFT_BITS),
+     urange(URANGE),
+     lrange(LRANGE),
+-    LPAD(this->FromDIP(60)),
+-    TPAD(this->FromDIP(60)),
+-    RPAD(this->FromDIP(90)),
+-    BPAD(this->FromDIP(40)),
+-    GAP(this->FromDIP(10)),
++    LPAD(this->FromDIP(80)),
++    TPAD(this->FromDIP(80)),
++    RPAD(this->FromDIP(115)),
++    BPAD(this->FromDIP(40)),
++    GAP(this->FromDIP(10)),
+     RULER(this->FromDIP(10))
+ {
+     this->create_palette();
+ 
++    m_resizeTimer.Start(1000 / 60);
+     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+     SetFocus();
+ }
+@@ -174,13 +174,18 @@ void SpekSpectrogram::on_paint(wxPaintEvent&)
+     render(dc);
+ }
+ 
+-void SpekSpectrogram::on_size(wxSizeEvent&)
++void SpekSpectrogram::on_size(wxSizeEvent& evt)
+ {
+-    wxSize size = GetClientSize();
+-    bool width_changed = this->prev_width != size.GetWidth();
+-    this->prev_width = size.GetWidth();
++    m_resizeTimer.Start(1000 / 60, wxTIMER_ONE_SHOT);
++    evt.Skip();
++}
+ 
+-    if (width_changed) {
++void SpekSpectrogram::on_resize_timer(wxTimerEvent&)
++{
++    wxSize size = GetClientSize();
++    bool size_changed = this->prev_size != size;
++    this->prev_size = size;
++    if (size_changed) {
+         start();
+     }
+ }
+@@ -233,17 +233,19 @@ void SpekSpectrogram::render(wxDC& dc)
+     dc.SetPen(*wxWHITE_PEN);
+     dc.SetBrush(*wxTRANSPARENT_BRUSH);
+     dc.SetTextForeground(wxColour(255, 255, 255));
+-    wxFont normal_font = wxFont(
+-        (int)round(9 * spek_platform_font_scale()),
++    wxFont normal_font;
++    if (!wxFromString("Iosevka Term SS08", &normal_font)) {
++        normal_font = wxFont(
++        (int)lround(9 * spek_platform_font_scale()),
+         wxFONTFAMILY_SWISS,
+         wxFONTSTYLE_NORMAL,
+-        wxFONTWEIGHT_NORMAL
+-    );
++        wxFONTWEIGHT_NORMAL);
++    }
+     wxFont large_font = wxFont(normal_font);
+-    large_font.SetPointSize((int)round(10 * spek_platform_font_scale()));
++    large_font.SetPointSize((int)lround(10 * spek_platform_font_scale()));
+     large_font.SetWeight(wxFONTWEIGHT_BOLD);
+     wxFont small_font = wxFont(normal_font);
+-    small_font.SetPointSize((int)round(8 * spek_platform_font_scale()));
++    small_font.SetPointSize((int)lround(8 * spek_platform_font_scale()));
+     dc.SetFont(normal_font);
+     int normal_height = dc.GetTextExtent("dummy").GetHeight();
+     dc.SetFont(large_font);
+diff --git a/src/spek-spectrogram.h b/src/spek-spectrogram.h
+index a657fbd..80e345f 100644
+--- a/src/spek-spectrogram.h
++++ b/src/spek-spectrogram.h
+@@ -12,6 +12,11 @@ class FFT;
+ class SpekHaveSampleEvent;
+ struct spek_pipeline;
+ 
++enum
++{
++    ID_RESIZE_TIMER = wxID_HIGHEST + 1,
++};
++
+ class SpekSpectrogram : public wxWindow
+ {
+ public:
+@@ -24,6 +30,7 @@ class SpekSpectrogram : public wxWindow
+     void on_char(wxKeyEvent& evt);
+     void on_paint(wxPaintEvent& evt);
+     void on_size(wxSizeEvent& evt);
++    void on_resize_timer(wxTimerEvent& event);
+     void on_have_sample(wxEvent& evt);
+     void render(wxDC& dc);
+ 
+@@ -47,7 +55,9 @@ class SpekSpectrogram : public wxWindow
+     enum palette palette;
+     wxImage palette_image;
+     wxImage image;
+-    int prev_width;
++    wxSize prev_size;
++    wxSize prev_save_size;
++    wxTimer m_resizeTimer;
+     int fft_bits;
+     int urange;
+     int lrange;
+diff --git a/src/spek-window.cc b/src/spek-window.cc
+index 86d360cf..d3c2524b 100644
+--- a/src/spek-window.cc
++++ b/src/spek-window.cc
+@@ -56,7 +56,11 @@ SpekWindow::SpekWindow(const wxString& path) :
+ {
+     this->description = _("Spek - Acoustic Spectrum Analyser");
+     SetTitle(this->description);
+-    SetSize(this->FromDIP(wxSize(640, 480)));
++    wxSize size = SpekPreferences::get().get_window_size();
++    wxSize defsz = wxSize(SpekPreferences::DEF_WIDTH, SpekPreferences::DEF_HEIGHT);
++    if (!size.GetWidth() || !size.GetHeight()) size = defsz;
++    wxSize newsz = this->FromDIP(size);
++    SetSize(newsz);
+ 
+ #ifndef OS_OSX
+     SetIcons(wxArtProvider::GetIconBundle(ART_SPEK, wxART_FRAME_ICON));

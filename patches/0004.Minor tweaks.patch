@@ -1,0 +1,173 @@
+From 82ba232fa8a058903385184c07bdba271604fd3e Mon Sep 17 00:00:00 2001
+From: Lichtenshtein <altruumann@protonmail.com> & Alastor27 <suicidewish@protonmail.com>
+Date: Sun, 7 Dec 2025 02:11:19 +0300
+Subject: [PATCH] Minor tweaks
+
+- Remove toolbar;
+- Hide SPEK version;
+- Smaller audiofile font size;
+- Added hint to about window
+- 'U' urange commands switch places
+- Added Esc shortcut to close the window
+---
+diff --git a/src/spek.cc b/src/spek.cc
+index 082f2af..4879ed4 100644
+--- a/src/spek.cc
++++ b/src/spek.cc
+@@ -1,5 +1,5 @@
+ #include <wx/cmdline.h>
+-#include <wx/log.h>
++// #include <wx/log.h>
+ #include <wx/socket.h>
+ 
+ #include "spek-artwork.h"
+diff --git a/src/spek-spectrogram.cc b/src/spek-spectrogram.cc
+index 9d025dc..f4e265e 100644
+--- a/src/spek-spectrogram.cc
++++ b/src/spek-spectrogram.cc
+@@ -93,7 +93,14 @@ void SpekSpectrogram::save(const wxString& path)
+ 
+ void SpekSpectrogram::on_char(wxKeyEvent& evt)
+ {
+-    switch (evt.GetKeyCode()) {
++    // int key_modifier = evt.GetModifiers();
++    int key_code = evt.GetKeyCode();
++
++    if (key_code == WXK_ESCAPE) {
++        this->GetParent()->Close(true);
++        return;
++    }
++    switch (key_code) {
+    case 'c':
+         if (this->channels) {
+             this->channel = (this->channel + 1) % this->channels;
+@@ -162,10 +162,10 @@ void SpekSpectrogram::on_char(wxKeyEvent& evt)
+         }
+         break;
+     case 'u':
+-        this->urange = spek_min(this->urange + 1, MAX_RANGE);
++        this->urange = spek_max(this->urange - 1, this->lrange + 1);
+         break;
+     case 'U':
+-        this->urange = spek_max(this->urange - 1, this->lrange + 1);
++        this->urange = spek_min(this->urange + 1, MAX_RANGE);
+         break;
+     case 'w':
+         this->fft_bits = spek_min(this->fft_bits + 1, MAX_FFT_BITS);
+@@ -255,20 +287,22 @@ void SpekSpectrogram::render(wxDC& dc)
+     dc.Clear();
+ 
+     // Spek version
+-    dc.SetFont(large_font);
+-    wxString package_name(PACKAGE_NAME);
+-    dc.DrawText(
+-        package_name,
+-        w - RPAD + GAP,
+-        TPAD - 2 * GAP - normal_height - large_height
+-    );
+-    int package_name_width = dc.GetTextExtent(package_name + " ").GetWidth();
+-    dc.SetFont(small_font);
+-    dc.DrawText(
+-        PACKAGE_VERSION,
+-        w - RPAD + GAP + package_name_width,
+-        TPAD - 2 * GAP - normal_height - small_height
+-    );
++//    dc.SetFont(small_font);
++//    wxString package_name(PACKAGE_NAME);
++//    dc.DrawText(
++//        package_name,
++//        w - RPAD + GAP,
++//        TPAD - 2 * GAP - normal_height - large_height
++//    );
++//    int package_name_width = dc.GetTextExtent(package_name + " ").GetWidth();
++//    int package_name_width = dc.GetTextExtent(package_name + " ").GetWidth();
++//    dc.SetFont(small_font);
++//    dc.DrawText(
++//        PACKAGE_VERSION,
++//        w - RPAD + GAP + package_name_width,
++//        TPAD - 2 * GAP - normal_height - small_height
++//    );
++
+ 
+     if (this->image.GetWidth() > 1 && this->image.GetHeight() > 1 &&
+         w - LPAD - RPAD > 0 && h - TPAD - BPAD > 0) {
+@@ -277,7 +311,7 @@ void SpekSpectrogram::render(wxDC& dc)
+         dc.DrawBitmap(bmp, LPAD, TPAD);
+ 
+         // File name.
+-        dc.SetFont(large_font);
++        dc.SetFont(small_font);
+         dc.DrawText(
+             trim(dc, this->path, w - LPAD - RPAD, false),
+             LPAD,
+diff --git a/src/spek-window.cc b/src/spek-window.cc
+index 86d360c..7892239 100644
+--- a/src/spek-window.cc
++++ b/src/spek-window.cc
+@@ -90,27 +96,27 @@ SpekWindow::SpekWindow(const wxString& path) :
+ 
+     SetMenuBar(menu);
+ 
+-    wxToolBar *toolbar = CreateToolBar();
+-    toolbar->AddTool(
+-        wxID_OPEN,
+-        wxEmptyString,
+-        wxArtProvider::GetBitmap(ART_OPEN, wxART_TOOLBAR),
+-        menu_file_open->GetItemLabelText()
+-    );
+-    toolbar->AddTool(
+-        wxID_SAVE,
+-        wxEmptyString,
+-        wxArtProvider::GetBitmap(ART_SAVE, wxART_TOOLBAR),
+-        menu_file_save->GetItemLabelText()
+-    );
+-    toolbar->AddStretchableSpace();
+-    toolbar->AddTool(
+-        wxID_HELP,
+-        wxEmptyString,
+-        wxArtProvider::GetBitmap(ART_HELP, wxART_TOOLBAR),
+-        _("Help")
+-    );
+-    toolbar->Realize();
++//    wxToolBar *toolbar = CreateToolBar();
++//    toolbar->AddTool(
++//        wxID_OPEN,
++//        wxEmptyString,
++//        wxArtProvider::GetBitmap(ART_OPEN, wxART_TOOLBAR),
++//        menu_file_open->GetItemLabelText()
++//    );
++//    toolbar->AddTool(
++//        wxID_SAVE,
++//        wxEmptyString,
++//        wxArtProvider::GetBitmap(ART_SAVE, wxART_TOOLBAR),
++//        menu_file_save->GetItemLabelText()
++//    );
++//    toolbar->AddStretchableSpace();
++//    toolbar->AddTool(
++//        wxID_HELP,
++//        wxEmptyString,
++//        wxArtProvider::GetBitmap(ART_HELP, wxART_TOOLBAR),
++//        _("Help")
++//    );
++//    toolbar->Realize();
+ 
+     wxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+ 
+@@ -296,5 +302,13 @@ void SpekWindow::on_help(wxCommandEvent&)
+     info.SetCopyright(_("Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"));
+-    info.SetDescription(this->description);
++    info.SetDescription(
++        "\n"
++        "MP3:  Bitrate   64 kbps - 11 kHz\n"
++        "MP3:  Bitrate  128 kbps - 16 kHz\n"
++        "MP3:  Bitrate  192 kbps - 19 kHz\n"
++        "MP3:  Bitrate  320 kbps - 20 kHz\n"
++        "M4A:  Bitrate  500 kbps - 22 kHz\n"
++        "FLAC: Bitrate 1000 kbps - Graph's drawn continuously, no cut-off"
++    );
+ #ifdef OS_UNIX
+     info.SetWebSite("https://www.spek.cc/", _("Spek Website"));
+     info.SetIcon(wxArtProvider::GetIcon("spek", wxART_OTHER, wxSize(128, 128)));
+-- 
+2.49.0.windows.1
+

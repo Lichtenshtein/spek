@@ -1,0 +1,1001 @@
+From 0e70eb8d54fe8804ad5e76783049dd5644e6dbf4 Mon Sep 17 00:00:00 2001
+From: MikeWang000000 <mikewang000000@gmail.com>
+Date: Sat, 2 Jul 2022 20:11:49 +0800
+Subject: [PATCH] Build Spek for Windows using MSYS2
+
+MO files are now embedded in the exe, making Spek.exe portable.
+
+Fix alexkay/spek#100, withmorten/spek-alternative#7
+---
+ dist/win/README-zh_CN.md       |  14 ++++++
+ dist/win/README.md             |  31 ++++--------
+ dist/win/SpekInstallDir.wxs    |  89 ---------------------------------
+ dist/win/SpekInstallDirDlg.wxs |  37 --------------
+ dist/win/banner.bmp            | Bin 57374 -> 0 bytes
+ dist/win/bundle.bat            |  20 --------
+ dist/win/bundle.sh             |  58 ++++++++++-----------
+ dist/win/compile-rc.py         |  66 ++++++++++++++++++++++++
+ dist/win/dialog.bmp            | Bin 155830 -> 0 bytes
+ dist/win/fix-msi.js            |  12 -----
+ dist/win/install_deps.sh       |  83 ++++++++++++++++++++++++++++++
+ dist/win/mxe.diff              |  80 -----------------------------
+ dist/win/spek.manifest         |  35 +++++++++++++
+ dist/win/spek.rc               |   5 +-
+ src/spek-preferences.cc        |  11 ++++
+ 15 files changed, 251 insertions(+), 290 deletions(-)
+ create mode 100644 dist/win/README-zh_CN.md
+ delete mode 100644 dist/win/SpekInstallDir.wxs
+ delete mode 100644 dist/win/SpekInstallDirDlg.wxs
+ delete mode 100644 dist/win/banner.bmp
+ delete mode 100644 dist/win/bundle.bat
+ mode change 100755 => 100644 dist/win/bundle.sh
+ create mode 100644 dist/win/compile-rc.py
+ delete mode 100644 dist/win/dialog.bmp
+ delete mode 100644 dist/win/fix-msi.js
+ create mode 100644 dist/win/install_deps.sh
+ delete mode 100644 dist/win/mxe.diff
+ create mode 100644 dist/win/spek.manifest
+
+diff --git a/dist/win/README-zh_CN.md b/dist/win/README-zh_CN.md
+new file mode 100644
+index 0000000..604fa24
+--- /dev/null
++++ b/dist/win/README-zh_CN.md
+@@ -0,0 +1,14 @@
++## 构建 Windows 版本的 Spek
++
++[[英文 English]](./README.md)
++
++现在，您可以通过 MSYS2 在 Windows 上直接构建 Spek 可执行程序，无需交叉编译。
++
++构建步骤：
++* 安装 [MSYS2](https://www.msys2.org)。
++* 运行 `mingw64.exe`。如果您使用 Windows on ARM，请运行 `clangarm64.exe`。
++* 进入项目目录。
++* 安装依赖：`./dist/win/install_deps.sh`。此操作将耗费一定的时间。
++* 编译并打包 Spek： `./dist/win/bundle.sh`。
++
++可以根据需要修改 `install_deps.sh` 和 `bundle.sh`。
+\ No newline at end of file
+diff --git a/dist/win/README.md b/dist/win/README.md
+index f045f2c..3f84cf7 100644
+--- a/dist/win/README.md
++++ b/dist/win/README.md
+@@ -1,25 +1,14 @@
+-## Building the Windows installer
++## Build Spek for Windows
+ 
+-This is done in two steps:
++[[简体中文 Simplified Chinese]](./README-zh_CN.md)
+ 
+- * Cross-compiling spek.exe using [MXE](http://mxe.cc/).
+- * Building the MSI package under Windows.
++You can now build the Spek executable directly under MSYS2 on Windows without cross-compiling.
+ 
+-For the first step you can use any Unix-y environment. Set up
+-[MXE](http://mxe.cc/#tutorial).
++Build steps:
++* Install [MSYS2](https://www.msys2.org).
++* Run `mingw64.exe`. If you are using Windows on ARM, please run `clangarm64.exe`.
++* Enter the project directory.
++* Install the dependencies: `./dist/win/install_deps.sh`. This procedure will take some time.
++* Compile and bundle Spek: `./dist/win/bundle.sh`.
+ 
+-Clone mxe from my fork created specifically for building Spek into `/opt/mxe-spek`:
+-
+-    git clone -b mxe-spek https://github.com/withmorten/mxe/ mxe-spek
+-
+-Build Spek dependencies:
+-
+-    make pthreads ffmpeg wxwidgets -j1 JOBS=4
+-
+-Build Spek, adjusting `bundle.sh` variables as necessary:
+-
+-    ./dist/win/bundle.sh
+-
+-For the second step, you will need a Windows box with
+-[WiX](http://wixtoolset.org/) installed. Copy over the entire `dist/win`
+-directory, cd into it, and run `bundle.bat`.
++You can modify `install_deps.sh` and `bundle.sh` as needed.
+diff --git a/dist/win/SpekInstallDir.wxs b/dist/win/SpekInstallDir.wxs
+deleted file mode 100644
+index 8a5a31f..0000000
+--- a/dist/win/SpekInstallDir.wxs
++++ /dev/null
+@@ -1,89 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-
+-<!--
+-    Copyright (c) Microsoft Corporation.  All rights reserved.
+-
+-    The use and distribution terms for this software are covered by the
+-    Common Public License 1.0 (http://opensource.org/licenses/cpl1.0.php)
+-    which can be found in the file CPL.TXT at the root of this distribution.
+-    By using this software in any fashion, you are agreeing to be bound by
+-    the terms of this license.
+-
+-    You must not remove this notice, or any other, from this software.
+--->
+-<!--
+-First-time install dialog sequence:
+- - WixUI_WelcomeDlg
+- - WixUI_LicenseAgreementDlg
+- - WixUI_InstallDirDlg
+- - WixUI_VerifyReadyDlg
+- - WixUI_DiskCostDlg
+-
+-Maintenance dialog sequence:
+- - WixUI_MaintenanceWelcomeDlg
+- - WixUI_MaintenanceTypeDlg
+- - WixUI_InstallDirDlg
+- - WixUI_VerifyReadyDlg
+-
+-Patch dialog sequence:
+- - WixUI_WelcomeDlg
+- - WixUI_VerifyReadyDlg
+-
+--->
+-
+-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+-    <Fragment>
+-        <UI Id="SpekInstallDir">
+-            <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+-            <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+-            <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+-
+-            <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+-            <Property Id="WixUI_Mode" Value="InstallDir" />
+-
+-            <DialogRef Id="BrowseDlg" />
+-            <DialogRef Id="DiskCostDlg" />
+-            <DialogRef Id="ErrorDlg" />
+-            <DialogRef Id="FatalError" />
+-            <DialogRef Id="FilesInUse" />
+-            <DialogRef Id="MsiRMFilesInUse" />
+-            <DialogRef Id="PrepareDlg" />
+-            <DialogRef Id="ProgressDlg" />
+-            <DialogRef Id="ResumeDlg" />
+-            <DialogRef Id="UserExit" />
+-
+-            <Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath" Order="3">1</Publish>
+-            <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4"><![CDATA[WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
+-
+-            <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+-
+-            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="LicenseAgreementDlg">NOT Installed</Publish>
+-            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">Installed AND PATCH</Publish>
+-
+-            <Publish Dialog="LicenseAgreementDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
+-            <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="SpekInstallDirDlg">LicenseAccepted = "1"</Publish>
+-
+-            <Publish Dialog="SpekInstallDirDlg" Control="Back" Event="NewDialog" Value="LicenseAgreementDlg">1</Publish>
+-            <Publish Dialog="SpekInstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
+-            <Publish Dialog="SpekInstallDirDlg" Control="Next" Event="DoAction" Value="WixUIValidatePath" Order="2">NOT WIXUI_DONTVALIDATEPATH</Publish>
+-            <Publish Dialog="SpekInstallDirDlg" Control="Next" Event="SpawnDialog" Value="InvalidDirDlg" Order="3"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
+-            <Publish Dialog="SpekInstallDirDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
+-            <Publish Dialog="SpekInstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
+-            <Publish Dialog="SpekInstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
+-
+-            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="SpekInstallDirDlg" Order="1">NOT Installed</Publish>
+-            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2">Installed AND NOT PATCH</Publish>
+-            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">Installed AND PATCH</Publish>
+-
+-            <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
+-
+-            <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+-            <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+-            <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+-
+-            <Property Id="ARPNOMODIFY" Value="1" />
+-        </UI>
+-
+-        <UIRef Id="WixUI_Common" />
+-    </Fragment>
+-</Wix>
+diff --git a/dist/win/SpekInstallDirDlg.wxs b/dist/win/SpekInstallDirDlg.wxs
+deleted file mode 100644
+index b426ee0..0000000
+--- a/dist/win/SpekInstallDirDlg.wxs
++++ /dev/null
+@@ -1,37 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<!--
+-    Copyright (c) Microsoft Corporation.  All rights reserved.
+-
+-    The use and distribution terms for this software are covered by the
+-    Common Public License 1.0 (http://opensource.org/licenses/cpl1.0.php)
+-    which can be found in the file CPL.TXT at the root of this distribution.
+-    By using this software in any fashion, you are agreeing to be bound by
+-    the terms of this license.
+-
+-    You must not remove this notice, or any other, from this software.
+--->
+-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+-    <Fragment>
+-        <UI>
+-            <Dialog Id="SpekInstallDirDlg" Width="370" Height="270" Title="!(loc.InstallDirDlg_Title)">
+-                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" />
+-                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)" />
+-                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+-                    <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+-                </Control>
+-
+-                <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgDescription)" />
+-                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgTitle)" />
+-                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.InstallDirDlgBannerBitmap)" />
+-                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+-                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+-
+-                <Control Id="FolderLabel" Type="Text" X="20" Y="60" Width="290" Height="30" NoPrefix="yes" Text="!(loc.InstallDirDlgFolderLabel)" />
+-                <Control Id="Folder" Type="PathEdit" X="20" Y="100" Width="320" Height="18" Property="WIXUI_INSTALLDIR" Indirect="yes" />
+-                <Control Id="ChangeFolder" Type="PushButton" X="20" Y="120" Width="56" Height="17" Text="!(loc.InstallDirDlgChange)" />
+-                <Control Id="StartMenuShortcutCheckBox" Type="CheckBox" X="20" Y="160" Width="290" Height="17" Property="INSTALLSTARTMENUSHORTCUT" CheckBoxValue="1" Text="Start menu shortcut" />
+-                <Control Id="DesktopShortcutCheckBox" Type="CheckBox" X="20" Y="180" Width="290" Height="17" Property="INSTALLDESKTOPSHORTCUT" CheckBoxValue="1" Text="Desktop shortcut" />
+-            </Dialog>
+-        </UI>
+-    </Fragment>
+-</Wix>
+diff --git a/dist/win/banner.bmp b/dist/win/banner.bmp
+deleted file mode 100644
+index 73e70fec82ade2c4fae8a4c8252c366491679a9a..0000000000000000000000000000000000000000
+GIT binary patch
+literal 0
+HcmV?d00001
+
+literal 57374
+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
+UY!?D>d%LVDEGGzTjDQgT1Jvl&R{#J2
+
+diff --git a/dist/win/bundle.bat b/dist/win/bundle.bat
+deleted file mode 100644
+index a20f970..0000000
+--- a/dist/win/bundle.bat
++++ /dev/null
+@@ -1,20 +0,0 @@
+-rem This script will build an MSI installer for Win32.
+-rem Check README.md in this directory for instructions.
+-
+-set WIX_PATH="C:\Program Files (x86)\Windows Installer XML v3.5\bin"
+-
+-rem Generate a wxs for files in Spek
+-del spek.msi
+-move Spek\spek.exe .\
+-%WIX_PATH%\heat dir Spek -gg -ke -srd -cg Files -dr INSTALLLOCATION -template fragment -o files.wxs
+-move spek.exe Spek\
+-
+-rem Make the MSI package
+-%WIX_PATH%\candle SpekInstallDirDlg.wxs SpekInstallDir.wxs spek.wxs files.wxs
+-%WIX_PATH%\light -b Spek SpekInstallDirDlg.wixobj SpekInstallDir.wixobj spek.wixobj files.wixobj -ext WixUIExtension.dll -o spek.msi
+-cscript /E:JScript fix-msi.js spek.msi
+-
+-rem Clean up
+-del files.wxs
+-del *.wixobj
+-del *.wixpdb
+diff --git a/dist/win/bundle.sh b/dist/win/bundle.sh
+old mode 100755
+new mode 100644
+index e907d05..5595bf8
+--- a/dist/win/bundle.sh
++++ b/dist/win/bundle.sh
+@@ -1,40 +1,45 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+-# This script will cross-compile spek.exe, make a ZIP archive and prepare files
+-# for building an MSI installer under Windows.
++# This script will compile spek.exe under MSYS2 and make a ZIP archive.
+ # Check README.md in this directory for instructions.
+ 
+ # Adjust these variables if necessary.
+-MXE=/opt/mxe-spek/usr
+ MAKE=make
+ JOBS=3
+ ZIP=zip
++STRIP=strip
++WINDRES=windres
++CYGPATH=cygpath
++WXCONFIG=wx-config
++WX_PREFIX="$(wx-config --prefix)"
+ 
+-HOST=i686-w64-mingw32.static
+ LANGUAGES="bs ca cs da de el eo es fi fr gl he hu id it ja ko lv nb nl pl pt_BR ru sk sr@latin sv th tr uk vi zh_CN zh_TW"
+-PATH="$MXE"/bin:$PATH
+-STRIP="$HOST"-strip
+-WINDRES="$HOST"-windres
+-WX_CONFIG="$MXE"/"$HOST"/bin/wx-config
+ 
+ cd $(dirname $0)/../..
+ rm -fr dist/win/build && mkdir dist/win/build
+ 
+-# Compile the resource file
+-rm -f dist/win/spek.res
+-"$WINDRES" dist/win/spek.rc -O coff -o dist/win/spek.res
+-mkdir -p src/dist/win && cp dist/win/spek.res src/dist/win/
++# Test windres
++"$WINDRES" dist/win/spek.rc -O coff -o dist/win/spek.res || exit 1
+ 
+-# Compile spek.exe
++# Run autogen.sh
++CXXFLAGS="--static" \
+ LDFLAGS="-mwindows dist/win/spek.res" ./autogen.sh \
+-    --enable-shared=no \
+-    --host="$HOST" \
++    --disable-shared \
++    --enable-static \
+     --disable-valgrind \
+     --with-wx-config="$WX_CONFIG" \
+     --prefix=${PWD}/dist/win/build && \
+-    "$MAKE" clean && \
+-    "$MAKE" -j $JOBS && \
+-    "$MAKE" install || exit 1
++    "$MAKE" clean || exit 1
++
++# Compile PO files first
++cd po && "$MAKE" && cd .. || exit 1
++
++# Compile the resource file
++./dist/win/compile-rc.py "$WINDRES" "$(CYGPATH "$WX_PREFIX")" $LANGUAGES || exit 1
++mkdir -p src/dist/win && cp dist/win/spek.res src/dist/win/
++
++# Compile spek.exe
++"$MAKE" V=1 -j $JOBS && "$MAKE" install || exit 1
+ "$STRIP" dist/win/build/bin/spek.exe
+ 
+ # Copy files to the bundle
+@@ -45,18 +50,15 @@ cp ../../LICENCE.md Spek/
+ cp ../../README.md Spek/
+ mkdir Spek/lic
+ cp ../../lic/* Spek/lic/
+-for lang in $LANGUAGES; do
+-    mkdir -p Spek/"$lang"
+-    cp build/share/locale/"$lang"/LC_MESSAGES/spek.mo Spek/"$lang"/
+-    cp "$MXE"/"$HOST"/share/locale/"$lang"/LC_MESSAGES/wxstd.mo Spek/"$lang"/
+-done
+ rm -fr build
++cd ../..
+ 
+ # Create a zip archive
+-rm -f spek.zip
+-"$ZIP" -r spek.zip Spek
+-
+-cd ../..
++cd dist/win/Spek
++rm -f Spek.zip
++"$ZIP" -mr Spek.zip *
++cd ../../..
+ 
+ # Clean up
++rm -fr src/dist
+ rm dist/win/spek.res
+diff --git a/dist/win/compile-rc.py b/dist/win/compile-rc.py
+new file mode 100644
+index 0000000..cf41916
+--- /dev/null
++++ b/dist/win/compile-rc.py
+@@ -0,0 +1,66 @@
++#!/usr/bin/env python3
++
++# This script adds MO files to resource file, and compiles spek.rc to spek.res file.
++
++# Both GNU windres and llvm-windres do not accept characters other than [A-Za-z0-9_] in resource name IDs.
++# However, this will leads wxWidgets not loading MO files like "spek_sr@latin".
++# Some hacky workarounds are used in this Python script.
++
++# Note: This script only accepts Windows style paths.
++
++import re
++import os
++import sys
++import glob
++
++WINDRES = sys.argv[1]
++WX_PREFIX = sys.argv[2]
++LANGUAGES = sys.argv[3:]
++
++token_map = {}
++
++# Replaces invalid characters to '_' and stores mapping relations.
++def safe_token(token):
++    safe = re.sub(r'[^A-Za-z0-9_]', '_', token)
++    if safe != token:
++        token_map[safe] = token
++    return safe
++
++def wxstd_path(lang):
++    paths = glob.glob(f'{WX_PREFIX}/share/locale/{lang}/LC_MESSAGES/wxstd*.mo')
++    if paths:
++        return paths[0]
++
++
++os.chdir(os.path.dirname(__file__))
++
++rc_content = '#include "spek.rc"\n'
++for lang in LANGUAGES:
++    token = safe_token(f'spek_{lang}')
++    rc_content += f'{token} MOFILE "../../po/{lang}.gmo"\n'
++    wxstd_mo = wxstd_path(lang)
++    if wxstd_mo:
++        token = safe_token(f'wxstd_{lang}')
++        rc_content += f'{token} MOFILE "{wxstd_mo}"\n'
++
++with open('spek-all.rc', 'w') as fo:
++    fo.write(rc_content)
++
++# Compile RC File
++ret = os.system(f'"{WINDRES}" spek-all.rc -O coff -o spek.res')
++if ret != 0:
++    exit(1)
++
++# Hack: Restore original resource IDs by editing the binary file.
++# This workaround is not always safe.
++with open('spek.res', 'rb+') as f:
++    content = f.read()
++    for token in token_map:
++        old_token = token.upper().encode('UTF-16-LE')
++        new_token = token_map[token].upper().encode('UTF-16-LE')
++        content = content.replace(old_token, new_token)
++    f.seek(0)
++    f.write(content)
++
++# Clean up
++os.remove('spek-all.rc')
+diff --git a/dist/win/dialog.bmp b/dist/win/dialog.bmp
+deleted file mode 100644
+index 38713ca04b18da2315d529391afe379a6860e593..0000000000000000000000000000000000000000
+GIT binary patch
+literal 0
+HcmV?d00001
+
+literal 155830
+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
+
+diff --git a/dist/win/fix-msi.js b/dist/win/fix-msi.js
+deleted file mode 100644
+index 0ec1a1e..0000000
+--- a/dist/win/fix-msi.js
++++ /dev/null
+@@ -1,12 +0,0 @@
+-var msiOpenDatabaseModeTransact = 1;
+-var filespec = WScript.Arguments(0);
+-var installer = new ActiveXObject("WindowsInstaller.Installer");
+-var database = installer.OpenDatabase(filespec, msiOpenDatabaseModeTransact);
+-var sql = "UPDATE `Control` SET `Control`.`Height` = '18', `Control`.`Width` = '170'," +
+-          " `Control`.`Y`='243', `Control`.`X`='10' " +
+-          "WHERE `Control`.`Dialog_`='ExitDialog' AND " +
+-          "  `Control`.`Control`='OptionalCheckBox'";
+-var view = database.OpenView(sql);
+-view.Execute();
+-view.Close();
+-database.Commit();
+\ No newline at end of file
+diff --git a/dist/win/install_deps.sh b/dist/win/install_deps.sh
+new file mode 100644
+index 0000000..b559d76
+--- /dev/null
++++ b/dist/win/install_deps.sh
+@@ -0,0 +1,83 @@
++#!/bin/bash
++
++# This script will compile and install the dependencies which are needed to build spek.exe.
++# Check README.md in this directory for instructions.
++
++# Adjust these variables if necessary.
++WX_VER="3.1.7"
++FFMPEG_VER="5.0.1"
++PREFIX="$MINGW_PREFIX"
++
++# Check the envrionment variables
++[ -n "$MINGW_PREFIX" ] && [ -n "$MINGW_PACKAGE_PREFIX" ] && [ -n "$MSYSTEM" ] || {
++    echo "One or more of the following variables are not set:"
++    echo "MINGW_PREFIX  MINGW_PACKAGE_PREFIX  MSYSTEM"
++    exit 1
++}
++
++[ "$MSYSTEM" = "CLANGARM64" ] && [ ! `grep '^\[clangarm64\]' /etc/pacman.conf` ] && {
++cat <<EOF >> /etc/pacman.conf
++# Enable ARM64 packages
++[clangarm64]
++Include = /etc/pacman.d/mirrorlist.mingw
++EOF
++}
++
++pacman -Sy && pacman -S --needed --noconfirm autotools intltool yasm zip "${MINGW_PACKAGE_PREFIX}-toolchain" || exit 1
++
++rm -rf $(dirname $0)/deps
++mkdir -p $(dirname $0)/deps
++cd $(dirname $0)/deps
++
++# === wxWidgets ===
++echo "# Installing wxWidgets..."
++wget "https://github.com/wxWidgets/wxWidgets/releases/download/v${WX_VER}/wxWidgets-${WX_VER}.tar.bz2" || exit 1
++tar xjvf "wxWidgets-${WX_VER}.tar.bz2"
++cd "wxWidgets-${WX_VER}"
++mkdir msw-build
++cd msw-build
++../configure --prefix="$PREFIX" --disable-shared --with-libtiff=no || exit 1
++make -j3 && make install || exit 1
++cd ../..
++
++# === FFmpeg ===
++# There are some problems assembling aarch64 code. Just disable it.
++[ "$MSYSTEM" = "CLANGARM64" ] && FFMPEG_ASM_OPTION="--disable-asm" || FFMPEG_ASM_OPTION=""
++echo "# Installing FFmpeg..."
++wget "https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VER}.tar.bz2" || exit 1
++tar xjvf "ffmpeg-${FFMPEG_VER}.tar.bz2"
++cd "ffmpeg-${FFMPEG_VER}"
++./configure \
++    --prefix="$PREFIX" \
++    $FFMPEG_ASM_OPTION \
++    --enable-version3 \
++    --enable-gpl \
++    --disable-programs \
++    --disable-doc \
++    --disable-debug \
++    --enable-static \
++    --disable-shared \
++    --enable-pic \
++    --disable-swscale \
++    --disable-postproc \
++    --disable-avfilter \
++    --disable-avdevice \
++    --disable-network \
++    --disable-xlib \
++    --disable-encoders \
++    --disable-hwaccels \
++    --disable-muxers \
++    --disable-bsfs \
++    --disable-devices \
++    --disable-filters \
++    --disable-protocols \
++    --enable-protocol=file,pipe \
++    --disable-parsers \
++    --enable-parser=aac,aac_latm,ac3,cook,dca,dirac,dolby_e,flac,g723_1,g729,gsm,mlp,mpegaudio,opus,sbc,sipr,tak,vorbis\
++    --disable-decoders \
++    --enable-decoder=aac,aac_fixed,aac_latm,ac3,ac3_fixed,acelp_kelvin,alac,als,amrnb,amrwb,ape,aptx,aptx_hd,atrac1,atrac3,atrac3al,atrac3p,atrac3pal,atrac9,binkaudio_dct,binkaudio_rdft,bmv_audio,cook,dca,dfpwm,dolby_e,dsd_lsbf,dsd_msbf,dsd_lsbf_planar,dsd_msbf_planar,dsicinaudio,dss_sp,dst,eac3,evrc,fastaudio,ffwavesynth,flac,g723_1,g729,gsm,gsm_ms,hca,hcom,iac,ilbc,imc,interplay_acm,mace3,mace6,metasound,mlp,mp1,mp1float,mp2,mp2float,mp3float,mp3,mp3adufloat,mp3adu,mp3on4float,mp3on4,mpc7,mpc8,msnsiren,nellymoser,on2avc,opus,paf_audio,qcelp,qdm2,qdmc,ra_144,ra_288,ralf,sbc,shorten,sipr,siren,smackaud,sonic,tak,truehd,truespeech,tta,twinvq,vmdaudio,vorbis,wavpack,wmalossless,wmapro,wmav1,wmav2,wmavoice,ws_snd1,xma1,xma2,pcm_alaw,pcm_bluray,pcm_dvd,pcm_f16le,pcm_f24le,pcm_f32be,pcm_f32le,pcm_f64be,pcm_f64le,pcm_lxf,pcm_mulaw,pcm_s8,pcm_s8_planar,pcm_s16be,pcm_s16be_planar,pcm_s16le,pcm_s16le_planar,pcm_s24be,pcm_s24daud,pcm_s24le,pcm_s24le_planar,pcm_s32be,pcm_s32le,pcm_s32le_planar,pcm_s64be,pcm_s64le,pcm_sga,pcm_u8,pcm_u16be,pcm_u16le,pcm_u24be,pcm_u24le,pcm_u32be,pcm_u32le,pcm_vidc,derf_dpcm,gremlin_dpcm,interplay_dpcm,roq_dpcm,sdx2_dpcm,sol_dpcm,xan_dpcm,adpcm_4xm,adpcm_adx,adpcm_afc,adpcm_agm,adpcm_aica,adpcm_argo,adpcm_ct,adpcm_dtk,adpcm_ea,adpcm_ea_maxis_xa,adpcm_ea_r1,adpcm_ea_r2,adpcm_ea_r3,adpcm_ea_xas,adpcm_g722,adpcm_g726,adpcm_g726le,adpcm_ima_acorn,adpcm_ima_amv,adpcm_ima_alp,adpcm_ima_apc,adpcm_ima_apm,adpcm_ima_cunning,adpcm_ima_dat4,adpcm_ima_dk3,adpcm_ima_dk4,adpcm_ima_ea_eacs,adpcm_ima_ea_sead,adpcm_ima_iss,adpcm_ima_moflex,adpcm_ima_mtf,adpcm_ima_oki,adpcm_ima_qt,adpcm_ima_rad,adpcm_ima_ssi,adpcm_ima_smjpeg,adpcm_ima_wav,adpcm_ima_ws,adpcm_ms,adpcm_mtaf,adpcm_psx,adpcm_sbpro_2,adpcm_sbpro_3,adpcm_sbpro_4,adpcm_swf,adpcm_thp,adpcm_thp_le,adpcm_vima,adpcm_xa,adpcm_yamaha,adpcm_zork || exit 1
++make -j3 && make install || exit 1
++
++# Clean up
++cd ../..
++rm -rf ./deps
+diff --git a/dist/win/mxe.diff b/dist/win/mxe.diff
+deleted file mode 100644
+index bd25df0..0000000
+--- a/dist/win/mxe.diff
++++ /dev/null
+@@ -1,80 +0,0 @@
+-diff --git a/src/ffmpeg.mk b/src/ffmpeg.mk
+-index 8b90d69..fab1a73 100644
+---- a/src/ffmpeg.mk
+-+++ b/src/ffmpeg.mk
+-@@ -3,13 +3,13 @@
+- 
+- PKG             := ffmpeg
+- $(PKG)_IGNORE   := 2%
+--$(PKG)_VERSION  := 1.2.3
+--$(PKG)_CHECKSUM := f083c92075fe010f17416bc880dfca101535276d
+-+$(PKG)_VERSION  := 2.0.2
+-+$(PKG)_CHECKSUM := 47d3b3d172ae81f0571549e4dfaadfe5b4fe06cc
+- $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
+- $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.bz2
+- $(PKG)_URL      := http://www.ffmpeg.org/releases/$($(PKG)_FILE)
+- $(PKG)_URL_2    := http://launchpad.net/ffmpeg/main/$($(PKG)_VERSION)/+download/$($(PKG)_FILE)
+--$(PKG)_DEPS     := gcc bzip2 lame libass libnut libvpx opencore-amr opus sdl speex theora vo-aacenc vo-amrwbenc vorbis x264 xvidcore zlib
+-+$(PKG)_DEPS     := gcc bzip2 opus zlib
+- 
+- define $(PKG)_UPDATE
+-     $(WGET) -q -O- 'http://www.ffmpeg.org/download.html' | \
+-@@ -31,26 +31,20 @@ define $(PKG)_BUILD
+-         --disable-pthreads \
+-         --enable-w32threads \
+-         --disable-doc \
+-+        --disable-programs \
+-         --enable-gpl \
+-         --enable-version3 \
+-         --disable-nonfree \
+--        --enable-avisynth \
+--        --enable-libass \
+--        --disable-libfaac \
+--        --enable-libmp3lame \
+--        --enable-libnut \
+--        --enable-libopencore-amrnb \
+--        --enable-libopencore-amrwb \
+--        --enable-libopus \
+--        --enable-libspeex \
+--        --enable-libtheora \
+--        --enable-libvo-aacenc \
+--        --enable-libvo-amrwbenc \
+--        --enable-libvorbis \
+--        --enable-libvpx \
+--        --enable-libx264 \
+--        --enable-libxvid \
+--        --enable-postproc
+-+        --disable-avdevice \
+-+        --disable-swresample \
+-+        --disable-swscale \
+-+        --disable-postproc \
+-+        --disable-avfilter \
+-+        --disable-encoders \
+-+        --disable-muxers \
+-+        --disable-devices \
+-+        --disable-filters \
+-+        --enable-libopus
+-     $(MAKE) -C '$(1)' -j '$(JOBS)'
+-     $(MAKE) -C '$(1)' -j 1 install
+- endef
+-diff --git a/src/wxwidgets.mk b/src/wxwidgets.mk
+-index db37a9a..8f37ffd 100644
+---- a/src/wxwidgets.mk
+-+++ b/src/wxwidgets.mk
+-@@ -8,7 +8,7 @@ $(PKG)_CHECKSUM := 0bab57ecd6d065a3672ec5fbb09d287456727ea4
+- $(PKG)_SUBDIR   := wxWidgets-$($(PKG)_VERSION)
+- $(PKG)_FILE     := wxWidgets-$($(PKG)_VERSION).tar.bz2
+- $(PKG)_URL      := http://$(SOURCEFORGE_MIRROR)/project/wxwindows/$($(PKG)_VERSION)/$($(PKG)_FILE)
+--$(PKG)_DEPS     := gcc libiconv libpng jpeg tiff sdl zlib expat
+-+$(PKG)_DEPS     := gcc libiconv libpng jpeg tiff zlib expat
+- 
+- define $(PKG)_UPDATE
+-     $(WGET) -q -O- 'http://sourceforge.net/projects/wxwindows/files/' | \
+-@@ -39,7 +39,6 @@ define $(PKG)_CONFIGURE_OPTS
+-         --with-regex=yes \
+-         --with-zlib=sys \
+-         --with-expat=sys \
+--        --with-sdl \
+-         --without-gtk \
+-         --without-motif \
+-         --without-mac \
+diff --git a/dist/win/spek.manifest b/dist/win/spek.manifest
+new file mode 100644
+index 0000000..f8a4751
+--- /dev/null
++++ b/dist/win/spek.manifest
+@@ -0,0 +1,35 @@
++﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
++<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
++  <dependency>
++    <dependentAssembly>
++      <assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
++    </dependentAssembly>
++  </dependency>
++  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
++    <security>
++      <requestedPrivileges>
++        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
++      </requestedPrivileges>
++    </security>
++  </trustInfo>
++  <asmv3:application>
++    <asmv3:windowsSettings>
++      <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2, system</dpiAwareness>
++      <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true</dpiAware>
++    </asmv3:windowsSettings>
++  </asmv3:application>
++  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
++    <application>
++      <!-- Windows Vista -->
++      <supportedOS Id="{e2011457-1546-43c5-a5fe-008deee3d3f0}" />
++      <!-- Windows 7 -->
++      <supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}" />
++      <!-- Windows 8 -->
++      <supportedOS Id="{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}" />
++      <!-- Windows 8.1 -->
++      <supportedOS Id="{1f676c76-80e1-4239-95bb-83d0f6d0da78}" />
++      <!-- Windows 10 -->
++      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />
++    </application>
++  </compatibility>
++</assembly>
+diff --git a/dist/win/spek.rc b/dist/win/spek.rc
+index 59b3292..b8b7de9 100644
+--- a/dist/win/spek.rc
++++ b/dist/win/spek.rc
+@@ -1,8 +1,7 @@
+-#define wxUSE_DPI_AWARE_MANIFEST 2
+-#include <wx/msw/wx.rc>
+-
+ aaaa ICON "spek.ico"
+ help ICON "help.ico"
+ open ICON "open.ico"
+ save ICON "save.ico"
+ close ICON "close.ico"
++
++1 24 "spek.manifest"
+\ No newline at end of file
+diff --git a/src/spek-preferences.cc b/src/spek-preferences.cc
+index 03fcb32..0c694e8 100644
+--- a/src/spek-preferences.cc
++++ b/src/spek-preferences.cc
+@@ -17,6 +17,17 @@ void SpekPreferences::init()
+     }
+     this->locale = new wxLocale();
+ 
++#ifdef OS_WIN
++    // Load MO files embedded in Windows executable file.
++    wxTranslations *translation = wxTranslations::Get();
++    if (translation == nullptr) {
++        translation = new wxTranslations();
++        wxTranslations::Set(translation);
++    }
++    wxResourceTranslationsLoader *loader = new wxResourceTranslationsLoader();
++    translation->SetLoader(loader);
++#endif
++
+     int lang = wxLANGUAGE_DEFAULT;
+     wxString code = this->get_language();
+     if (spek_platform_can_change_language() && !code.IsEmpty()) {

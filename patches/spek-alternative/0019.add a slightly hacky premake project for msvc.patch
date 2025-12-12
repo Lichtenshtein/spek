@@ -1,0 +1,114 @@
+From 4f40627e0a146d16eaa74dfe297366b8eb83f3bf Mon Sep 17 00:00:00 2001
+From: withmorten <morten.with@gmail.com>
+Date: Sun, 2 Oct 2022 12:54:05 +0200
+Subject: [PATCH] add a slightly hacky premake project for msvc
+
+---
+ .gitignore                  |  2 ++
+ dist/win/premake-vs2017.cmd |  1 +
+ dist/win/premake-vs2019.cmd |  1 +
+ dist/win/premake-vs2022.cmd |  1 +
+ dist/win/premake5.lua       | 54 +++++++++++++++++++++++++++++++++++++
+ 5 files changed, 59 insertions(+)
+ create mode 100644 dist/win/premake-vs2017.cmd
+ create mode 100644 dist/win/premake-vs2019.cmd
+ create mode 100644 dist/win/premake-vs2022.cmd
+ create mode 100644 dist/win/premake5.lua
+
+diff --git a/.gitignore b/.gitignore
+index 7d412ed9..bd054584 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -25,6 +25,8 @@ dist/osx/Spek.dmg
+ dist/win/Spek
+ dist/win/spek.wxs
+ dist/win/tests
++dist/win/bin
++dist/win/build
+ env
+ install-sh
+ libtool
+diff --git a/dist/win/premake-vs2017.cmd b/dist/win/premake-vs2017.cmd
+new file mode 100644
+index 00000000..b569c559
+--- /dev/null
++++ b/dist/win/premake-vs2017.cmd
+@@ -0,0 +1 @@
++premake5 vs2017
+\ No newline at end of file
+diff --git a/dist/win/premake-vs2019.cmd b/dist/win/premake-vs2019.cmd
+new file mode 100644
+index 00000000..18298f5e
+--- /dev/null
++++ b/dist/win/premake-vs2019.cmd
+@@ -0,0 +1 @@
++premake5 vs2019
+\ No newline at end of file
+diff --git a/dist/win/premake-vs2022.cmd b/dist/win/premake-vs2022.cmd
+new file mode 100644
+index 00000000..3b476e7a
+--- /dev/null
++++ b/dist/win/premake-vs2022.cmd
+@@ -0,0 +1 @@
++premake5 vs2022
+\ No newline at end of file
+diff --git a/dist/win/premake5.lua b/dist/win/premake5.lua
+new file mode 100644
+index 00000000..abd9b083
+--- /dev/null
++++ b/dist/win/premake5.lua
+@@ -0,0 +1,54 @@
++workspace "spek"
++	configurations { "Debug", "Release", }
++	platforms { "x64" }
++	location "build"
++
++	characterset ("Unicode")
++	toolset ("v143")
++
++	defines { "WIN32", "WIN32_LEAN_AND_MEAN", "_CRT_SECURE_NO_WARNINGS", "_CRT_NONSTDC_NO_DEPRECATE", "_CRT_NONSTDC_NO_WARNINGS" }
++
++	staticruntime "on"
++
++	filter "configurations:Debug"
++		defines { "DEBUG" }
++		symbols "full"
++		optimize "off"
++		runtime "debug"
++
++	filter { "configurations:Release" }
++		defines { "NDEBUG" }
++		runtime "release"
++		symbols "on"
++		optimize "speed"
++		inlining "auto"
++		flags { "LinkTimeOptimization" }
++
++project "spek"
++	kind "WindowedApp"
++	language "C++"
++	targetname "spek"
++	targetdir "bin/%{cfg.buildcfg}"
++	targetextension ".exe"
++
++	defines { "PACKAGE_VERSION=\"0.8.2.3\"", "PACKAGE_NAME=\"Spek\"", "GETTEXT_PACKAGE=\"spek\"" }
++	files { "spek.rc" }
++
++	includedirs { "C:/Libs/wxWidgets-3.1.2/include" }
++	includedirs { "C:/Libs/wxWidgets-3.1.2/include/msvc" }
++	includedirs { "C:/Libs/wxWidgets-3.1.2/lib/vc_x64_lib/mswu" }
++	libdirs { "C:/Libs/wxWidgets-3.1.2/lib/vc_x64_lib" }
++
++	includedirs { "C:/Libs/ffmpeg-4.4/include" }
++	libdirs { "C:/Libs/ffmpeg-4.4/lib" }
++	links { "avutil", "avformat", "avcodec", "swresample" }
++
++	includedirs { "C:/Tools/vcpkg/installed/x64-windows-static/include" }
++	libdirs { "C:/Tools/vcpkg/installed/x64-windows-static/lib" }
++	links { "pthreadVC3" }
++
++	includedirs { "../../src" }
++
++	defines { "OS_WIN", "_USE_MATH_DEFINES" }
++	files { "../../src/*.h" }
++	files { "../../src/*.cc" }

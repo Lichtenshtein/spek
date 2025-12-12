@@ -1,0 +1,181 @@
+From 3641bd9219e4a18c62031eb2dfd6b5ce957a7335 Mon Sep 17 00:00:00 2001
+From: withmorten <morten.with@gmail.com> & Lichtenshtein
+Date: Wed, 6 Dec 2017 18:27:11 +0100
+Subject: [PATCH] Add option to hide full path in spek display
+
+---
+ po/de.po                       |  4 ++++
+ po/spek.pot                    |  4 ++++
+ src/spek-preferences-dialog.cc | 21 ++++++++++++++++-----
+ src/spek-preferences-dialog.h  |  3 ++-
+ src/spek-preferences.cc        | 13 +++++++++++++
+ src/spek-preferences.h         |  2 ++
+ src/spek-spectrogram.cc        | 23 ++++++++++++-----------
+ 7 files changed, 53 insertions(+), 17 deletions(-)
+
+diff --git a/po/de.po b/po/de.po
+index 89a66908..a6eb58e4 100644
+--- a/po/ru.po
++++ b/po/ru.po
+@@ -120,6 +120,10 @@ msgstr "Sprache:"
+ msgid "Check for &updates"
+ msgstr "Проверять &обновления"
+ 
++#: src/spek-preferences-dialog.cc:99
++msgid "Show &filename only"
++msgstr "Показывать только имя &файла"
++
+ #: src/spek-spectrogram.cc:216
+ #, c-format
+ msgid "%d kHz"
+diff --git a/po/spek.pot b/po/spek.pot
+index b17ef599..692a305d 100644
+--- a/po/spek.pot
++++ b/po/spek.pot
+@@ -117,6 +117,10 @@ msgstr ""
+ msgid "Check for &updates"
+ msgstr ""
+ 
++#: src/spek-preferences-dialog.cc:99
++msgid "Show &filename only"
++msgstr ""
++
+ #: src/spek-spectrogram.cc:216
+ #, c-format
+ msgid "%d kHz"
+diff --git a/src/spek-preferences-dialog.cc b/src/spek-preferences-dialog.cc
+index 1b1fa0fa..cb6cf53b 100644
+--- a/src/spek-preferences-dialog.cc
++++ b/src/spek-preferences-dialog.cc
+@@ -45,11 +45,13 @@ static const char *available_languages[] =
+ };
+ 
+ #define ID_LANGUAGE (wxID_HIGHEST + 1)
+-#define ID_CHECK (wxID_HIGHEST + 2)
++#define ID_CHECK_UPDATE (wxID_HIGHEST + 2)
++#define ID_CHECK_FULL_PATH (wxID_HIGHEST + 3)
+ 
+ BEGIN_EVENT_TABLE(SpekPreferencesDialog, wxDialog)
+     EVT_CHOICE(ID_LANGUAGE, SpekPreferencesDialog::on_language)
+-    EVT_CHECKBOX(ID_CHECK, SpekPreferencesDialog::on_check)
++    EVT_CHECKBOX(ID_CHECK_UPDATE, SpekPreferencesDialog::on_check_update)
++    EVT_CHECKBOX(ID_CHECK_FULL_PATH, SpekPreferencesDialog::on_check_hide_full_path)
+ END_EVENT_TABLE()
+ 
+ SpekPreferencesDialog::SpekPreferencesDialog(wxWindow *parent) :
+@@ -90,10 +92,14 @@ SpekPreferencesDialog::SpekPreferencesDialog(wxWindow *parent) :
+         language_choice->SetSelection(active_index);
+     }
+ 
+-    wxCheckBox *check_update = new wxCheckBox(this, ID_CHECK, _("Check for &updates"));
+-    inner_sizer->Add(check_update, 0 ,wxLEFT | wxTOP, 12);
++    wxCheckBox *check_update = new wxCheckBox(this, ID_CHECK_UPDATE, _("Check for &updates"));
++    inner_sizer->Add(check_update, 0, wxLEFT | wxTOP, 12);
+     check_update->SetValue(SpekPreferences::get().get_check_update());
+ 
++    wxCheckBox *hide_full_path = new wxCheckBox(this, ID_CHECK_FULL_PATH, _("Show &filename only"));
++    inner_sizer->Add(hide_full_path, 0, wxLEFT | wxTOP, 12);
++    hide_full_path->SetValue(SpekPreferences::get().get_hide_full_path());
++
+     sizer->Add(CreateButtonSizer(wxOK), 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
+     sizer->SetSizeHints(this);
+     SetSizer(sizer);
+@@ -104,7 +110,12 @@ void SpekPreferencesDialog::on_language(wxCommandEvent& event)
+     SpekPreferences::get().set_language(this->languages[event.GetSelection() * 2]);
+ }
+ 
+-void SpekPreferencesDialog::on_check(wxCommandEvent& event)
++void SpekPreferencesDialog::on_check_update(wxCommandEvent& event)
+ {
+     SpekPreferences::get().set_check_update(event.IsChecked());
+ }
++
++void SpekPreferencesDialog::on_check_hide_full_path(wxCommandEvent& event)
++{
++    SpekPreferences::get().set_hide_full_path(event.IsChecked());
++}
+diff --git a/src/spek-preferences-dialog.h b/src/spek-preferences-dialog.h
+index d73121c2..2662b0c1 100644
+--- a/src/spek-preferences-dialog.h
++++ b/src/spek-preferences-dialog.h
+@@ -9,7 +9,8 @@ class SpekPreferencesDialog : public wxDialog
+ 
+ private:
+     void on_language(wxCommandEvent& event);
+-    void on_check(wxCommandEvent& event);
++    void on_check_update(wxCommandEvent& event);
++    void on_check_hide_full_path(wxCommandEvent& event);
+ 
+     wxArrayString languages;
+ 
+diff --git a/src/spek-preferences.cc b/src/spek-preferences.cc
+index 67cbd098..34e6dfb8 100644
+--- a/src/spek-preferences.cc
++++ b/src/spek-preferences.cc
+@@ -80,3 +80,16 @@ void SpekPreferences::set_language(const wxString& value)
+     this->config->Write("/general/language", value);
+     this->config->Flush();
+ }
++
++bool SpekPreferences::get_hide_full_path()
++{
++    bool result = false;
++    this->config->Read("/general/hidepath", &result);
++    return result;
++}
++
++void SpekPreferences::set_hide_full_path(bool value)
++{
++    this->config->Write("/general/hidepath", value);
++    this->config->Flush();
++}
+\ No newline at end of file
+diff --git a/src/spek-preferences.h b/src/spek-preferences.h
+index 3ccc5ca8..1d634f6a 100644
+--- a/src/spek-preferences.h
++++ b/src/spek-preferences.h
+@@ -15,4 +15,6 @@ class SpekPreferences
+     void set_language(const wxString& value);
++    bool get_hide_full_path();
++    void set_hide_full_path(bool value);
+ 
+ private:
+     SpekPreferences();
+diff --git a/src/spek-spectrogram.cc b/src/spek-spectrogram.cc
+index 62707f04..d7574c96 100644
+--- a/src/spek-spectrogram.cc
++++ b/src/spek-spectrogram.cc
+@@ -1,11 +1,13 @@
+ #include <cmath>
+ 
+ #include <wx/dcbuffer.h>
++#include <wx/filename.h>
+ 
+ #include "spek-audio.h"
+ #include "spek-events.h"
+ #include "spek-fft.h"
+ #include "spek-platform.h"
+ #include "spek-ruler.h"
+ #include "spek-utils.h"
++#include "spek-preferences.h"
+ 
+@@ -282,9 +274,18 @@ void SpekSpectrogram::render(wxDC& dc)
+         dc.DrawBitmap(bmp, LPAD, TPAD);
+ 
+         // File name.
++        // Checking prefs can probably be solved differently.
++        SpekPreferences& prefs = SpekPreferences::get();
++        wxString file_name = this->path;
++
++        if (prefs.get_hide_full_path()) {
++            wxFileName file_path(this->path);
++            file_name = file_path.GetFullName();
++        }
++
+         dc.SetFont(small_font);
+         dc.DrawText(
+-            trim(dc, this->path, w - LPAD - RPAD, false),
++            trim(dc, file_name, w - LPAD - RPAD, false),
+             LPAD,
+             TPAD - 2 * GAP - normal_height - large_height
+         );

@@ -1,0 +1,20 @@
+From 2627007c1b9eebe58431b8c455c2e9f2c1c8cee1 Mon Sep 17 00:00:00 2001
+From: Hannes Braun <hannes@hannesbraun.net>
+Date: Thu, 9 Oct 2025 20:25:51 +0200
+Subject: [PATCH] Add missing cstdint include
+
+---
+ src/spek-audio.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/spek-audio.h b/src/spek-audio.h
+index 53e3cdf2..d610d25b 100644
+--- a/src/spek-audio.h
++++ b/src/spek-audio.h
+@@ -1,5 +1,6 @@
+ #pragma once
+ 
++#include <cstdint>
+ #include <memory>
+ #include <ostream>
+ #include <string>

@@ -1,0 +1,105 @@
+From d7b01b3dbdf7b4f54d47ab3cdf8fc3edb53d7c0f Mon Sep 17 00:00:00 2001
+From: Mike Wang <mikewang000000@gmail.com>
+Date: Thu, 6 Feb 2025 01:16:42 +0800
+Subject: [PATCH] chore: Bump dependencies
+
+---
+ .github/workflows/ci.yml       | 2 ++
+ dist/debian/control            | 8 ++++----
+ dist/debian/control.ci         | 2 +-
+ dist/osx/cross/install_deps.sh | 2 +-
+ dist/osx/install_deps.sh       | 2 +-
+ dist/win/install_deps.sh       | 4 ++--
+ 6 files changed, 11 insertions(+), 9 deletions(-)
+
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 5119ff2..7bfe82f 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -16,6 +16,7 @@ jobs:
+       - name: Install dependencies
+         run: |
+           apt update
++          apt full-upgrade -y
+           apt install -y g++ make pkg-config libtool intltool libwxgtk3.2-dev wx-common libavcodec-dev libavformat-dev
+       - name: Compile and bundle application
+         run: |
+@@ -108,6 +109,7 @@ jobs:
+       - name: Install dependencies
+         run: |
+           apt update
++          apt full-upgrade -y
+           apt install -y g++ make pkg-config libtool intltool libwxgtk3.2-dev wx-common libavcodec-dev libavformat-dev
+       - name: Run tests
+         run: |
+diff --git a/dist/debian/control b/dist/debian/control
+index 87ec9f4..23a1422 100644
+--- a/dist/debian/control
++++ b/dist/debian/control
+@@ -6,10 +6,10 @@ Build-Depends: debhelper (>= 9),
+                autotools-dev,
+                pkg-config,
+                intltool (>= 0.35),
+-               libavcodec-dev (>= 10:5.0~),
+-               libavformat-dev (>= 10:5.0~),
+-               libavutil-dev (>= 10:5.0~),
+-               libwxgtk3.0-dev,
++               libavcodec-dev (>= 7:5.0.1),
++               libavformat-dev (>= 7:5.0.1),
++               libavutil-dev (>= 7:5.0.1),
++               libwxgtk3.2-dev,
+                wx-common
+ Standards-Version: 3.9.6
+ Homepage: https://github.com/MikeWang000000/spek-X
+diff --git a/dist/debian/control.ci b/dist/debian/control.ci
+index 2fabc44..3cd6c98 100644
+--- a/dist/debian/control.ci
++++ b/dist/debian/control.ci
+@@ -5,5 +5,5 @@ Priority: optional
+ Maintainer: MikeWang000000 <mikewang000000@gmail.com>
+ Homepage: https://github.com/MikeWang000000/spek-X
+ Architecture: amd64
+-Depends: libavcodec59, libavformat59, libavutil57, libc6, libgcc-s1, libstdc++6, libwxbase3.2-0, libwxgtk3.2-0
++Depends: libavcodec61, libavformat61, libavutil59, libc6, libgcc-s1, libstdc++6, libwxbase3.2-1t64, libwxbase3.2-1t64
+ Description: Spek-X helps to analyse your audio files by showing their spectrogram.
+diff --git a/dist/osx/cross/install_deps.sh b/dist/osx/cross/install_deps.sh
+index ac7ef51..c45dae2 100755
+--- a/dist/osx/cross/install_deps.sh
++++ b/dist/osx/cross/install_deps.sh
+@@ -13,7 +13,7 @@ EOF
+     exit 1
+ fi
+ 
+-FFMPEG_VER="7.0"
++FFMPEG_VER="7.1"
+ PREFIX="/usr/local"
+ 
+ # Check Homebrew
+diff --git a/dist/osx/install_deps.sh b/dist/osx/install_deps.sh
+index 728a838..0051625 100755
+--- a/dist/osx/install_deps.sh
++++ b/dist/osx/install_deps.sh
+@@ -4,7 +4,7 @@
+ # Check README.md in this directory for instructions.
+ 
+ # Adjust these variables if necessary.
+-FFMPEG_VER="7.0"
++FFMPEG_VER="7.1"
+ PREFIX="/usr/local"
+ 
+ # Check Homebrew
+diff --git a/dist/win/install_deps.sh b/dist/win/install_deps.sh
+index 89ef463..241739e 100755
+--- a/dist/win/install_deps.sh
++++ b/dist/win/install_deps.sh
+@@ -4,8 +4,8 @@
+ # Check README.md in this directory for instructions.
+ 
+ # Adjust these variables if necessary.
+-WX_VER="3.2.5"
+-FFMPEG_VER="7.0"
++WX_VER="3.2.6"
++FFMPEG_VER="7.1"
+ PREFIX="$MINGW_PREFIX"
+ 
+ # Check the envrionment variables

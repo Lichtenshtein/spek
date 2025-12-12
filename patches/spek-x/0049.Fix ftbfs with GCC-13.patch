@@ -1,0 +1,20 @@
+From c9be327e2dda85bb4478e82dd18c03c7d309113b Mon Sep 17 00:00:00 2001
+From: Matteo Bini <40460686+matteobin@users.noreply.github.com>
+Date: Sat, 15 Jul 2023 20:16:02 +0000
+Subject: [PATCH] Fix ftbfs with GCC-13 (alexkay/spek#289)
+
+See Debian bug #1037864
+<https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1037864>
+---
+ tests/perf.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tests/perf.cc b/tests/perf.cc
+index 469d2da..aa85eb2 100644
+--- a/tests/perf.cc
++++ b/tests/perf.cc
+@@ -1,3 +1,4 @@
++#include <cstdint>
+ #include <cstdlib>
+ #include <iostream>
+ #include <fstream>

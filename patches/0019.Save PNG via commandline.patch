@@ -1,0 +1,224 @@
+From cf02f3c4c4bf794a479dcb8939546c3d06a83786 Mon Sep 17 00:00:00 2001
+From: withmorten <morten.with@gmail.com>
+Date: Fri, 6 Apr 2018 17:00:16 +0200
+Subject: [PATCH] Save PNG via commandline
+
+---
+ src/spek-spectrogram.cc |  9 ++++-
+ src/spek-spectrogram.h  |  3 +-
+ src/spek-window.cc      |  6 ++--
+ src/spek-window.h       |  3 +-
+ src/spek.cc             | 73 ++++++++++++++++++++++++++++++++++++++---
+ 5 files changed, 83 insertions(+), 11 deletions(-)
+
+diff --git a/src/spek-spectrogram.cc b/src/spek-spectrogram.cc
+index d7574c96..aceb1705 100644
+--- a/src/spek-spectrogram.cc
++++ b/src/spek-spectrogram.cc
+@@ -73,10 +73,11 @@ SpekSpectrogram::~SpekSpectrogram()
+     this->stop();
+ }
+ 
+-void SpekSpectrogram::open(const wxString& path)
++void SpekSpectrogram::open(const wxString& path, const wxString& pngpath)
+ {
+     this->path = path;
++    this->pngpath = pngpath;
+     this->stream = 0;
+     this->channel = 0;
+     start();
+     Refresh();
+@@ -180,6 +181,12 @@ void SpekSpectrogram::on_have_sample(SpekHaveSampleEvent& event)
+ 
+     if (sample == -1) {
+         this->stop();
++
++        if (!this->pngpath.IsEmpty()) {
++            this->save(this->pngpath);
++            this->GetParent()->Close(true);
++        }
++
+         return;
+     }
+ 
+diff --git a/src/spek-spectrogram.h b/src/spek-spectrogram.h
+index 206f9457..478a29e9 100644
+--- a/src/spek-spectrogram.h
++++ b/src/spek-spectrogram.h
+@@ -17,7 +17,7 @@ class SpekSpectrogram : public wxWindow
+ public:
+     SpekSpectrogram(wxFrame *parent);
+     ~SpekSpectrogram();
+-    void open(const wxString& path);
++    void open(const wxString& path, const wxString& pngpath);
+     void save(const wxString& path);
+ 
+ private:
+@@ -39,6 +39,7 @@ class SpekSpectrogram : public wxWindow
+     int channel;
+     enum window_function window_function;
+     wxString path;
++    wxString pngpath;
+     wxString desc;
+     double duration;
+     int sample_rate;
+diff --git a/src/spek-window.cc b/src/spek-window.cc
+index 9feba79a..92008390 100644
+--- a/src/spek-window.cc
++++ b/src/spek-window.cc
+@@ -51,8 +51,8 @@ class SpekDropTarget : public wxFileDropTarget
+     SpekWindow *window;
+ };
+ 
+-SpekWindow::SpekWindow(int width, int height, const wxString& path) :
+-    wxFrame(NULL, -1, wxEmptyString, wxDefaultPosition, wxSize(width, height)), path(path)
++SpekWindow::SpekWindow(int width, int height, const wxString& path, const wxString& pngpath) :
++    wxFrame(NULL, -1, wxEmptyString, wxDefaultPosition, wxSize(width, height)), path(path), pngpath(pngpath)
+ {
+     this->description = _("Spek - Acoustic Spectrum Analyser");
+     SetTitle(this->description);
+@@ -161,7 +161,7 @@ void SpekWindow::open(const wxString& path)
+         wxString title = wxString::Format(_("Spek - %s"), full_name.c_str());
+         SetTitle(title);
+ 
+-        this->spectrogram->open(path);
++        this->spectrogram->open(path, this->pngpath);
+     }
+ }
+ 
+diff --git a/src/spek-window.h b/src/spek-window.h
+index 94e65c37..69a5b289 100644
+--- a/src/spek-window.h
++++ b/src/spek-window.h
+@@ -7,7 +7,7 @@ class SpekSpectrogram;
+ class SpekWindow : public wxFrame
+ {
+ public:
+-    SpekWindow(int width, int height, const wxString& path);
++    SpekWindow(int width, int height, const wxString& path, const wxString& pngpath);
+     void open(const wxString& path);
+ 
+ private:
+@@ -23,6 +23,7 @@ class SpekWindow : public wxFrame
+ 
+     SpekSpectrogram *spectrogram;
+     wxString path;
++    wxString pngpath;
+     wxString cur_dir;
+     wxString description;
+ 
+diff --git a/src/spek.cc b/src/spek.cc
+index 76f93ea6..9906ff69 100644
+--- a/src/spek.cc
++++ b/src/spek.cc
+@@ -23,6 +23,10 @@ class Spek: public wxApp
+ private:
+     SpekWindow *window;
+     wxString path;
++    wxString pngpath;
++#ifdef OS_OSX
++    bool cmdcall = false;
++#endif
+     bool quit;
+ };
+ 
+@@ -35,7 +39,11 @@ bool Spek::OnInit()
+ 
+     spek_artwork_init();
+     spek_platform_init();
+-    SpekPreferences::get().init();
++
++    SpekPreferences& prefs = SpekPreferences::get();
++    prefs.init();
++    long width = prefs.get_window_width();
++    long height = prefs.get_window_height();
+ 
+     static const wxCmdLineEntryDesc desc[] = {{
+             wxCMD_LINE_SWITCH,
+@@ -58,6 +66,27 @@ bool Spek::OnInit()
+             "FILE",
+             wxCMD_LINE_VAL_STRING,
+             wxCMD_LINE_PARAM_OPTIONAL,
++        }, {
++            wxCMD_LINE_PARAM,
++            NULL,
++            NULL,
++            "PNG",
++            wxCMD_LINE_VAL_STRING,
++            wxCMD_LINE_PARAM_OPTIONAL
++        },{
++            wxCMD_LINE_PARAM,
++            NULL,
++            NULL,
++            "width",
++            wxCMD_LINE_VAL_NUMBER,
++            wxCMD_LINE_PARAM_OPTIONAL
++        },{
++            wxCMD_LINE_PARAM,
++            NULL,
++            NULL,
++            "height",
++            wxCMD_LINE_VAL_NUMBER,
++            wxCMD_LINE_PARAM_OPTIONAL
+         },
+         wxCMD_LINE_DESC_END,
+     };
+@@ -89,12 +118,46 @@ bool Spek::OnInit()
+     }
+     if (parser.GetParamCount()) {
+         this->path = parser.GetParam();
++#ifdef OS_OSX
++        this->cmdcall = true;
++#endif
+     }
++    if (parser.GetParamCount() > 1) {
++        wxString pngpath = parser.GetParam(1);
++        wxFileName png_path(pngpath);
++        png_path.MakeAbsolute();
++        wxFileName file_path(this->path);
+ 
+-    // Checking prefs can probably be solved differently.
+-    SpekPreferences& prefs = SpekPreferences::get();
++        if (!(png_path.IsDirWritable() || png_path.IsFileWritable())) {
++            msgout->Printf(_("PNG \"%s\" is not writable"), pngpath);
++#ifndef OS_WIN
++            msgout->Printf("\n");
++#endif
++            this->quit = true;
++            return false;
++        }
++        if (png_path.SameAs(file_path)) {
++            msgout->Printf(_("PNG \"%s\" is same as FILE \"%s\""), pngpath, this->path);
++#ifndef OS_WIN
++            msgout->Printf("\n");
++#endif
++            this->quit = true;
++            return false;
++        }
++
++        this->pngpath = pngpath;
++    }
++    if (parser.GetParamCount() > 3) {
++        wxString width_str = parser.GetParam(2);
++        wxString height_str = parser.GetParam(3);
++
++        if (!(width_str.ToLong(&width) && height_str.ToLong(&height))) {
++            width = prefs.get_window_width();
++            height = prefs.get_window_height();
++        }
++    }
+ 
+-    this->window = new SpekWindow(prefs.get_window_width(), prefs.get_window_height(), this->path);
++    this->window = new SpekWindow(width, height, this->path, this->pngpath);
+     this->window->Show(true);
+     SetTopWindow(this->window);
+     return true;
+@@ -112,7 +175,7 @@ int Spek::OnRun()
+ #ifdef OS_OSX
+ void Spek::MacOpenFiles(const wxArrayString& files)
+ {
+-    if (files.GetCount() == 1) {
++    if (!this->cmdcall && files.GetCount() == 1) {
+         this->window->open(files[0]);
+     }
+ }

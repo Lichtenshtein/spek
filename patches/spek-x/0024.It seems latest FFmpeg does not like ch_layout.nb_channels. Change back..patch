@@ -1,0 +1,23 @@
+From ba7508084648b30787c1508d30207e0303864528 Mon Sep 17 00:00:00 2001
+From: MikeWang000000 <mikewang000000@gmail.com>
+Date: Sat, 25 Jun 2022 13:14:37 +0800
+Subject: [PATCH] It seems latest FFmpeg does not like ch_layout.nb_channels.
+ Change back.
+
+---
+ src/spek-audio.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/spek-audio.cc b/src/spek-audio.cc
+index 0761bde..837dcf5 100644
+--- a/src/spek-audio.cc
++++ b/src/spek-audio.cc
+@@ -160,7 +160,7 @@ std::unique_ptr<AudioFile> Audio::open(const std::string& file_name, int stream)
+         if (bits_per_sample) {
+             bit_rate = 0;
+         }
+-        channels = codecpar->ch_layout.nb_channels;
++        channels = codecpar->channels;
+ 
+         if (avstream->duration != AV_NOPTS_VALUE) {
+             duration = avstream->duration * av_q2d(avstream->time_base);

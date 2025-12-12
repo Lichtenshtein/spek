@@ -1,0 +1,127 @@
+From 8bf03d28f1400b81685285cec8cd29ccd0dc6f4d Mon Sep 17 00:00:00 2001
+From: withmorten <morten.with@gmail.com>
+Date: Fri, 7 Jul 2017 12:10:25 +0200
+Subject: [PATCH] Remove DFT function and window size from info bar for now
+
+---
+ src/spek-audio.cc       |  2 +-
+ src/spek-pipeline.cc    | 44 ++++++++++++++++++++---------------------
+ src/spek-spectrogram.cc | 18 +++++++++++++++++
+ 3 files changed, 41 insertions(+), 23 deletions(-)
+
+diff --git a/src/spek-audio.cc b/src/spek-audio.cc
+index f3893c18..513f2ebb 100644
+--- a/src/spek-audio.cc
++++ b/src/spek-audio.cc
+@@ -157,7 +157,7 @@ std::unique_ptr<AudioFile> Audio::open(const std::string& file_name, int stream)
+             // These decoders set both bps and bitrate.
+             bits_per_sample = 0;
+         }
+-        if (bits_per_sample) {
++        if (codec_context->codec_id == AV_CODEC_ID_ALAC) {
+             bit_rate = 0;
+         }
+         channels = codec_context->channels;
+diff --git a/src/spek-pipeline.cc b/src/spek-pipeline.cc
+index aaa1cbca..1f9c6fc8 100644
+--- a/src/spek-pipeline.cc
++++ b/src/spek-pipeline.cc
+@@ -205,27 +205,27 @@ std::string spek_pipeline_desc(const struct spek_pipeline *pipeline)
+         ));
+     }
+ 
+-    if (pipeline->file->get_error() == AudioError::OK) {
+-        items.push_back(std::string(wxString::Format(wxT("W:%i"), pipeline->nfft).utf8_str()));
+-
+-        std::string window_function_name;
+-        switch (pipeline->window_function) {
+-        case WINDOW_HANN:
+-            window_function_name = std::string("Hann");
+-            break;
+-        case WINDOW_HAMMING:
+-            window_function_name = std::string("Hamming");
+-            break;
+-        case WINDOW_BLACKMAN_HARRIS:
+-            window_function_name = std::string("Blackman–Harris");
+-            break;
+-        default:
+-            assert(false);
+-        }
+-        if (window_function_name.size()) {
+-            items.push_back("F:" + window_function_name);
+-        }
+-    }
++    // if (pipeline->file->get_error() == AudioError::OK) {
++        // items.push_back(std::string(wxString::Format(wxT("W:%i"), pipeline->nfft).utf8_str()));
++
++        // std::string window_function_name;
++        // switch (pipeline->window_function) {
++        // case WINDOW_HANN:
++            // window_function_name = std::string("Hann");
++            // break;
++        // case WINDOW_HAMMING:
++            // window_function_name = std::string("Hamming");
++            // break;
++        // case WINDOW_BLACKMAN_HARRIS:
++            // window_function_name = std::string("Blackman-Harris");
++            // break;
++        // default:
++            // assert(false);
++        // }
++        // if (window_function_name.size()) {
++            // items.push_back("F:" + window_function_name);
++        // }
++    // }
+ 
+     std::string desc;
+     for (const auto& item : items) {
+@@ -268,7 +268,7 @@ std::string spek_pipeline_desc(const struct spek_pipeline *pipeline)
+     auto error_string = std::string(error.utf8_str());
+     if (desc.empty()) {
+         desc = error_string;
+-    } else if (pipeline->stream < pipeline->file->get_streams()) {
++    } else if (pipeline->stream < pipeline->file->get_streams() && pipeline->file->get_streams() != 1) {
+         desc = std::string(
+             wxString::Format(
+                 // TRANSLATORS: first %d is the stream number, second %d is the
+diff --git a/src/spek-spectrogram.cc b/src/spek-spectrogram.cc
+index 1b321c9c..62707f04 100644
+--- a/src/spek-spectrogram.cc
++++ b/src/spek-spectrogram.cc
+@@ -91,6 +91,16 @@ void SpekSpectrogram::save(const wxString& path)
+ void SpekSpectrogram::on_char(wxKeyEvent& evt)
+ {
+     switch (evt.GetKeyCode()) {
++    // case 'c':
++        // if (this->channels) {
++            // this->channel = (this->channel + 1) % this->channels;
++        // }
++        // break;
++    // case 'C':
++        // if (this->channels) {
++            // this->channel = (this->channel - 1 + this->channels) % this->channels;
++        // }
++        // break;
+     case 'f':
+         this->window_function = (enum window_function) ((this->window_function + 1) % WINDOW_COUNT);
+         break;
+@@ -114,11 +124,19 @@ void SpekSpectrogram::on_char(wxKeyEvent& evt)
+         break;
+     case 's':
+         if (this->streams) {
++            if (this->streams == 1) {
++                evt.Skip();
++                return;
++            }
+             this->stream = (this->stream + 1) % this->streams;
+         }
+         break;
+     case 'S':
+         if (this->streams) {
++            if (this->streams == 1) {
++                evt.Skip();
++                return;
++            }
+             this->stream = (this->stream - 1 + this->streams) % this->streams;
+         }
+         break;

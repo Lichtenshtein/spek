@@ -1,0 +1,4184 @@
+From 64cfcb7ce0d9b0ae60ea28a4b25cef515ff8485d Mon Sep 17 00:00:00 2001
+From: withmorten <morten.with@gmail.com>
+Date: Sun, 3 Dec 2017 21:06:56 +0100
+Subject: [PATCH] Add languages from spek/spek transifex repository
+
+---
+ dist/freebsd/pkg-plist         |  13 ++
+ dist/osx/bundle.sh             |   2 +-
+ dist/win/bundle.sh             |   2 +-
+ po/LINGUAS                     |   6 +
+ po/bs.po                       | 215 +++++++++++++++++++++++++++++++++
+ po/ca.po                       |  44 +++----
+ po/cs.po                       |  44 +++----
+ po/da.po                       |  38 +++---
+ po/de.po                       |  38 +++---
+ po/el.po                       |  40 +++---
+ po/eo.po                       |  38 +++---
+ po/es.po                       |  44 +++----
+ po/fi.po                       |  42 +++----
+ po/fr.po                       |   4 +-
+ po/gl.po                       |  38 +++---
+ po/he.po                       | 213 ++++++++++++++++++++++++++++++++
+ po/hu.po                       | 213 ++++++++++++++++++++++++++++++++
+ po/id.po                       | 211 ++++++++++++++++++++++++++++++++
+ po/it.po                       |  38 +++---
+ po/ja.po                       |   4 +-
+ po/ko.po                       | 212 ++++++++++++++++++++++++++++++++
+ po/lv.po                       |   8 +-
+ po/nb.po                       |  40 +++---
+ po/nl.po                       |  58 ++++-----
+ po/pl.po                       |  54 +++++----
+ po/pt_BR.po                    |  42 +++----
+ po/ru.po                       |  42 ++++---
+ po/sk.po                       |  42 +++----
+ po/sr@latin.po                 |  38 +++---
+ po/sv.po                       |  38 +++---
+ po/th.po                       | 211 ++++++++++++++++++++++++++++++++
+ po/tr.po                       |  40 +++---
+ po/uk.po                       |  38 +++---
+ po/vi.po                       |  38 +++---
+ po/zh_CN.po                    |  38 +++---
+ po/zh_TW.po                    |  38 +++---
+ src/spek-preferences-dialog.cc |   6 +
+ 37 files changed, 1788 insertions(+), 482 deletions(-)
+ create mode 100644 po/bs.po
+ create mode 100644 po/he.po
+ create mode 100644 po/hu.po
+ create mode 100644 po/id.po
+ create mode 100644 po/ko.po
+ create mode 100644 po/th.po
+
+diff --git a/dist/freebsd/pkg-plist b/dist/freebsd/pkg-plist
+index 0dc2a24d..87b938e6 100644
+--- a/dist/freebsd/pkg-plist
++++ b/dist/freebsd/pkg-plist
+@@ -6,20 +6,33 @@ share/icons/hicolor/24x24/apps/spek.png
+ share/icons/hicolor/32x32/apps/spek.png
+ share/icons/hicolor/48x48/apps/spek.png
+ share/icons/hicolor/scalable/apps/spek.svg
++%%NLS%%share/locale/bs/LC_MESSAGES/spek.mo
++%%NLS%%share/locale/ca/LC_MESSAGES/spek.mo
+ %%NLS%%share/locale/cs/LC_MESSAGES/spek.mo
+ %%NLS%%share/locale/da/LC_MESSAGES/spek.mo
+ %%NLS%%share/locale/de/LC_MESSAGES/spek.mo
++%%NLS%%share/locale/el/LC_MESSAGES/spek.mo
+ %%NLS%%share/locale/eo/LC_MESSAGES/spek.mo
+ %%NLS%%share/locale/es/LC_MESSAGES/spek.mo
++%%NLS%%share/locale/fi/LC_MESSAGES/spek.mo
+ %%NLS%%share/locale/fr/LC_MESSAGES/spek.mo
++%%NLS%%share/locale/gl/LC_MESSAGES/spek.mo
++%%NLS%%share/locale/he/LC_MESSAGES/spek.mo
++%%NLS%%share/locale/hu/LC_MESSAGES/spek.mo
++%%NLS%%share/locale/id/LC_MESSAGES/spek.mo
+ %%NLS%%share/locale/it/LC_MESSAGES/spek.mo
+ %%NLS%%share/locale/ja/LC_MESSAGES/spek.mo
++%%NLS%%share/locale/ko/LC_MESSAGES/spek.mo
++%%NLS%%share/locale/lv/LC_MESSAGES/spek.mo
+ %%NLS%%share/locale/nb/LC_MESSAGES/spek.mo
+ %%NLS%%share/locale/nl/LC_MESSAGES/spek.mo
+ %%NLS%%share/locale/pl/LC_MESSAGES/spek.mo
+ %%NLS%%share/locale/pt_BR/LC_MESSAGES/spek.mo
+ %%NLS%%share/locale/ru/LC_MESSAGES/spek.mo
++%%NLS%%share/locale/sk/LC_MESSAGES/spek.mo
++%%NLS%%share/locale/sr@latin/LC_MESSAGES/spek.mo
+ %%NLS%%share/locale/sv/LC_MESSAGES/spek.mo
++%%NLS%%share/locale/th/LC_MESSAGES/spek.mo
+ %%NLS%%share/locale/tr/LC_MESSAGES/spek.mo
+ %%NLS%%share/locale/uk/LC_MESSAGES/spek.mo
+ %%NLS%%share/locale/vi/LC_MESSAGES/spek.mo
+diff --git a/dist/osx/bundle.sh b/dist/osx/bundle.sh
+index da395c4d..ae391a08 100755
+--- a/dist/osx/bundle.sh
++++ b/dist/osx/bundle.sh
+@@ -1,6 +1,6 @@
+ #!/bin/sh
+ 
+-LANGUAGES="ca cs da de el eo es fi fr gl it ja lv nb nl pl pt_BR ru sk sr@latin sv tr uk vi zh_CN zh_TW"
++LANGUAGES="bs ca cs da de el eo es fi fr gl he hu id it ja ko lv nb nl pl pt_BR ru sk sr@latin sv th tr uk vi zh_CN zh_TW"
+ 
+ cd $(dirname $0)/../..
+ 
+diff --git a/dist/win/bundle.sh b/dist/win/bundle.sh
+index f123ed0c..e907d053 100755
+--- a/dist/win/bundle.sh
++++ b/dist/win/bundle.sh
+@@ -11,7 +11,7 @@ JOBS=3
+ ZIP=zip
+ 
+ HOST=i686-w64-mingw32.static
+-LANGUAGES="ca cs da de el eo es fi fr gl it ja lv nb nl pl pt_BR ru sk sr@latin sv tr uk vi zh_CN zh_TW"
++LANGUAGES="bs ca cs da de el eo es fi fr gl he hu id it ja ko lv nb nl pl pt_BR ru sk sr@latin sv th tr uk vi zh_CN zh_TW"
+ PATH="$MXE"/bin:$PATH
+ STRIP="$HOST"-strip
+ WINDRES="$HOST"-windres
+diff --git a/po/LINGUAS b/po/LINGUAS
+index 8d779364..868f5d65 100644
+--- a/po/LINGUAS
++++ b/po/LINGUAS
+@@ -1,5 +1,6 @@
+ # please keep this list sorted alphabetically
+ #
++bs
+ ca
+ cs
+ da
+@@ -10,8 +11,12 @@ es
+ fi
+ fr
+ gl
++he
++hu
++id
+ it
+ ja
++ko
+ lv
+ nb
+ nl
+@@ -21,6 +26,7 @@ ru
+ sk
+ sr@latin
+ sv
++th
+ tr
+ uk
+ vi
+diff --git a/po/bs.po b/po/bs.po
+new file mode 100644
+index 00000000..47f29391
+--- /dev/null
++++ b/po/bs.po
+@@ -0,0 +1,215 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# 
++# Translators:
++# Aleksandar Todorović <aleksandar.todorovic@mail.ru>, 2015
++msgid ""
++msgstr ""
++"Project-Id-Version: Spek\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-23 21:21+0000\n"
++"Last-Translator: Aleksandar Todorović <aleksandar.todorovic@mail.ru>\n"
++"Language-Team: Bosnian (http://www.transifex.com/spek/spek/language/bs/)\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Language: bs\n"
++"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
++
++#: ../data/spek.desktop.in.in.h:1
++msgid "Spek"
++msgstr "Spek"
++
++#: ../data/spek.desktop.in.in.h:2
++msgid "Spectrum Analyser"
++msgstr "Analizator spektra"
++
++#: ../data/spek.desktop.in.in.h:3
++msgid "View spectrograms of your audio files"
++msgstr "Pregledaj spektogram svojih audio datoteka"
++
++#: ../data/spek.desktop.in.in.h:4
++msgid "Spek Spectrum Analyser"
++msgstr "Spek analizator spektra"
++
++#: ../src/spek-pipeline.cc:197
++#, c-format
++msgid "%d kbps"
++msgstr "%d kbps"
++
++#: ../src/spek-pipeline.cc:202
++#, c-format
++msgid "%d Hz"
++msgstr "%d Hz"
++
++#: ../src/spek-pipeline.cc:209
++#, c-format
++msgid "%d bit"
++msgid_plural "%d bits"
++msgstr[0] "%d bit"
++msgstr[1] "%d bita"
++msgstr[2] "%d bita"
++
++#: ../src/spek-pipeline.cc:217
++#, c-format
++msgid "%d channel"
++msgid_plural "%d channels"
++msgstr[0] "%d kanal"
++msgstr[1] "%d kanala"
++msgstr[2] "%d kanala"
++
++#: ../src/spek-pipeline.cc:234
++msgid "Cannot open input file"
++msgstr "Nije moguće otvoriti datoteku"
++
++#: ../src/spek-pipeline.cc:237
++msgid "Cannot find stream info"
++msgstr "Nije moguće pronaći informacije o stream-u"
++
++#: ../src/spek-pipeline.cc:240
++msgid "The file contains no audio streams"
++msgstr "Datoteka ne sadrži audio stream"
++
++#: ../src/spek-pipeline.cc:243
++msgid "Cannot find decoder"
++msgstr "Nije moguće pronaći dekoder"
++
++#: ../src/spek-pipeline.cc:246
++msgid "Unknown duration"
++msgstr "Nepoznato trajanje"
++
++#: ../src/spek-pipeline.cc:249
++msgid "No audio channels"
++msgstr "Nema audio kanala"
++
++#: ../src/spek-pipeline.cc:252
++msgid "Cannot open decoder"
++msgstr "Nije moguće pokrenuti dekoder"
++
++#: ../src/spek-pipeline.cc:255
++msgid "Unsupported sample format"
++msgstr "Format nije podržan"
++
++#. TRANSLATORS: first %s is the error message, second %s is stream
++#. description.
++#: ../src/spek-pipeline.cc:267
++#, c-format
++msgid "%s: %s"
++msgstr "%s: %s"
++
++#: ../src/spek-preferences-dialog.cc:67
++msgid "Preferences"
++msgstr "Podešavanja"
++
++#: ../src/spek-preferences-dialog.cc:72
++msgid "(system default)"
++msgstr "(sistemski podrazumijevano)"
++
++#. TRANSLATORS: The name of a section in the Preferences dialog.
++#: ../src/spek-preferences-dialog.cc:79
++msgid "General"
++msgstr "Generalno"
++
++#: ../src/spek-preferences-dialog.cc:88
++msgid "Language:"
++msgstr "Jezik:"
++
++#: ../src/spek-preferences-dialog.cc:104
++msgid "Check for &updates"
++msgstr "Potraži &nadogradnje"
++
++#: ../src/spek-spectrogram.cc:191
++#, c-format
++msgid "%d kHz"
++msgstr "%d kHz"
++
++#: ../src/spek-spectrogram.cc:196
++#, c-format
++msgid "%d dB"
++msgstr "%d dB"
++
++#. TRANSLATORS: keep "00" unchanged, it's used to calc the text width
++#: ../src/spek-spectrogram.cc:302
++msgid "00 kHz"
++msgstr "00 kHz"
++
++#. TRANSLATORS: keep "-00" unchanged, it's used to calc the text width
++#: ../src/spek-spectrogram.cc:333
++msgid "-00 dB"
++msgstr "-00 dB"
++
++#: ../src/spek-window.cc:75
++msgid "Spek - Acoustic Spectrum Analyser"
++msgstr "Spek - Akustični analizator spektra"
++
++#: ../src/spek-window.cc:91
++msgid "&File"
++msgstr "&Datoteka"
++
++#: ../src/spek-window.cc:97
++msgid "&Edit"
++msgstr "&Uredi"
++
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
++msgid "&Help"
++msgstr "&Pomoć"
++
++#: ../src/spek-window.cc:128
++msgid "Help"
++msgstr "Pomoć"
++
++#: ../src/spek-window.cc:141
++msgid "A new version of Spek is available, click to download."
++msgstr "Dostupna je nova verzija Speka, kliknite da je preuzmete."
++
++#. TRANSLATORS: window title, %s is replaced with the file name
++#: ../src/spek-window.cc:179
++#, c-format
++msgid "Spek - %s"
++msgstr "Spek - %s"
++
++#: ../src/spek-window.cc:226
++msgid "All files"
++msgstr "Sve datoteke"
++
++#: ../src/spek-window.cc:228
++msgid "Audio files"
++msgstr "Audio datoteke"
++
++#: ../src/spek-window.cc:242
++msgid "Open File"
++msgstr "Otvori datoteku"
++
++#: ../src/spek-window.cc:264
++msgid "PNG images"
++msgstr "PNG slike"
++
++#: ../src/spek-window.cc:270
++msgid "Save Spectrogram"
++msgstr "Sačuvaj spektogram"
++
++#. Suggested name is <file_name>.png
++#: ../src/spek-window.cc:278
++msgid "Untitled"
++msgstr "Bez naslova"
++
++#. TRANSLATORS: Add your name here
++#: ../src/spek-window.cc:325
++msgid "translator-credits"
++msgstr "zasluge-za-prevod"
++
++#: ../src/spek-window.cc:331
++msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
++msgstr "Copyright (c) 2010-2013 Alexander Kojevnikov i ostali kontributori"
++
++#: ../src/spek-window.cc:334
++msgid "Spek Website"
++msgstr "Spek web sajt"
++
++#. TRANSLATORS: the %s is the package version.
++#: ../src/spek.cc:94
++#, c-format
++msgid "Spek version %s"
++msgstr "Spek verzija %s"
+diff --git a/po/ca.po b/po/ca.po
+index 9855fd2a..ae0b0967 100644
+--- a/po/ca.po
++++ b/po/ca.po
+@@ -3,16 +3,16 @@
+ # This file is distributed under the same license as the PACKAGE package.
+ # 
+ # Translators:
+-# Adolfo Jayme Barrientos <fitoschido@ubuntu.com>, 2013
+-# Adolfo Jayme Barrientos <fitoschido@ubuntu.com>, 2013
++# Adolfo Jayme Barrientos, 2013
++# Adolfo Jayme Barrientos, 2013
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-12-27 18:00+0000\n"
+-"Last-Translator: Adolfo Jayme Barrientos <fitoschido@ubuntu.com>\n"
+-"Language-Team: Catalan (http://www.transifex.com/projects/p/spek/language/ca/)\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 16:11+0000\n"
++"Last-Translator: Adolfo Jayme Barrientos\n"
++"Language-Team: Catalan (http://www.transifex.com/spek/spek/language/ca/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -143,72 +143,72 @@ msgstr "−00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek – Analitzador d’espectres acústics"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&Fitxer"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "&Edita"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "&Ajuda"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Ajuda"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "Hi ha una versió més recent del Spek disponible, feu clic per baixar-la."
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek – %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Tots els fitxers"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Fitxers d’àudio"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Obre un fitxer"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "Imatges PNG"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Desa l’espectrograma"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Sense títol"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "Adolfo Jayme Barrientos <fitoschido@ubuntu.com>, 2013"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Copyright © 2010–2013 Alexander Kojevnikov i col·laboradors"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Lloc web del Spek"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek versió %s"
+diff --git a/po/cs.po b/po/cs.po
+index 174874aa..744265ba 100644
+--- a/po/cs.po
++++ b/po/cs.po
+@@ -4,16 +4,16 @@
+ # 
+ # Translators:
+ # Alexander Kojevnikov <alexander@kojevnikov.com>, 2012
+-# fri <pavelfric@seznam.cz>, 2011
+-# fri <pavelfric@seznam.cz>, 2012
++# fri, 2011
++# fri, 2012
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
+-"Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: Czech (http://www.transifex.com/projects/p/spek/language/cs/)\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-23 18:04+0000\n"
++"Last-Translator: fri\n"
++"Language-Team: Czech (http://www.transifex.com/spek/spek/language/cs/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -146,72 +146,72 @@ msgstr "-00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - spektrální analyzátor"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&Soubor"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "Ú&pravy"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "&Nápověda"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Nápověda"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "Je dostupná nová verze Speku. Klepněte pro stažení."
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Všechny soubory"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Zvukové soubory"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Otevřít soubor"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "Obrázky PNG"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Uložit spektrogram"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Bez názvu"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "Pavel Fric"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Autorské právo (c) 2010-2013 Alexander Kojevnikov a přispěvatelé"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Stránky programu Spek"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek verze %s"
+diff --git a/po/da.po b/po/da.po
+index c22af7c4..433f9ec7 100644
+--- a/po/da.po
++++ b/po/da.po
+@@ -9,10 +9,10 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 13:48+0000\n"
+ "Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: Danish (http://www.transifex.com/projects/p/spek/language/da/)\n"
++"Language-Team: Danish (http://www.transifex.com/spek/spek/language/da/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -143,72 +143,72 @@ msgstr "-00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - akustisk spectrum analysator"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&Fil"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "&Redigér"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "&Hjælp"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Hjælp"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "En ny version af Spek er tilgængelig, tryk her for at downloade."
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Alle filer"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Lydfiler"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Åben fil"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "PNG billeder"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Gem spektrogram"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Ikke-navngivet"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "nbca"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Copyright (c) 2010-2013 Alexander Kojevnikov and bidragsydere"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Spek hjemmeside"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek version %s"
+diff --git a/po/de.po b/po/de.po
+index 46e749bf..89a66908 100644
+--- a/po/de.po
++++ b/po/de.po
+@@ -10,10 +10,10 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 09:42+0000\n"
+ "Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: German (http://www.transifex.com/projects/p/spek/language/de/)\n"
++"Language-Team: German (http://www.transifex.com/spek/spek/language/de/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -144,72 +144,72 @@ msgstr "-00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - Tonspektrum Analysator"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&Datei"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "&Bearbeiten"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "&Hilfe"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Hilfe"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "Eine neue Spek Version ist verfügbar, klicke um sie herunterzuladen."
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Alle Dateien"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Audiodateien"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Datei öffnen"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "PNG Bilddatei"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Spektrogramm speichern"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Unbenannt"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "dewey"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Copyright (c) 2010-2013 Alexander Kojevnikov und Helfer"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Spek Website"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek Version %s"
+diff --git a/po/el.po b/po/el.po
+index 12f1967e..66cd7275 100644
+--- a/po/el.po
++++ b/po/el.po
+@@ -4,15 +4,15 @@
+ # 
+ # Translators:
+ # Alexander Kojevnikov <alexander@kojevnikov.com>, 2013
+-# Wasilis Mandratzis <m.wasilis@yahoo.de>, 2013
++# Wasilis <m.wasilis@yahoo.de>, 2013
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 17:10+0000\n"
+ "Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: Greek (http://www.transifex.com/projects/p/spek/language/el/)\n"
++"Language-Team: Greek (http://www.transifex.com/spek/spek/language/el/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -143,72 +143,72 @@ msgstr "-00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - Acoustic Spectrum Analyser"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "Αρχειο"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "Επεξεργασια"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "Βοηθεια"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Βοηθεια"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "Μια νεα εκδοση του Spek ειναι διαθεσιμη, πατηστε για λυψη."
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Ολα τα αρχεια"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Αρχεια ηχου"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Ανοιγμα αρχειου"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "PNG εικονες"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Αποθήκευση φασματόγραμματος "
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Χωρίς τίτλο"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "Βασιλης Μανδρατζης "
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Πνευματική ιδιοκτησία (c) 2010-2013 Alexander Kojevnikov και συντελεστές "
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Spek Ιστοσελιδα"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek εκδοση %s"
+diff --git a/po/eo.po b/po/eo.po
+index e0820273..7c560902 100644
+--- a/po/eo.po
++++ b/po/eo.po
+@@ -9,10 +9,10 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 12:44+0000\n"
+ "Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: Esperanto (http://www.transifex.com/projects/p/spek/language/eo/)\n"
++"Language-Team: Esperanto (http://www.transifex.com/spek/spek/language/eo/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -143,72 +143,72 @@ msgstr "-00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - Akustika Spektro Analizilo"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&Dosiero"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "&Redakto"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "&Helpo"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Helpo"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "Nova versio de Spek estas disponebla, klaku por elŝuti."
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Ĉiuj dosieroj"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Sondosieroj"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Malfermi dosieron"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "PNG bildoj"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Konservi spektron"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Sentitola"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "Ryan Smith"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Kopirajto  (c) 2010-2013 Alexander Kojevnikov kaj kontribuistoj."
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Spek Retejo"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek versio %s"
+diff --git a/po/es.po b/po/es.po
+index f7c2ec66..c226230b 100644
+--- a/po/es.po
++++ b/po/es.po
+@@ -3,8 +3,8 @@
+ # This file is distributed under the same license as the PACKAGE package.
+ # 
+ # Translators:
+-# Adolfo Jayme Barrientos <fitoschido@ubuntu.com>, 2013
+-# Adolfo Jayme Barrientos <fitoschido@ubuntu.com>, 2013
++# Adolfo Jayme Barrientos, 2013
++# Adolfo Jayme Barrientos, 2013
+ # Alexander Kojevnikov <alexander@kojevnikov.com>, 2011-2012
+ # zeus <jonathan.abdiel@gmail.com>, 2012
+ # zeus <jonathan.abdiel@gmail.com>, 2011
+@@ -12,10 +12,10 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-12-27 17:55+0000\n"
+-"Last-Translator: Adolfo Jayme Barrientos <fitoschido@ubuntu.com>\n"
+-"Language-Team: Spanish (http://www.transifex.com/projects/p/spek/language/es/)\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 09:46+0000\n"
++"Last-Translator: Adolfo Jayme Barrientos\n"
++"Language-Team: Spanish (http://www.transifex.com/spek/spek/language/es/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -146,72 +146,72 @@ msgstr "−00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek – Analizador de espectro acústico"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&Archivo"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "&Editar"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "Ay&uda"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Ayuda"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "Hay una versión nueva de Spek disponible, pulse para descargarla."
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek – %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Todos los archivos"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Archivos de sonido"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Abrir un archivo"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "Imágenes PNG"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Guardar espectograma"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Sin título"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "Jonathan Gonzalez V.\nAdolfo Jayme Barrientos <fitoschido@ubuntu.com>, 2013"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Copyright © 2010–2013 Alexander Kojevnikov y colaboradores"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Sitio web de Spek"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek versión %s"
+diff --git a/po/fi.po b/po/fi.po
+index fa229db1..d490b5ed 100644
+--- a/po/fi.po
++++ b/po/fi.po
+@@ -3,15 +3,15 @@
+ # This file is distributed under the same license as the PACKAGE package.
+ # 
+ # Translators:
+-# Fintero, 2013
++# Tero Talvio, 2013
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
+-"Last-Translator: Fintero\n"
+-"Language-Team: Finnish (http://www.transifex.com/projects/p/spek/language/fi/)\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 19:46+0000\n"
++"Last-Translator: Tero Talvio\n"
++"Language-Team: Finnish (http://www.transifex.com/spek/spek/language/fi/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -142,72 +142,72 @@ msgstr "-00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - Akustinen Spektrianalysaattori"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&Tiedosto"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "&Muokkaa"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "&Ohje"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Ohje"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "Uusi versio Spekistä on saatavilla, lataa tästä."
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Kaikki tiedostot"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Äänitiedostot"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Avaa tiedosto"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "PNG-kuva"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Tallenna spektrogrammi"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Nimetön"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "Tero Talvio"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Tekijänoikeuden haltija (c) 2010-2013 Alexander Kojevnikov ja avustajat"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Spek-verkkosivusto"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek versio %s"
+diff --git a/po/fr.po b/po/fr.po
+index 5a362d69..0272853e 100644
+--- a/po/fr.po
++++ b/po/fr.po
+@@ -13,9 +13,9 @@ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2014-03-29 13:05-0700\n"
+-"PO-Revision-Date: 2015-03-25 22:57+0000\n"
++"PO-Revision-Date: 2017-09-19 09:46+0000\n"
+ "Last-Translator: Vincent A <doezerx@gmail.com>\n"
+-"Language-Team: French (http://www.transifex.com/projects/p/spek/language/fr/)\n"
++"Language-Team: French (http://www.transifex.com/spek/spek/language/fr/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+diff --git a/po/gl.po b/po/gl.po
+index 69166572..13afa28c 100644
+--- a/po/gl.po
++++ b/po/gl.po
+@@ -9,10 +9,10 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 16:11+0000\n"
+ "Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: Galician (http://www.transifex.com/projects/p/spek/language/gl/)\n"
++"Language-Team: Galician (http://www.transifex.com/spek/spek/language/gl/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -143,72 +143,72 @@ msgstr "-00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - Analizador de espectro acústico"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&Ficheiro"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "&Editar"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "&Axuda"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Axuda"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "Unha nova versión de Spek está dispoñíbel, prema para descargar."
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Todos os ficheiros"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Ficheiros de son"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Abrir ficheiro"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "Imaxes PNG"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Gardar espectrograma"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Sen título"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "Antón Méixome"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Dereitos de autor (c) 2010-2013 Alexander Kojevnikov e colaboradores"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Sitio web do Spek"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Versión de Spek %s"
+diff --git a/po/he.po b/po/he.po
+new file mode 100644
+index 00000000..544576dd
+--- /dev/null
++++ b/po/he.po
+@@ -0,0 +1,213 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# 
++# Translators:
++# YAKIR RACHMANY <yakirra@gmail.com>, 2014
++msgid ""
++msgstr ""
++"Project-Id-Version: Spek\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-23 20:29+0000\n"
++"Last-Translator: YAKIR RACHMANY <yakirra@gmail.com>\n"
++"Language-Team: Hebrew (http://www.transifex.com/spek/spek/language/he/)\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Language: he\n"
++"Plural-Forms: nplurals=2; plural=(n != 1);\n"
++
++#: ../data/spek.desktop.in.in.h:1
++msgid "Spek"
++msgstr "Spek"
++
++#: ../data/spek.desktop.in.in.h:2
++msgid "Spectrum Analyser"
++msgstr "ספקטרום אנלייזר"
++
++#: ../data/spek.desktop.in.in.h:3
++msgid "View spectrograms of your audio files"
++msgstr "הצג ספקטרום מתוך קבצי השמע שלך"
++
++#: ../data/spek.desktop.in.in.h:4
++msgid "Spek Spectrum Analyser"
++msgstr "Spek Spectrum Analyser"
++
++#: ../src/spek-pipeline.cc:197
++#, c-format
++msgid "%d kbps"
++msgstr "%d kbps"
++
++#: ../src/spek-pipeline.cc:202
++#, c-format
++msgid "%d Hz"
++msgstr "%d Hz"
++
++#: ../src/spek-pipeline.cc:209
++#, c-format
++msgid "%d bit"
++msgid_plural "%d bits"
++msgstr[0] "%d bit"
++msgstr[1] "%d bits"
++
++#: ../src/spek-pipeline.cc:217
++#, c-format
++msgid "%d channel"
++msgid_plural "%d channels"
++msgstr[0] "%d channel"
++msgstr[1] "%d channels"
++
++#: ../src/spek-pipeline.cc:234
++msgid "Cannot open input file"
++msgstr "לא ניתן לפתוח קובץ זה"
++
++#: ../src/spek-pipeline.cc:237
++msgid "Cannot find stream info"
++msgstr "לא ניתן למצוא מידע זרימה"
++
++#: ../src/spek-pipeline.cc:240
++msgid "The file contains no audio streams"
++msgstr "הקובץ אינו מכיל ערוצי שמע"
++
++#: ../src/spek-pipeline.cc:243
++msgid "Cannot find decoder"
++msgstr "לא ניתן למצוא מקודד"
++
++#: ../src/spek-pipeline.cc:246
++msgid "Unknown duration"
++msgstr "אורך לא ידוע"
++
++#: ../src/spek-pipeline.cc:249
++msgid "No audio channels"
++msgstr "אין ערוצי שמע"
++
++#: ../src/spek-pipeline.cc:252
++msgid "Cannot open decoder"
++msgstr "לא ניתן לפתוח קידוד זה"
++
++#: ../src/spek-pipeline.cc:255
++msgid "Unsupported sample format"
++msgstr "פורמט דגימה לא נתמך"
++
++#. TRANSLATORS: first %s is the error message, second %s is stream
++#. description.
++#: ../src/spek-pipeline.cc:267
++#, c-format
++msgid "%s: %s"
++msgstr "%s: %s"
++
++#: ../src/spek-preferences-dialog.cc:67
++msgid "Preferences"
++msgstr "הגדרות"
++
++#: ../src/spek-preferences-dialog.cc:72
++msgid "(system default)"
++msgstr "(מערכת ברירת המחדל)"
++
++#. TRANSLATORS: The name of a section in the Preferences dialog.
++#: ../src/spek-preferences-dialog.cc:79
++msgid "General"
++msgstr "ראשי"
++
++#: ../src/spek-preferences-dialog.cc:88
++msgid "Language:"
++msgstr "שפה:"
++
++#: ../src/spek-preferences-dialog.cc:104
++msgid "Check for &updates"
++msgstr "בדוק &עדכונים"
++
++#: ../src/spek-spectrogram.cc:191
++#, c-format
++msgid "%d kHz"
++msgstr "%d kHz"
++
++#: ../src/spek-spectrogram.cc:196
++#, c-format
++msgid "%d dB"
++msgstr "%d dB"
++
++#. TRANSLATORS: keep "00" unchanged, it's used to calc the text width
++#: ../src/spek-spectrogram.cc:302
++msgid "00 kHz"
++msgstr "00 kHz"
++
++#. TRANSLATORS: keep "-00" unchanged, it's used to calc the text width
++#: ../src/spek-spectrogram.cc:333
++msgid "-00 dB"
++msgstr "-00 dB"
++
++#: ../src/spek-window.cc:75
++msgid "Spek - Acoustic Spectrum Analyser"
++msgstr "Spek - Acoustic Spectrum Analyser"
++
++#: ../src/spek-window.cc:91
++msgid "&File"
++msgstr "&קובץ"
++
++#: ../src/spek-window.cc:97
++msgid "&Edit"
++msgstr "&עריכה"
++
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
++msgid "&Help"
++msgstr "&עזרה"
++
++#: ../src/spek-window.cc:128
++msgid "Help"
++msgstr "עזרה"
++
++#: ../src/spek-window.cc:141
++msgid "A new version of Spek is available, click to download."
++msgstr "גרסה חדשה זמינה, לחץ להורדה."
++
++#. TRANSLATORS: window title, %s is replaced with the file name
++#: ../src/spek-window.cc:179
++#, c-format
++msgid "Spek - %s"
++msgstr "Spek - %s"
++
++#: ../src/spek-window.cc:226
++msgid "All files"
++msgstr "כל הקבצים"
++
++#: ../src/spek-window.cc:228
++msgid "Audio files"
++msgstr "קבצי שמע"
++
++#: ../src/spek-window.cc:242
++msgid "Open File"
++msgstr "פתח קובץ"
++
++#: ../src/spek-window.cc:264
++msgid "PNG images"
++msgstr "תמונות PNG"
++
++#: ../src/spek-window.cc:270
++msgid "Save Spectrogram"
++msgstr "שמור ספקטרום"
++
++#. Suggested name is <file_name>.png
++#: ../src/spek-window.cc:278
++msgid "Untitled"
++msgstr "ללא כותרת"
++
++#. TRANSLATORS: Add your name here
++#: ../src/spek-window.cc:325
++msgid "translator-credits"
++msgstr "קרדיטים-למתרגמים"
++
++#: ../src/spek-window.cc:331
++msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
++msgstr "כל הזכויות שמורות: (c) 2010-2013 \nאלכסנדר קוג'בניקוב והכותבים"
++
++#: ../src/spek-window.cc:334
++msgid "Spek Website"
++msgstr "Spek אתר הבית"
++
++#. TRANSLATORS: the %s is the package version.
++#: ../src/spek.cc:94
++#, c-format
++msgid "Spek version %s"
++msgstr "Spek גרסה %s"
+diff --git a/po/hu.po b/po/hu.po
+new file mode 100644
+index 00000000..0161a364
+--- /dev/null
++++ b/po/hu.po
+@@ -0,0 +1,213 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# 
++# Translators:
++# Gergő Seregély <blacksurfer167@gmail.com>, 2017
++msgid ""
++msgstr ""
++"Project-Id-Version: Spek\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-10-21 09:16+0000\n"
++"Last-Translator: Gergő Seregély <blacksurfer167@gmail.com>\n"
++"Language-Team: Hungarian (http://www.transifex.com/spek/spek/language/hu/)\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Language: hu\n"
++"Plural-Forms: nplurals=2; plural=(n != 1);\n"
++
++#: ../data/spek.desktop.in.in.h:1
++msgid "Spek"
++msgstr "Spek"
++
++#: ../data/spek.desktop.in.in.h:2
++msgid "Spectrum Analyser"
++msgstr "Spektrum Analizáló"
++
++#: ../data/spek.desktop.in.in.h:3
++msgid "View spectrograms of your audio files"
++msgstr "Spektrogrammot mutat az audió fájljaidról"
++
++#: ../data/spek.desktop.in.in.h:4
++msgid "Spek Spectrum Analyser"
++msgstr "Spek Spektrum Analizáló"
++
++#: ../src/spek-pipeline.cc:197
++#, c-format
++msgid "%d kbps"
++msgstr "%d kbps"
++
++#: ../src/spek-pipeline.cc:202
++#, c-format
++msgid "%d Hz"
++msgstr "%d Hz"
++
++#: ../src/spek-pipeline.cc:209
++#, c-format
++msgid "%d bit"
++msgid_plural "%d bits"
++msgstr[0] "%d bit"
++msgstr[1] "%d bitek"
++
++#: ../src/spek-pipeline.cc:217
++#, c-format
++msgid "%d channel"
++msgid_plural "%d channels"
++msgstr[0] "%d csatorna"
++msgstr[1] "%d csatornák"
++
++#: ../src/spek-pipeline.cc:234
++msgid "Cannot open input file"
++msgstr "A fájlt nem lehet megnyitni"
++
++#: ../src/spek-pipeline.cc:237
++msgid "Cannot find stream info"
++msgstr "Nem található adatfolyam "
++
++#: ../src/spek-pipeline.cc:240
++msgid "The file contains no audio streams"
++msgstr "A fájlban nincs adatfolyam"
++
++#: ../src/spek-pipeline.cc:243
++msgid "Cannot find decoder"
++msgstr "Nem található dekóder"
++
++#: ../src/spek-pipeline.cc:246
++msgid "Unknown duration"
++msgstr "Ismeretlen tartam"
++
++#: ../src/spek-pipeline.cc:249
++msgid "No audio channels"
++msgstr "Nincs audió csatorna"
++
++#: ../src/spek-pipeline.cc:252
++msgid "Cannot open decoder"
++msgstr "A dekódolót nem lehet megnyitni"
++
++#: ../src/spek-pipeline.cc:255
++msgid "Unsupported sample format"
++msgstr "Nem támogatott minta"
++
++#. TRANSLATORS: first %s is the error message, second %s is stream
++#. description.
++#: ../src/spek-pipeline.cc:267
++#, c-format
++msgid "%s: %s"
++msgstr "%s: %s"
++
++#: ../src/spek-preferences-dialog.cc:67
++msgid "Preferences"
++msgstr "Beállítások"
++
++#: ../src/spek-preferences-dialog.cc:72
++msgid "(system default)"
++msgstr "(Alapértelmezett)"
++
++#. TRANSLATORS: The name of a section in the Preferences dialog.
++#: ../src/spek-preferences-dialog.cc:79
++msgid "General"
++msgstr "Általános"
++
++#: ../src/spek-preferences-dialog.cc:88
++msgid "Language:"
++msgstr "Nyelv:"
++
++#: ../src/spek-preferences-dialog.cc:104
++msgid "Check for &updates"
++msgstr "Frissítések ellenőrzése"
++
++#: ../src/spek-spectrogram.cc:191
++#, c-format
++msgid "%d kHz"
++msgstr "%d kHz"
++
++#: ../src/spek-spectrogram.cc:196
++#, c-format
++msgid "%d dB"
++msgstr "%d dB"
++
++#. TRANSLATORS: keep "00" unchanged, it's used to calc the text width
++#: ../src/spek-spectrogram.cc:302
++msgid "00 kHz"
++msgstr "00 kHz"
++
++#. TRANSLATORS: keep "-00" unchanged, it's used to calc the text width
++#: ../src/spek-spectrogram.cc:333
++msgid "-00 dB"
++msgstr "-00 dB"
++
++#: ../src/spek-window.cc:75
++msgid "Spek - Acoustic Spectrum Analyser"
++msgstr "Spek - Akusztikai Spektrum Analizáló"
++
++#: ../src/spek-window.cc:91
++msgid "&File"
++msgstr "&Fájl"
++
++#: ../src/spek-window.cc:97
++msgid "&Edit"
++msgstr "&Szerkesztés"
++
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
++msgid "&Help"
++msgstr "&Súgó"
++
++#: ../src/spek-window.cc:128
++msgid "Help"
++msgstr "Súgó"
++
++#: ../src/spek-window.cc:141
++msgid "A new version of Spek is available, click to download."
++msgstr "Egy új verzió érhető el, kattints a letöltéshez."
++
++#. TRANSLATORS: window title, %s is replaced with the file name
++#: ../src/spek-window.cc:179
++#, c-format
++msgid "Spek - %s"
++msgstr "Spek - %s"
++
++#: ../src/spek-window.cc:226
++msgid "All files"
++msgstr "Minden fájl"
++
++#: ../src/spek-window.cc:228
++msgid "Audio files"
++msgstr "Audió fájlok"
++
++#: ../src/spek-window.cc:242
++msgid "Open File"
++msgstr "Fájl megnyitása"
++
++#: ../src/spek-window.cc:264
++msgid "PNG images"
++msgstr "PNG kép"
++
++#: ../src/spek-window.cc:270
++msgid "Save Spectrogram"
++msgstr "Spektrogram mentése"
++
++#. Suggested name is <file_name>.png
++#: ../src/spek-window.cc:278
++msgid "Untitled"
++msgstr "Névtelen"
++
++#. TRANSLATORS: Add your name here
++#: ../src/spek-window.cc:325
++msgid "translator-credits"
++msgstr "A fordítást készítette Seregély Gergő.\nNoParaMediaGroup\nblscksurfer167@icloud.com"
++
++#: ../src/spek-window.cc:331
++msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
++msgstr "Minden jog fenntartva (©) 2010-2013 Alexander Kojevnikov és a közreműködők részére."
++
++#: ../src/spek-window.cc:334
++msgid "Spek Website"
++msgstr "Spek weboldala"
++
++#. TRANSLATORS: the %s is the package version.
++#: ../src/spek.cc:94
++#, c-format
++msgid "Spek version %s"
++msgstr "Spek verzió %s"
+diff --git a/po/id.po b/po/id.po
+new file mode 100644
+index 00000000..8d3e8f54
+--- /dev/null
++++ b/po/id.po
+@@ -0,0 +1,211 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# 
++# Translators:
++# Tan Rico <riecotan@gmail.com>, 2016
++msgid ""
++msgstr ""
++"Project-Id-Version: Spek\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-21 14:32+0000\n"
++"Last-Translator: Tan Rico <riecotan@gmail.com>\n"
++"Language-Team: Indonesian (http://www.transifex.com/spek/spek/language/id/)\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Language: id\n"
++"Plural-Forms: nplurals=1; plural=0;\n"
++
++#: ../data/spek.desktop.in.in.h:1
++msgid "Spek"
++msgstr "Spek"
++
++#: ../data/spek.desktop.in.in.h:2
++msgid "Spectrum Analyser"
++msgstr "Spectrum Analyser"
++
++#: ../data/spek.desktop.in.in.h:3
++msgid "View spectrograms of your audio files"
++msgstr "Tampilkan spektogram dari file audio-mu"
++
++#: ../data/spek.desktop.in.in.h:4
++msgid "Spek Spectrum Analyser"
++msgstr "Spek Spectrum Analyser"
++
++#: ../src/spek-pipeline.cc:197
++#, c-format
++msgid "%d kbps"
++msgstr "%d kbps"
++
++#: ../src/spek-pipeline.cc:202
++#, c-format
++msgid "%d Hz"
++msgstr "%d Hz"
++
++#: ../src/spek-pipeline.cc:209
++#, c-format
++msgid "%d bit"
++msgid_plural "%d bits"
++msgstr[0] "%d bits"
++
++#: ../src/spek-pipeline.cc:217
++#, c-format
++msgid "%d channel"
++msgid_plural "%d channels"
++msgstr[0] "%d channels"
++
++#: ../src/spek-pipeline.cc:234
++msgid "Cannot open input file"
++msgstr "Tidak dapat membuka file masukan"
++
++#: ../src/spek-pipeline.cc:237
++msgid "Cannot find stream info"
++msgstr "Tidak dapat menemukan informasi gelombang audio"
++
++#: ../src/spek-pipeline.cc:240
++msgid "The file contains no audio streams"
++msgstr "File ini tidak memiliki gelombang audio"
++
++#: ../src/spek-pipeline.cc:243
++msgid "Cannot find decoder"
++msgstr "Tidak dapat menemukan decoder"
++
++#: ../src/spek-pipeline.cc:246
++msgid "Unknown duration"
++msgstr "Durasi tidak diketahui"
++
++#: ../src/spek-pipeline.cc:249
++msgid "No audio channels"
++msgstr "Tidak ada kanal audio"
++
++#: ../src/spek-pipeline.cc:252
++msgid "Cannot open decoder"
++msgstr "Tidak dapat membuka decoder"
++
++#: ../src/spek-pipeline.cc:255
++msgid "Unsupported sample format"
++msgstr "Sampel format tidak didukung"
++
++#. TRANSLATORS: first %s is the error message, second %s is stream
++#. description.
++#: ../src/spek-pipeline.cc:267
++#, c-format
++msgid "%s: %s"
++msgstr "%s: %s"
++
++#: ../src/spek-preferences-dialog.cc:67
++msgid "Preferences"
++msgstr "Preferensi"
++
++#: ../src/spek-preferences-dialog.cc:72
++msgid "(system default)"
++msgstr "(bawaan sistem)"
++
++#. TRANSLATORS: The name of a section in the Preferences dialog.
++#: ../src/spek-preferences-dialog.cc:79
++msgid "General"
++msgstr "Umum"
++
++#: ../src/spek-preferences-dialog.cc:88
++msgid "Language:"
++msgstr "Bahasa:"
++
++#: ../src/spek-preferences-dialog.cc:104
++msgid "Check for &updates"
++msgstr "Cek &pembaharuan"
++
++#: ../src/spek-spectrogram.cc:191
++#, c-format
++msgid "%d kHz"
++msgstr "%d kHz"
++
++#: ../src/spek-spectrogram.cc:196
++#, c-format
++msgid "%d dB"
++msgstr "%d dB"
++
++#. TRANSLATORS: keep "00" unchanged, it's used to calc the text width
++#: ../src/spek-spectrogram.cc:302
++msgid "00 kHz"
++msgstr "00 kHz"
++
++#. TRANSLATORS: keep "-00" unchanged, it's used to calc the text width
++#: ../src/spek-spectrogram.cc:333
++msgid "-00 dB"
++msgstr "-00 dB"
++
++#: ../src/spek-window.cc:75
++msgid "Spek - Acoustic Spectrum Analyser"
++msgstr "Spek - Acoustic Spectrum Analyser"
++
++#: ../src/spek-window.cc:91
++msgid "&File"
++msgstr "&File"
++
++#: ../src/spek-window.cc:97
++msgid "&Edit"
++msgstr "&Edit"
++
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
++msgid "&Help"
++msgstr "&Bantuan"
++
++#: ../src/spek-window.cc:128
++msgid "Help"
++msgstr "Bantuan"
++
++#: ../src/spek-window.cc:141
++msgid "A new version of Spek is available, click to download."
++msgstr "Versi terbaru Spek ditemukan, klik untuk mengunduh."
++
++#. TRANSLATORS: window title, %s is replaced with the file name
++#: ../src/spek-window.cc:179
++#, c-format
++msgid "Spek - %s"
++msgstr "Spek - %s"
++
++#: ../src/spek-window.cc:226
++msgid "All files"
++msgstr "Semua file"
++
++#: ../src/spek-window.cc:228
++msgid "Audio files"
++msgstr "File Audio"
++
++#: ../src/spek-window.cc:242
++msgid "Open File"
++msgstr "Buka File"
++
++#: ../src/spek-window.cc:264
++msgid "PNG images"
++msgstr "Gambar PNG"
++
++#: ../src/spek-window.cc:270
++msgid "Save Spectrogram"
++msgstr "Simpan Spektogram"
++
++#. Suggested name is <file_name>.png
++#: ../src/spek-window.cc:278
++msgid "Untitled"
++msgstr "Tidak ada judul"
++
++#. TRANSLATORS: Add your name here
++#: ../src/spek-window.cc:325
++msgid "translator-credits"
++msgstr "translator-credits"
++
++#: ../src/spek-window.cc:331
++msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
++msgstr "Hak Cipta (c) 2010-2013 Alexander Kojevnikov dan para kontributor"
++
++#: ../src/spek-window.cc:334
++msgid "Spek Website"
++msgstr "Laman Website Spek"
++
++#. TRANSLATORS: the %s is the package version.
++#: ../src/spek.cc:94
++#, c-format
++msgid "Spek version %s"
++msgstr "Spek versi %s"
+diff --git a/po/it.po b/po/it.po
+index 522d6063..71a67cb7 100644
+--- a/po/it.po
++++ b/po/it.po
+@@ -9,10 +9,10 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 10:22+0000\n"
+ "Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: Italian (http://www.transifex.com/projects/p/spek/language/it/)\n"
++"Language-Team: Italian (http://www.transifex.com/spek/spek/language/it/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -143,72 +143,72 @@ msgstr "-00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - Analizzatore di Spettro Acustico"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&File"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "&Modifica"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "&Aiuto"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Aiuto"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "Una nuova versione di Spek è disponibile, clicca per scaricarla."
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Tutti i file"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "File Audio"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Apri File"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "Immagini PNG"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Salva Spettrogramma"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Senza Titolo"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "Giuseppe D. Barbagallo"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Copyright (c) 2010-2013 Alexander Kojevnikov e contributori"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Sito Web Spek"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek versione %s"
+diff --git a/po/ja.po b/po/ja.po
+index daa8d78c..44f974d0 100644
+--- a/po/ja.po
++++ b/po/ja.po
+@@ -11,9 +11,9 @@ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2014-03-29 13:05-0700\n"
+-"PO-Revision-Date: 2014-04-26 10:31+0000\n"
++"PO-Revision-Date: 2017-09-19 11:23+0000\n"
+ "Last-Translator: AmishGramish <amish.gramish@gmail.com>\n"
+-"Language-Team: Japanese (http://www.transifex.com/projects/p/spek/language/ja/)\n"
++"Language-Team: Japanese (http://www.transifex.com/spek/spek/language/ja/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+diff --git a/po/ko.po b/po/ko.po
+new file mode 100644
+index 00000000..197ab7de
+--- /dev/null
++++ b/po/ko.po
+@@ -0,0 +1,212 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# 
++# Translators:
++# Dae-Seok Kim <kndol@kndol.net>, 2017
++# Zames Dean <zdci4li@gmail.com>, 2014
++msgid ""
++msgstr ""
++"Project-Id-Version: Spek\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-21 14:32+0000\n"
++"Last-Translator: Dae-Seok Kim <kndol@kndol.net>\n"
++"Language-Team: Korean (http://www.transifex.com/spek/spek/language/ko/)\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Language: ko\n"
++"Plural-Forms: nplurals=1; plural=0;\n"
++
++#: ../data/spek.desktop.in.in.h:1
++msgid "Spek"
++msgstr "Spek"
++
++#: ../data/spek.desktop.in.in.h:2
++msgid "Spectrum Analyser"
++msgstr "스펙트럼 분석기"
++
++#: ../data/spek.desktop.in.in.h:3
++msgid "View spectrograms of your audio files"
++msgstr "오디오 파일의 스펙트로그램을 봅니다."
++
++#: ../data/spek.desktop.in.in.h:4
++msgid "Spek Spectrum Analyser"
++msgstr "Spek 스펙트럼 분석기"
++
++#: ../src/spek-pipeline.cc:197
++#, c-format
++msgid "%d kbps"
++msgstr "%d kbps"
++
++#: ../src/spek-pipeline.cc:202
++#, c-format
++msgid "%d Hz"
++msgstr "%d Hz"
++
++#: ../src/spek-pipeline.cc:209
++#, c-format
++msgid "%d bit"
++msgid_plural "%d bits"
++msgstr[0] "%d bits"
++
++#: ../src/spek-pipeline.cc:217
++#, c-format
++msgid "%d channel"
++msgid_plural "%d channels"
++msgstr[0] "%d 개 채널"
++
++#: ../src/spek-pipeline.cc:234
++msgid "Cannot open input file"
++msgstr "입력 파일을 열 수 없습니다."
++
++#: ../src/spek-pipeline.cc:237
++msgid "Cannot find stream info"
++msgstr "스트림 정보를 찾을 수 없습니다."
++
++#: ../src/spek-pipeline.cc:240
++msgid "The file contains no audio streams"
++msgstr "파일에 오디오 스트림이 포함돼 있지 않습니다."
++
++#: ../src/spek-pipeline.cc:243
++msgid "Cannot find decoder"
++msgstr "디코더를 찾을 수 없습니다."
++
++#: ../src/spek-pipeline.cc:246
++msgid "Unknown duration"
++msgstr "재생 시간을 알 수 없습니다."
++
++#: ../src/spek-pipeline.cc:249
++msgid "No audio channels"
++msgstr "오디오 채널이 없습니다."
++
++#: ../src/spek-pipeline.cc:252
++msgid "Cannot open decoder"
++msgstr "디코더를 열 수 없습니다."
++
++#: ../src/spek-pipeline.cc:255
++msgid "Unsupported sample format"
++msgstr "지원하지 않는 샘플 형식입니다."
++
++#. TRANSLATORS: first %s is the error message, second %s is stream
++#. description.
++#: ../src/spek-pipeline.cc:267
++#, c-format
++msgid "%s: %s"
++msgstr "%s: %s"
++
++#: ../src/spek-preferences-dialog.cc:67
++msgid "Preferences"
++msgstr "환경 설정"
++
++#: ../src/spek-preferences-dialog.cc:72
++msgid "(system default)"
++msgstr "(시스템 기본값)"
++
++#. TRANSLATORS: The name of a section in the Preferences dialog.
++#: ../src/spek-preferences-dialog.cc:79
++msgid "General"
++msgstr "일반"
++
++#: ../src/spek-preferences-dialog.cc:88
++msgid "Language:"
++msgstr "언어(Language):"
++
++#: ../src/spek-preferences-dialog.cc:104
++msgid "Check for &updates"
++msgstr "업데이트 확인(&U)"
++
++#: ../src/spek-spectrogram.cc:191
++#, c-format
++msgid "%d kHz"
++msgstr "%d kHz"
++
++#: ../src/spek-spectrogram.cc:196
++#, c-format
++msgid "%d dB"
++msgstr "%d dB"
++
++#. TRANSLATORS: keep "00" unchanged, it's used to calc the text width
++#: ../src/spek-spectrogram.cc:302
++msgid "00 kHz"
++msgstr "00 kHz"
++
++#. TRANSLATORS: keep "-00" unchanged, it's used to calc the text width
++#: ../src/spek-spectrogram.cc:333
++msgid "-00 dB"
++msgstr "-00 dB"
++
++#: ../src/spek-window.cc:75
++msgid "Spek - Acoustic Spectrum Analyser"
++msgstr "Spek - 음향 스펙트럼 분석기"
++
++#: ../src/spek-window.cc:91
++msgid "&File"
++msgstr "파일(&F)"
++
++#: ../src/spek-window.cc:97
++msgid "&Edit"
++msgstr "편집(&E)"
++
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
++msgid "&Help"
++msgstr "도움말(&H)"
++
++#: ../src/spek-window.cc:128
++msgid "Help"
++msgstr "도움말"
++
++#: ../src/spek-window.cc:141
++msgid "A new version of Spek is available, click to download."
++msgstr "Spek의 새 버전이 사용 가능합니다, 다운로드하려면 누르세요."
++
++#. TRANSLATORS: window title, %s is replaced with the file name
++#: ../src/spek-window.cc:179
++#, c-format
++msgid "Spek - %s"
++msgstr "Spek - %s"
++
++#: ../src/spek-window.cc:226
++msgid "All files"
++msgstr "모든 파일"
++
++#: ../src/spek-window.cc:228
++msgid "Audio files"
++msgstr "오디오 파일"
++
++#: ../src/spek-window.cc:242
++msgid "Open File"
++msgstr "파일 열기"
++
++#: ../src/spek-window.cc:264
++msgid "PNG images"
++msgstr "PNG 이미지"
++
++#: ../src/spek-window.cc:270
++msgid "Save Spectrogram"
++msgstr "스펙트로그램 저장"
++
++#. Suggested name is <file_name>.png
++#: ../src/spek-window.cc:278
++msgid "Untitled"
++msgstr "제목 없음"
++
++#. TRANSLATORS: Add your name here
++#: ../src/spek-window.cc:325
++msgid "translator-credits"
++msgstr "4Li, 큰돌"
++
++#: ../src/spek-window.cc:331
++msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
++msgstr "저작권 (c) 2010-2013 Alexander Kojevnikov 와 공헌자들"
++
++#: ../src/spek-window.cc:334
++msgid "Spek Website"
++msgstr "Spek 웹사이트"
++
++#. TRANSLATORS: the %s is the package version.
++#: ../src/spek.cc:94
++#, c-format
++msgid "Spek version %s"
++msgstr "Spek 버전 %s"
+diff --git a/po/lv.po b/po/lv.po
+index a35e8508..cd413315 100644
+--- a/po/lv.po
++++ b/po/lv.po
+@@ -3,15 +3,15 @@
+ # This file is distributed under the same license as the PACKAGE package.
+ # 
+ # Translators:
+-# Toms Zvīnis <tomy91@inbox.lv>, 2014
++# Toms <tomy91@inbox.lv>, 2014
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2014-03-29 13:05-0700\n"
+-"PO-Revision-Date: 2014-03-02 11:25+0000\n"
+-"Last-Translator: Toms Zvīnis <tomy91@inbox.lv>\n"
+-"Language-Team: Latvian (http://www.transifex.com/projects/p/spek/language/lv/)\n"
++"PO-Revision-Date: 2017-09-23 19:36+0000\n"
++"Last-Translator: Toms <tomy91@inbox.lv>\n"
++"Language-Team: Latvian (http://www.transifex.com/spek/spek/language/lv/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+diff --git a/po/nb.po b/po/nb.po
+index beeb52e1..47783950 100644
+--- a/po/nb.po
++++ b/po/nb.po
+@@ -4,15 +4,15 @@
+ # 
+ # Translators:
+ # Alexander Kojevnikov <alexander@kojevnikov.com>, 2013
+-# Ulykkesnissen <lodottis@gmail.com>, 2012
++# Even Gabrielsen <lodottis@gmail.com>, 2012
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 14:25+0000\n"
+ "Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: Norwegian Bokmål (http://www.transifex.com/projects/p/spek/language/nb/)\n"
++"Language-Team: Norwegian Bokmål (http://www.transifex.com/spek/spek/language/nb/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -143,72 +143,72 @@ msgstr "-00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - Akustisk Spekter Analysator "
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&Fil"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "&Endre"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "&Hjelp"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Hjelp"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "En ny versjon av Spek er tilgjengelig, klikk for å laste ned"
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Alle filer"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Lyd filer"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Åpne fil"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "PNG bildefiler"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Lagre spektogram"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Ikke navngitt"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "Ulykkesnissen"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Kopibeskyttet (c) 2010-2013 Alexander Kojevnikov og kontributører"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Spek nettside"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek versjon %s"
+diff --git a/po/nl.po b/po/nl.po
+index 3e5b6099..ce53b355 100644
+--- a/po/nl.po
++++ b/po/nl.po
+@@ -4,6 +4,8 @@
+ # 
+ # Translators:
+ # Alexander Kojevnikov <alexander@kojevnikov.com>, 2011-2012
++# Gabriel Secreve <rdsserver@outlook.com>, 2017
++# Johan van Rietveld <johan.van.rietveld@home.nl>, 2016
+ # theguyofdoom <thom.venividivici@gmail.com>, 2011
+ # theguyofdoom <thom.venividivici@gmail.com>, 2012
+ # Wouter Bolsterlee <wbolster@gnome.org>, 2011
+@@ -11,10 +13,10 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
+-"Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: Dutch (http://www.transifex.com/projects/p/spek/language/nl/)\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 09:42+0000\n"
++"Last-Translator: Gabriel Secreve <rdsserver@outlook.com>\n"
++"Language-Team: Dutch (http://www.transifex.com/spek/spek/language/nl/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -79,7 +81,7 @@ msgstr "Kan decoder niet vinden"
+ 
+ #: ../src/spek-pipeline.cc:246
+ msgid "Unknown duration"
+-msgstr ""
++msgstr "Tijdsduur onbekend"
+ 
+ #: ../src/spek-pipeline.cc:249
+ msgid "No audio channels"
+@@ -91,7 +93,7 @@ msgstr "Kan decoder niet openen"
+ 
+ #: ../src/spek-pipeline.cc:255
+ msgid "Unsupported sample format"
+-msgstr "Sample-formaat niet ondersteund"
++msgstr "Sampleformaat niet ondersteund"
+ 
+ #. TRANSLATORS: first %s is the error message, second %s is stream
+ #. description.
+@@ -102,7 +104,7 @@ msgstr "%s: %s"
+ 
+ #: ../src/spek-preferences-dialog.cc:67
+ msgid "Preferences"
+-msgstr "Einstellungen"
++msgstr "Voorkeuren"
+ 
+ #: ../src/spek-preferences-dialog.cc:72
+ msgid "(system default)"
+@@ -111,7 +113,7 @@ msgstr "(systeem standaard)"
+ #. TRANSLATORS: The name of a section in the Preferences dialog.
+ #: ../src/spek-preferences-dialog.cc:79
+ msgid "General"
+-msgstr "Allgemein"
++msgstr "Algemeen"
+ 
+ #: ../src/spek-preferences-dialog.cc:88
+ msgid "Language:"
+@@ -145,72 +147,72 @@ msgstr "-00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - Akoestische spectrumanalyse"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+-msgstr "&File"
++msgstr "&Bestand"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "Be&werken"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "&Hulp"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Hulp"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+-msgstr ""
++msgstr "Er is een nieuwe versie van Spek beschikbaar, klik voor download"
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek – %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Alle bestanden"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Audiobestanden"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Bestand openen"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "PNG-afbeeldingen"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Spectrogram opslaan"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Naamloos"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+-msgstr "DutchDude (TheGuyOfDoom)\nWouter Bolsterlee\nAlexander Kojevnikov"
++msgstr "DutchDude (TheGuyOfDoom)\nWouter Bolsterlee\nAlexander Kojevnikov\nGabriel Secreve"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+-msgstr ""
++msgstr "Copyright (c) 2010-2013 Alexander Kojevnikov en inzenders"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Spek-website"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek versie %s"
+diff --git a/po/pl.po b/po/pl.po
+index eb2b05ca..a1e3e40f 100644
+--- a/po/pl.po
++++ b/po/pl.po
+@@ -4,20 +4,20 @@
+ # 
+ # Translators:
+ # Alexander Kojevnikov <alexander@kojevnikov.com>, 2012
+-# Piotr Drąg <piotrdrag@gmail.com>, 2011-2013
++# Piotr Drąg <piotrdrag@gmail.com>, 2011-2013,2015
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
+-"Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: Polish (http://www.transifex.com/projects/p/spek/language/pl/)\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 09:46+0000\n"
++"Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
++"Language-Team: Polish (http://www.transifex.com/spek/spek/language/pl/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+ "Language: pl\n"
+-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
++"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+ 
+ #: ../data/spek.desktop.in.in.h:1
+ msgid "Spek"
+@@ -52,6 +52,7 @@ msgid_plural "%d bits"
+ msgstr[0] "%d bit"
+ msgstr[1] "%d bity"
+ msgstr[2] "%d bitów"
++msgstr[3] "%d bitów"
+ 
+ #: ../src/spek-pipeline.cc:217
+ #, c-format
+@@ -60,6 +61,7 @@ msgid_plural "%d channels"
+ msgstr[0] "%d kanał"
+ msgstr[1] "%d kanały"
+ msgstr[2] "%d kanałów"
++msgstr[3] "%d kanałów"
+ 
+ #: ../src/spek-pipeline.cc:234
+ msgid "Cannot open input file"
+@@ -143,74 +145,74 @@ msgstr "-00 dB"
+ 
+ #: ../src/spek-window.cc:75
+ msgid "Spek - Acoustic Spectrum Analyser"
+-msgstr "Spek - analizator widma akustycznego"
++msgstr "Spek — analizator widma akustycznego"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&Plik"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "&Edycja"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "Pomo&c"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Pomoc"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "Dostępna jest nowa wersja programu Spek.  Proszę kliknąć, aby ją pobrać."
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+-msgstr "Spek - %s"
++msgstr "Spek — %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Wszystkie pliki"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Pliki dźwiękowe"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Otwarcie pliku"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "Obrazy PNG"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Zapis spektogramu"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Bez tytułu"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+-msgstr "Piotr Drąg <piotrdrag@gmail.com>, 2011"
++msgstr "Piotr Drąg <piotrdrag@gmail.com>, 2011, 2015"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+-msgstr "Copyright (c) 2010-2013 Alexander Kojevnikov i współtwórcy"
++msgstr "Copyright © 2010-2013 Alexander Kojevnikov i współtwórcy"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Witryna programu Spek"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek wersja %s"
+diff --git a/po/pt_BR.po b/po/pt_BR.po
+index 5db5c62f..4bc403d6 100644
+--- a/po/pt_BR.po
++++ b/po/pt_BR.po
+@@ -4,16 +4,16 @@
+ # 
+ # Translators:
+ # Alexander Kojevnikov <alexander@kojevnikov.com>, 2012
+-# Tiago Rinaldi <trinaldi@gmail.com>, 2013
+-# Tiago Rinaldi <trinaldi@gmail.com>, 2011-2012
++# trinaldi <trinaldi@gmail.com>, 2013
++# trinaldi <trinaldi@gmail.com>, 2011-2012
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 11:01+0000\n"
+ "Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/spek/language/pt_BR/)\n"
++"Language-Team: Portuguese (Brazil) (http://www.transifex.com/spek/spek/language/pt_BR/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -144,72 +144,72 @@ msgstr "-00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - Analisador de Espectro Acústico"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&Arquivo"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "&Editar"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "&Ajuda"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Ajuda"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "Uma nova versão do Spek está disponível, clique para fazer o download"
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Todos os arquivos"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Arquivos de áudio"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Abrir arquivo"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "Imagens PNG"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Salvar Espectrograma "
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Sem título"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "Tiago Rinaldi"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Copyright (c) 2010-2013 Alexander Kojevnikov e contribuidores"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Site do Spek"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek versão %s"
+diff --git a/po/ru.po b/po/ru.po
+index f3d169e3..bc44912e 100644
+--- a/po/ru.po
++++ b/po/ru.po
+@@ -10,15 +10,15 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 09:42+0000\n"
+ "Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: Russian (http://www.transifex.com/projects/p/spek/language/ru/)\n"
++"Language-Team: Russian (http://www.transifex.com/spek/spek/language/ru/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+ "Language: ru\n"
+-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
++"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+ 
+ #: ../data/spek.desktop.in.in.h:1
+ msgid "Spek"
+@@ -53,6 +53,7 @@ msgid_plural "%d bits"
+ msgstr[0] "%d бит"
+ msgstr[1] "%d бита"
+ msgstr[2] "%d битов"
++msgstr[3] "%d битов"
+ 
+ #: ../src/spek-pipeline.cc:217
+ #, c-format
+@@ -61,6 +62,7 @@ msgid_plural "%d channels"
+ msgstr[0] "%d канал"
+ msgstr[1] "%d канала"
+ msgstr[2] "%d каналов"
++msgstr[3] "%d каналов"
+ 
+ #: ../src/spek-pipeline.cc:234
+ msgid "Cannot open input file"
+@@ -146,72 +148,72 @@ msgstr "-00 дБ"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - Акустический анализатор спектра"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&Файл"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "&Правка"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "&Справка"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Справка"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "Вышла новая версия Spek, щёлкните для скачивания"
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Все файлы"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Аудио файлы"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Открыть файл"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "PNG изображения"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Сохранить спектрограмму"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Без названия"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "Александр Кожевников <alexander@kojevnikov.com>"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Авторские права (c) 2010-2013 Александр Кожевников и соавторы"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Веб-сайт Spek"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek версии %s"
+diff --git a/po/sk.po b/po/sk.po
+index 190c1388..3d2a8327 100644
+--- a/po/sk.po
++++ b/po/sk.po
+@@ -4,15 +4,15 @@
+ # 
+ # Translators:
+ # Alexander Kojevnikov <alexander@kojevnikov.com>, 2013
+-# patrik.skulavik <patrik.skulavik@gmail.com>, 2013-2014
++# Patrik Škulavík <patrik.skulavik@gmail.com>, 2013-2014
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2014-01-07 18:10+0000\n"
+-"Last-Translator: patrik.skulavik <patrik.skulavik@gmail.com>\n"
+-"Language-Team: Slovak (http://www.transifex.com/projects/p/spek/language/sk/)\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 19:38+0000\n"
++"Last-Translator: Patrik Škulavík <patrik.skulavik@gmail.com>\n"
++"Language-Team: Slovak (http://www.transifex.com/spek/spek/language/sk/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -145,72 +145,72 @@ msgstr "-00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - Akustický Spektrálny Analyzátor"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&Súbor"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "&Upraviť"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "&Nápoveda"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Nápoveda"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "Nová verzia programu Spek je dostupná, kliknite pre stiahnutie."
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Všetky súbory"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Audio súbory"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Otvoriť súbor"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "PNG obrázky"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Uložiť Spektrogram"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Bez názvu"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "Patrik Škulavík"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Copyright (c) 2010-2013 Alexander Kojevnikov a prispievatelia"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Spek Webová stránka"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek verzia %s"
+diff --git a/po/sr@latin.po b/po/sr@latin.po
+index 70d9f495..d8b06b31 100644
+--- a/po/sr@latin.po
++++ b/po/sr@latin.po
+@@ -7,10 +7,10 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 15:14+0000\n"
+ "Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: Serbian (Latin) (http://www.transifex.com/projects/p/spek/language/sr@latin/)\n"
++"Language-Team: Serbian (Latin) (http://www.transifex.com/spek/spek/language/sr%40latin/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -143,72 +143,72 @@ msgstr "-00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - Akustični analizator spektra"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&File"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "&Uredi"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "&Pomoć"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Pomoć"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "Dostupna je nova verzija Speka. Kliknite za download."
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Sve datoteke"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Audio datoteke"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Otvori datoteku"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "PNG slike"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Sačuvaj spektrogram"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Bez naslova"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "Aleksandar Todorovic"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Copyright (c) 2010-2013 Alexander Kojevnikov i saradnici"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Spek web stranica"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek verzija %s"
+diff --git a/po/sv.po b/po/sv.po
+index 9da8a13e..f3befd2c 100644
+--- a/po/sv.po
++++ b/po/sv.po
+@@ -10,10 +10,10 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 09:42+0000\n"
+ "Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: Swedish (http://www.transifex.com/projects/p/spek/language/sv/)\n"
++"Language-Team: Swedish (http://www.transifex.com/spek/spek/language/sv/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -144,72 +144,72 @@ msgstr "-00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - Akustisk Spektrumanalysator"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&Arkiv"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "&Redigera"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "&Hjälp"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Hjälp"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "En ny version av Spek finns tillgänglig, klicka för att hämta."
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Alla filer"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Ljudfiler"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Öppna fil"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "PNG-bilder"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Spara spektrogram"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Namnlös"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "Jimpalompa"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Copyright (c) 2010-2013 Alexander Kojevnikov och bidragsgivare"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Spek hemsida"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek version %s"
+diff --git a/po/th.po b/po/th.po
+new file mode 100644
+index 00000000..8ef3bd44
+--- /dev/null
++++ b/po/th.po
+@@ -0,0 +1,211 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# 
++# Translators:
++# Iho Somnam <ihosomnam4741@gmail.com>, 2017
++msgid ""
++msgstr ""
++"Project-Id-Version: Spek\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-10-16 05:09+0000\n"
++"Last-Translator: Iho Somnam <ihosomnam4741@gmail.com>\n"
++"Language-Team: Thai (http://www.transifex.com/spek/spek/language/th/)\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Language: th\n"
++"Plural-Forms: nplurals=1; plural=0;\n"
++
++#: ../data/spek.desktop.in.in.h:1
++msgid "Spek"
++msgstr "Spek"
++
++#: ../data/spek.desktop.in.in.h:2
++msgid "Spectrum Analyser"
++msgstr "วิเคราะห์สเปกตรัม"
++
++#: ../data/spek.desktop.in.in.h:3
++msgid "View spectrograms of your audio files"
++msgstr "ดูสเปกโตรแกรมจากไฟล์เสียง"
++
++#: ../data/spek.desktop.in.in.h:4
++msgid "Spek Spectrum Analyser"
++msgstr "Spek สเปกตรัมอนาไลเซอร์"
++
++#: ../src/spek-pipeline.cc:197
++#, c-format
++msgid "%d kbps"
++msgstr "%dkbps"
++
++#: ../src/spek-pipeline.cc:202
++#, c-format
++msgid "%d Hz"
++msgstr "%d Hz"
++
++#: ../src/spek-pipeline.cc:209
++#, c-format
++msgid "%d bit"
++msgid_plural "%d bits"
++msgstr[0] "%d bits"
++
++#: ../src/spek-pipeline.cc:217
++#, c-format
++msgid "%d channel"
++msgid_plural "%d channels"
++msgstr[0] "%dchannels"
++
++#: ../src/spek-pipeline.cc:234
++msgid "Cannot open input file"
++msgstr "ไม่สามารถเปิดไฟล์ได้"
++
++#: ../src/spek-pipeline.cc:237
++msgid "Cannot find stream info"
++msgstr "ไม่สามารถหาข้อมูลสตรีมได้"
++
++#: ../src/spek-pipeline.cc:240
++msgid "The file contains no audio streams"
++msgstr "ไฟล์ไม่ได้มีข้อมูลเสียงบรรจุอยู่"
++
++#: ../src/spek-pipeline.cc:243
++msgid "Cannot find decoder"
++msgstr "ไม่สามารถหาตัวถอดรหัส"
++
++#: ../src/spek-pipeline.cc:246
++msgid "Unknown duration"
++msgstr "ไม่ทราบระยะเวลา"
++
++#: ../src/spek-pipeline.cc:249
++msgid "No audio channels"
++msgstr "ไม่มีร่องเสียง"
++
++#: ../src/spek-pipeline.cc:252
++msgid "Cannot open decoder"
++msgstr "ไม่สามารถเปิดตัวถอดรหัส"
++
++#: ../src/spek-pipeline.cc:255
++msgid "Unsupported sample format"
++msgstr "ไม่รองรับ Sample Format"
++
++#. TRANSLATORS: first %s is the error message, second %s is stream
++#. description.
++#: ../src/spek-pipeline.cc:267
++#, c-format
++msgid "%s: %s"
++msgstr "%s: %s"
++
++#: ../src/spek-preferences-dialog.cc:67
++msgid "Preferences"
++msgstr "การตั้งค่า"
++
++#: ../src/spek-preferences-dialog.cc:72
++msgid "(system default)"
++msgstr "(ค่าระบบดั้งเดิม)"
++
++#. TRANSLATORS: The name of a section in the Preferences dialog.
++#: ../src/spek-preferences-dialog.cc:79
++msgid "General"
++msgstr "ตั้งค่าทั่วไป"
++
++#: ../src/spek-preferences-dialog.cc:88
++msgid "Language:"
++msgstr "ภาษา:"
++
++#: ../src/spek-preferences-dialog.cc:104
++msgid "Check for &updates"
++msgstr "ตรวจสอบ &การอัพเดต"
++
++#: ../src/spek-spectrogram.cc:191
++#, c-format
++msgid "%d kHz"
++msgstr "%d kHz"
++
++#: ../src/spek-spectrogram.cc:196
++#, c-format
++msgid "%d dB"
++msgstr "%d dB"
++
++#. TRANSLATORS: keep "00" unchanged, it's used to calc the text width
++#: ../src/spek-spectrogram.cc:302
++msgid "00 kHz"
++msgstr "00 kHz"
++
++#. TRANSLATORS: keep "-00" unchanged, it's used to calc the text width
++#: ../src/spek-spectrogram.cc:333
++msgid "-00 dB"
++msgstr "-00 dB"
++
++#: ../src/spek-window.cc:75
++msgid "Spek - Acoustic Spectrum Analyser"
++msgstr "Spek - อะคูสติกสเปกตรัมอนาไลเซอร์"
++
++#: ../src/spek-window.cc:91
++msgid "&File"
++msgstr "&ไฟล์"
++
++#: ../src/spek-window.cc:97
++msgid "&Edit"
++msgstr "&แก้ไข"
++
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
++msgid "&Help"
++msgstr "&ช่วยเหลือ"
++
++#: ../src/spek-window.cc:128
++msgid "Help"
++msgstr "ช่วยเหลือ"
++
++#: ../src/spek-window.cc:141
++msgid "A new version of Spek is available, click to download."
++msgstr "Spek มีเวอร์ชันล่าสุด, คลิกที่นี่เพื่อดาวน์โหลด"
++
++#. TRANSLATORS: window title, %s is replaced with the file name
++#: ../src/spek-window.cc:179
++#, c-format
++msgid "Spek - %s"
++msgstr "Spek - %s"
++
++#: ../src/spek-window.cc:226
++msgid "All files"
++msgstr "ไฟล์ทั้งหมด"
++
++#: ../src/spek-window.cc:228
++msgid "Audio files"
++msgstr "ไฟล์เสียง"
++
++#: ../src/spek-window.cc:242
++msgid "Open File"
++msgstr "เปิดไฟล์"
++
++#: ../src/spek-window.cc:264
++msgid "PNG images"
++msgstr "รูปภาพ PNG"
++
++#: ../src/spek-window.cc:270
++msgid "Save Spectrogram"
++msgstr "บันทึกสเปกโตรแกรม"
++
++#. Suggested name is <file_name>.png
++#: ../src/spek-window.cc:278
++msgid "Untitled"
++msgstr "ไฟล์ที่ไม่ได้ตั้งชื่อ"
++
++#. TRANSLATORS: Add your name here
++#: ../src/spek-window.cc:325
++msgid "translator-credits"
++msgstr "ไอโฮ โสมนาม"
++
++#: ../src/spek-window.cc:331
++msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
++msgstr "ลิขสิทธิ์ (c) 2010-2013 Alexander Kojevnikov และผู้มีส่วนร่วม"
++
++#: ../src/spek-window.cc:334
++msgid "Spek Website"
++msgstr "เว็บไซต์ Spek"
++
++#. TRANSLATORS: the %s is the package version.
++#: ../src/spek.cc:94
++#, c-format
++msgid "Spek version %s"
++msgstr "Spek เวอร์ชัน %s"
+diff --git a/po/tr.po b/po/tr.po
+index 7502d334..9e3f2fca 100644
+--- a/po/tr.po
++++ b/po/tr.po
+@@ -4,15 +4,15 @@
+ # 
+ # Translators:
+ # Alexander Kojevnikov <alexander@kojevnikov.com>, 2013
+-# apranax <apranax@sharklasers.com>, 2012
++# apranax fort <apranax@sharklasers.com>, 2012
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 14:11+0000\n"
+ "Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: Turkish (http://www.transifex.com/projects/p/spek/language/tr/)\n"
++"Language-Team: Turkish (http://www.transifex.com/spek/spek/language/tr/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -143,72 +143,72 @@ msgstr "-00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - Akustik Spektrum Analizör"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&File"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "&Düzenle"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "&Yardım"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Yardım"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "Spek'in yeni bir versiyonu hazır, indirmek için tıklayınız."
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Tüm dosyalar"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Ses dosyaları"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Aç"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "PNG imajları"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Spektogramı Kaydet"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Adsız"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "apranax"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Telif hakları (c) 2010-2013 Alexander Kojevnikov and katkıda bulunanlar"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Spek Websitesi"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek versiyonu %s"
+diff --git a/po/uk.po b/po/uk.po
+index 3db1e788..23d83430 100644
+--- a/po/uk.po
++++ b/po/uk.po
+@@ -11,10 +11,10 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 09:42+0000\n"
+ "Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: Ukrainian (http://www.transifex.com/projects/p/spek/language/uk/)\n"
++"Language-Team: Ukrainian (http://www.transifex.com/spek/spek/language/uk/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -147,72 +147,72 @@ msgstr "-00 дБ"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - Акустичний аналізатор спектру"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&Файл"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "З&міни"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "&Довідка"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Довідка"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "Вийшла нова версія Spek, клацніть для скачування"
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Всі файли"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "Аудіо файли"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Відкрити файл"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "PNG зображення"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Зберегти спектрограму"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Без назви"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "Ольга Василевська"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Авторські права (с) 2010-2013 Олександр Кожевніков та співавтори"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Веб-сайт Spek"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek версії %s"
+diff --git a/po/vi.po b/po/vi.po
+index 45a42e79..3d8f53a0 100644
+--- a/po/vi.po
++++ b/po/vi.po
+@@ -8,10 +8,10 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 14:52+0000\n"
+ "Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: Vietnamese (http://www.transifex.com/projects/p/spek/language/vi/)\n"
++"Language-Team: Vietnamese (http://www.transifex.com/spek/spek/language/vi/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -140,72 +140,72 @@ msgstr "-00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - Chương trình phân tích âm phổ"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "&File"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "&Chỉnh sửa"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "&Trợ giúp"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "Trợ giúp"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "Spek đã có phiên bản mới, hãy click để tải về."
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "Mọi loại file"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "File nhạc"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "Mở file"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "Ảnh PNG"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "Lưu âm phổ"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "Không tên"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "alienyd"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "Bản quyền (c) 2010-2013 thuộc về Alexander Kojevnikov và cộng sự"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Trang chủ của Spek"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek phiên bản %s"
+diff --git a/po/zh_CN.po b/po/zh_CN.po
+index 1fde1f88..757e324b 100644
+--- a/po/zh_CN.po
++++ b/po/zh_CN.po
+@@ -9,10 +9,10 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 12:11+0000\n"
+ "Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: Chinese (China) (http://www.transifex.com/projects/p/spek/language/zh_CN/)\n"
++"Language-Team: Chinese (China) (http://www.transifex.com/spek/spek/language/zh_CN/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -141,72 +141,72 @@ msgstr "-00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - 声学频谱分析器"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "文件"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "编辑"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "帮助"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "帮助"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "有更新版本的Spek，点击下载。"
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "所有文件"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "音频文件"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "打开文件"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "PNG图像"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "保存频谱"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "未命名"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "翻译由 Shibing Huang <mr.shibing@mac.com> 提供"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "(c) 2010-2013 Alexander Kojevnikov 以及贡献者 版权所有"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Spek官方"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek 版本 %s"
+diff --git a/po/zh_TW.po b/po/zh_TW.po
+index 4cd77f98..6bd0f061 100644
+--- a/po/zh_TW.po
++++ b/po/zh_TW.po
+@@ -9,10 +9,10 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: Spek\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-09-11 10:26-0700\n"
+-"PO-Revision-Date: 2013-11-20 10:50+0000\n"
++"POT-Creation-Date: 2014-03-29 13:05-0700\n"
++"PO-Revision-Date: 2017-09-19 12:11+0000\n"
+ "Last-Translator: Alexander Kojevnikov <alexander@kojevnikov.com>\n"
+-"Language-Team: Chinese (Taiwan) (http://www.transifex.com/projects/p/spek/language/zh_TW/)\n"
++"Language-Team: Chinese (Taiwan) (http://www.transifex.com/spek/spek/language/zh_TW/)\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -141,72 +141,72 @@ msgstr "-00 dB"
+ msgid "Spek - Acoustic Spectrum Analyser"
+ msgstr "Spek - 聲學頻譜分析儀"
+ 
+-#: ../src/spek-window.cc:95
++#: ../src/spek-window.cc:91
+ msgid "&File"
+ msgstr "文件"
+ 
+-#: ../src/spek-window.cc:101
++#: ../src/spek-window.cc:97
+ msgid "&Edit"
+ msgstr "編輯"
+ 
+-#: ../src/spek-window.cc:105 ../src/spek-window.cc:110
++#: ../src/spek-window.cc:101 ../src/spek-window.cc:106
+ msgid "&Help"
+ msgstr "幫助"
+ 
+-#: ../src/spek-window.cc:133
++#: ../src/spek-window.cc:128
+ msgid "Help"
+ msgstr "幫助"
+ 
+-#: ../src/spek-window.cc:147
++#: ../src/spek-window.cc:141
+ msgid "A new version of Spek is available, click to download."
+ msgstr "已經有更新版本的Spek發佈，點擊更新"
+ 
+ #. TRANSLATORS: window title, %s is replaced with the file name
+-#: ../src/spek-window.cc:185
++#: ../src/spek-window.cc:179
+ #, c-format
+ msgid "Spek - %s"
+ msgstr "Spek - %s"
+ 
+-#: ../src/spek-window.cc:232
++#: ../src/spek-window.cc:226
+ msgid "All files"
+ msgstr "所有文件"
+ 
+-#: ../src/spek-window.cc:234
++#: ../src/spek-window.cc:228
+ msgid "Audio files"
+ msgstr "音頻文件"
+ 
+-#: ../src/spek-window.cc:248
++#: ../src/spek-window.cc:242
+ msgid "Open File"
+ msgstr "打開文件"
+ 
+-#: ../src/spek-window.cc:270
++#: ../src/spek-window.cc:264
+ msgid "PNG images"
+ msgstr "PNG圖像"
+ 
+-#: ../src/spek-window.cc:276
++#: ../src/spek-window.cc:270
+ msgid "Save Spectrogram"
+ msgstr "保存頻譜"
+ 
+ #. Suggested name is <file_name>.png
+-#: ../src/spek-window.cc:284
++#: ../src/spek-window.cc:278
+ msgid "Untitled"
+ msgstr "未命名"
+ 
+ #. TRANSLATORS: Add your name here
+-#: ../src/spek-window.cc:331
++#: ../src/spek-window.cc:325
+ msgid "translator-credits"
+ msgstr "Shibing Huang <mr.shibing@mac.com> 提供"
+ 
+-#: ../src/spek-window.cc:337
++#: ../src/spek-window.cc:331
+ msgid "Copyright (c) 2010-2013 Alexander Kojevnikov and contributors"
+ msgstr "(c) 2010-2013 Alexander Kojevnikov以及貢獻者 版權所有"
+ 
+-#: ../src/spek-window.cc:340
++#: ../src/spek-window.cc:334
+ msgid "Spek Website"
+ msgstr "Spek官網"
+ 
+ #. TRANSLATORS: the %s is the package version.
+-#: ../src/spek.cc:96
++#: ../src/spek.cc:94
+ #, c-format
+ msgid "Spek version %s"
+ msgstr "Spek 版本信息 %s"
+diff --git a/src/spek-preferences-dialog.cc b/src/spek-preferences-dialog.cc
+index 7060b240..1b1fa0fa 100644
+--- a/src/spek-preferences-dialog.cc
++++ b/src/spek-preferences-dialog.cc
+@@ -8,6 +8,7 @@
+ static const char *available_languages[] =
+ {
+     "", "",
++    "bs", "Bosanski",
+     "ca", "Català",
+     "cs", "Čeština",
+     "da", "Dansk",
+@@ -19,8 +20,12 @@ static const char *available_languages[] =
+     "fi", "Suomi",
+     "fr", "Français",
+     "gl", "Galego",
++    "he", "עִבְרִית",
++    "hu", "Magyar nyelv",
++    "id", "Bahasa Indonesia",
+     "it", "Italiano",
+     "ja", "日本語",
++    "ko", "한국어/韓國語",
+     "lv", "Latviešu",
+     "nb", "Norsk (bokmål)",
+     "nl", "Nederlands",
+@@ -30,6 +35,7 @@ static const char *available_languages[] =
+     "sk", "Slovenčina",
+     "sr@latin", "Srpski",
+     "sv", "Svenska",
++    "th", "ภาษาไทย",
+     "tr", "Türkçe",
+     "uk", "Українська",
+     "vi", "Tiếng Việt",

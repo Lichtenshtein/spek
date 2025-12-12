@@ -1,0 +1,26 @@
+From dab48e52208aa346660a8647b84060c180af8b45 Mon Sep 17 00:00:00 2001
+From: Greedysky <greedysky@163.com>
+Date: Thu, 9 Jun 2022 14:03:06 +0800
+Subject: [PATCH] Fix crash when decoder name is nullptr
+
+---
+ src/spek-audio.cc | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/spek-audio.cc b/src/spek-audio.cc
+index 31bce16..0761bde 100644
+--- a/src/spek-audio.cc
++++ b/src/spek-audio.cc
+@@ -138,7 +138,11 @@ std::unique_ptr<AudioFile> Audio::open(const std::string& file_name, int stream)
+     double duration = 0;
+     if (!error) {
+         // We can already fill in the stream info even if the codec won't be able to open it.
+-        codec_name = codec->long_name;
++        if (codec->long_name) {
++            codec_name = codec->long_name;
++        } else if (codec->name) {
++            codec_name = codec->name;
++        }
+         bit_rate = codecpar->bit_rate;
+         sample_rate = codecpar->sample_rate;
+         bits_per_sample = codecpar->bits_per_raw_sample;

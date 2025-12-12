@@ -1,0 +1,15 @@
+From 0a1b371e8bf6171968160858a0a3ef7f64345bc4 Mon Sep 17 00:00:00 2001
+From: withmorten <morten.with@gmail.com>
+Date: Sun, 15 Oct 2017 02:10:36 +0200
+Subject: [PATCH] Moved dist/win/spek to web/spek due to name clashing on
+ Windows
+
+---
+ {dist/win => web}/spek | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename {dist/win => web}/spek (100%)
+
+diff --git a/dist/win/spek b/web/spek
+similarity index 100%
+rename from dist/win/spek
+rename to web/spek

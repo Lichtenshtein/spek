@@ -1,0 +1,50 @@
+From e4c417f8d49fe011ef40d72a54835fc425c62b26 Mon Sep 17 00:00:00 2001
+From: MikeWang000000 <mikewang000000@gmail.com>
+Date: Mon, 6 Mar 2023 18:53:20 +0800
+Subject: [PATCH] ffmpeg: upgrade to 6.0
+
+---
+ dist/osx/cross/install_deps.sh | 2 +-
+ dist/osx/install_deps.sh       | 2 +-
+ dist/win/install_deps.sh       | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/dist/osx/cross/install_deps.sh b/dist/osx/cross/install_deps.sh
+index 35d625d..3582276 100755
+--- a/dist/osx/cross/install_deps.sh
++++ b/dist/osx/cross/install_deps.sh
+@@ -13,7 +13,7 @@ EOF
+     exit 1
+ fi
+ 
+-FFMPEG_VER="5.1.2"
++FFMPEG_VER="6.0"
+ PREFIX="/usr/local"
+ 
+ # Check Homebrew
+diff --git a/dist/osx/install_deps.sh b/dist/osx/install_deps.sh
+index f550ad1..d8c48e0 100755
+--- a/dist/osx/install_deps.sh
++++ b/dist/osx/install_deps.sh
+@@ -4,7 +4,7 @@
+ # Check README.md in this directory for instructions.
+ 
+ # Adjust these variables if necessary.
+-FFMPEG_VER="5.1.2"
++FFMPEG_VER="6.0"
+ PREFIX="/usr/local"
+ 
+ # Check Homebrew
+diff --git a/dist/win/install_deps.sh b/dist/win/install_deps.sh
+index 44ab8ad..3dff483 100755
+--- a/dist/win/install_deps.sh
++++ b/dist/win/install_deps.sh
+@@ -5,7 +5,7 @@
+ 
+ # Adjust these variables if necessary.
+ WX_VER="3.2.1"
+-FFMPEG_VER="5.1.2"
++FFMPEG_VER="6.0"
+ PREFIX="$MINGW_PREFIX"
+ 
+ # Check the envrionment variables

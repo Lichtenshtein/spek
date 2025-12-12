@@ -1,0 +1,176 @@
+From 3dbf01442ca7c844a9ae2d6d73ecb0be32154eec Mon Sep 17 00:00:00 2001
+From: Mike Wang <mikewang000000@gmail.com>
+Date: Sun, 2 Feb 2025 03:46:24 +0800
+Subject: [PATCH] fix: Github Actions failure
+
+---
+ .github/workflows/caching.yml  |  6 ++---
+ .github/workflows/ci.yml       | 41 +++++++++++++++++-----------------
+ dist/osx/cross/install_deps.sh |  2 +-
+ 3 files changed, 25 insertions(+), 24 deletions(-)
+
+diff --git a/.github/workflows/caching.yml b/.github/workflows/caching.yml
+index 2d51ec5..e3fe8a1 100644
+--- a/.github/workflows/caching.yml
++++ b/.github/workflows/caching.yml
+@@ -7,13 +7,13 @@ on:
+ jobs:
+   Windows-MSYS2-MINGW64-Caching:
+     name: Windows MSYS2/MINGW64 Caching
+-    runs-on: windows-2022
++    runs-on: windows-latest
+     defaults:
+       run:
+         shell: msys2 {0}
+     steps:
+       - name: Check out repository code
+-        uses: actions/checkout@v3
++        uses: actions/checkout@v4
+       - name: Setup MSYS2
+         uses: msys2/setup-msys2@v2
+         with:
+@@ -24,7 +24,7 @@ jobs:
+           cd '${{ github.workspace }}' && ./dist/win/install_deps.sh
+           du -sh 'C:\msys2'
+       - name: Cache MSYS2
+-        uses: actions/cache@v3
++        uses: actions/cache@v4
+         with:
+           key: spek-x-msys2-mingw64
+           path: C:\msys2
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index bcb76f9..5119ff2 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -8,39 +8,39 @@ env:
+ jobs:
+   Build-Debian-x86_64:
+     name: Build Spek-X (Debian, x86_64)
+-    runs-on: ubuntu-24.04
++    runs-on: ubuntu-latest
++    container: debian:sid
+     steps:
+       - name: Check out repository code
+-        uses: actions/checkout@v3
++        uses: actions/checkout@v4
+       - name: Install dependencies
+         run: |
+-          sudo apt update
+-          sudo apt install -y intltool libwxgtk3.2-dev wx-common libavcodec-dev libavformat-dev
++          apt update
++          apt install -y g++ make pkg-config libtool intltool libwxgtk3.2-dev wx-common libavcodec-dev libavformat-dev
+       - name: Compile and bundle application
+         run: |
+-          cd '${{ github.workspace }}'
+           mkdir -p ./dist/debian/spek-x/usr ./dist/debian/spek-x/DEBIAN
+           ./autogen.sh --prefix="$(realpath ./dist/debian/spek-x/usr)"
+           make -j2 && make install
+           cp ./dist/debian/control.ci ./dist/debian/spek-x/DEBIAN/control
+           dpkg-deb --build dist/debian/spek-x
+       - name: Archive production artifacts
+-        uses: actions/upload-artifact@v3
++        uses: actions/upload-artifact@v4
+         with:
+           name: Spek-X (Debian, x86_64)
+           path: ${{ github.workspace }}/dist/debian/spek-x.deb
+ 
+   Build-Windows-x64:
+     name: Build Spek-X (Windows, x64)
+-    runs-on: windows-2022
++    runs-on: windows-latest
+     defaults:
+       run:
+         shell: cmd
+     steps:
+       - name: Check out repository code
+-        uses: actions/checkout@v3
++        uses: actions/checkout@v4
+       - name: Get dependencies from cache
+-        uses: actions/cache/restore@v3
++        uses: actions/cache/restore@v4
+         with:
+           key: spek-x-msys2-mingw64
+           path: C:\msys2
+@@ -51,17 +51,17 @@ jobs:
+         run: |
+           "C:\msys2\msys64\usr\bin\env.exe" MSYSTEM=MINGW64 /usr/bin/bash -lc "cd '${{ github.workspace }}' && ./dist/win/bundle.sh"
+       - name: Archive production artifacts
+-        uses: actions/upload-artifact@v3
++        uses: actions/upload-artifact@v4
+         with:
+           name: Spek-X (Windows, x64)
+           path: ${{ github.workspace }}/dist/win/Spek/Spek.zip
+ 
+   Build-macOS-Intel:
+     name: Build Spek-X (macOS, Intel)
+-    runs-on: macos-12
++    runs-on: macos-13
+     steps:
+       - name: Check out repository code
+-        uses: actions/checkout@v3
++        uses: actions/checkout@v4
+       - name: Install dependencies
+         run: |
+           eval "$(brew shellenv)"
+@@ -72,17 +72,17 @@ jobs:
+           eval "$(brew shellenv)"
+           cd '${{ github.workspace }}' && ./dist/osx/bundle.sh
+       - name: Archive production artifacts
+-        uses: actions/upload-artifact@v3
++        uses: actions/upload-artifact@v4
+         with:
+           name: Spek-X (macOS, Intel)
+           path: ${{ github.workspace }}/dist/osx/Spek.tgz
+ 
+   Build-macOS-AppleSilicon:
+     name: Build Spek-X (macOS, Apple Silicon)
+-    runs-on: macos-12
++    runs-on: macos-13
+     steps:
+       - name: Check out repository code
+-        uses: actions/checkout@v3
++        uses: actions/checkout@v4
+       - name: Install dependencies
+         run: |
+           eval "$(brew shellenv)"
+@@ -93,21 +93,22 @@ jobs:
+           eval "$(brew shellenv)"
+           cd '${{ github.workspace }}' && ./dist/osx/cross/bundle.sh i_am_ci
+       - name: Archive production artifacts
+-        uses: actions/upload-artifact@v3
++        uses: actions/upload-artifact@v4
+         with:
+           name: Spek-X (macOS, Apple Silicon)
+           path: ${{ github.workspace }}/dist/osx/Spek.tgz
+ 
+   Unit-Test:
+     name: Unit Tests
+-    runs-on: ubuntu-24.04
++    runs-on: ubuntu-latest
++    container: debian:sid
+     steps:
+       - name: Check out repository code
+-        uses: actions/checkout@v3
++        uses: actions/checkout@v4
+       - name: Install dependencies
+         run: |
+-          sudo apt update
+-          sudo apt install -y intltool libwxgtk3.2-dev wx-common libavcodec-dev libavformat-dev
++          apt update
++          apt install -y g++ make pkg-config libtool intltool libwxgtk3.2-dev wx-common libavcodec-dev libavformat-dev
+       - name: Run tests
+         run: |
+           ./autogen.sh && make check
+diff --git a/dist/osx/cross/install_deps.sh b/dist/osx/cross/install_deps.sh
+index f2be7c7..ac7ef51 100755
+--- a/dist/osx/cross/install_deps.sh
++++ b/dist/osx/cross/install_deps.sh
+@@ -26,7 +26,7 @@ brew install autoconf automake gettext intltool libtool pkg-config wxwidgets nas
+ # Force install arm64 libraries on x86_64 machines
+ for dep in jpeg-turbo libpng zstd libtiff pcre2 wxwidgets
+ do
+-    brew reinstall $(brew fetch --force --bottle-tag=arm64_monterey "${dep}" | egrep -om1 '/Users/.*\.gz') || return 1
++    brew reinstall $(brew fetch --force --bottle-tag=arm64_ventura "${dep}" | egrep -om1 '/Users/.*\.gz') || exit 1
+ done
+ 
+ rm -rf $(dirname $0)/../deps

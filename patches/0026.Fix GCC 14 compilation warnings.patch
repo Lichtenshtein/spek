@@ -1,0 +1,115 @@
+From fe30e07bbf5e481d7fd52e3d2c9b8790daea75c6 Mon Sep 17 00:00:00 2001
+From: Mike Wang <mikewang000000@gmail.com>
+Date: Thu, 6 Feb 2025 03:23:40 +0800
+Subject: [PATCH] fix: GCC 14 compilation warnings
+
+---
+ src/spek-events.h       |  4 +---
+ src/spek-spectrogram.cc | 15 ++++++++++-----
+ src/spek-spectrogram.h  |  2 +-
+ src/spek-window.cc      | 15 +++++++++------
+ 4 files changed, 21 insertions(+), 15 deletions(-)
+
+diff --git a/src/spek-events.h b/src/spek-events.h
+index abd8220..3679cc4 100644
+--- a/src/spek-events.h
++++ b/src/spek-events.h
+@@ -22,10 +22,8 @@ class SpekHaveSampleEvent: public wxEvent
+     bool free_values;
+ };
+ 
+-typedef void (wxEvtHandler::*SpekHaveSampleEventFunction)(SpekHaveSampleEvent&);
+-
+ DECLARE_EVENT_TYPE(SPEK_HAVE_SAMPLE, wxID_ANY)
+ 
+ #define SPEK_EVT_HAVE_SAMPLE(fn) \
+     DECLARE_EVENT_TABLE_ENTRY(SPEK_HAVE_SAMPLE, -1, -1, \
+-    (wxObjectEventFunction) (SpekHaveSampleEventFunction) &fn, (wxObject *) NULL ),
++    (wxObjectEventFunction) &fn, (wxObject *) NULL ),
+diff --git a/src/spek-spectrogram.cc b/src/spek-spectrogram.cc
+index 969170d..4109dc7 100644
+--- a/src/spek-spectrogram.cc
++++ b/src/spek-spectrogram.cc
+@@ -194,11 +194,16 @@ void SpekSpectrogram::on_size(wxSizeEvent&)
+     }
+ }
+ 
+-void SpekSpectrogram::on_have_sample(SpekHaveSampleEvent& event)
++void SpekSpectrogram::on_have_sample(wxEvent& event)
+ {
+-    int bands = event.get_bands();
+-    int sample = event.get_sample();
+-    const float *values = event.get_values();
++    SpekHaveSampleEvent *ev = dynamic_cast<SpekHaveSampleEvent *>(&event);
++    if (ev == nullptr) {
++        return;
++    }
++
++    int bands = ev->get_bands();
++    int sample = ev->get_sample();
++    const float *values = ev->get_values();
+ 
+     if (sample == -1) {
+         this->stop();
+diff --git a/src/spek-spectrogram.h b/src/spek-spectrogram.h
+index 430a70f..bfc0b9c 100644
+--- a/src/spek-spectrogram.h
++++ b/src/spek-spectrogram.h
+@@ -24,7 +24,7 @@ class SpekSpectrogram : public wxWindow
+     void on_char(wxKeyEvent& evt);
+     void on_paint(wxPaintEvent& evt);
+     void on_size(wxSizeEvent& evt);
+-    void on_have_sample(SpekHaveSampleEvent& evt);
++    void on_have_sample(wxEvent& evt);
+     void render(wxDC& dc);
+ 
+     void start();
+diff --git a/src/spek-window.cc b/src/spek-window.cc
+index 975742a..675a930 100644
+--- a/src/spek-window.cc
++++ b/src/spek-window.cc
+@@ -30,8 +30,10 @@ BEGIN_EVENT_TABLE(SpekWindow, wxFrame)
+     EVT_COMMAND(-1, SPEK_NOTIFY_EVENT, SpekWindow::on_notify)
+ END_EVENT_TABLE()
+ 
++#ifdef SPEK_CHECK_VERSION
+ // Forward declarations.
+ static void * check_version(void *);
++#endif
+ 
+ class SpekDropTarget : public wxFileDropTarget
+ {
+@@ -147,8 +149,10 @@ SpekWindow::SpekWindow(int width, int height, const wxString& path, const wxStri
+ 
+     SetSizer(sizer);
+ 
+-    // pthread_t thread;
+-    // pthread_create(&thread, NULL, &check_version, this);
++#ifdef SPEK_CHECK_VERSION
++    pthread_t thread;
++    pthread_create(&thread, NULL, &check_version, this);
++#endif
+ }
+ 
+ void SpekWindow::open(const wxString& path)
+@@ -351,11 +355,9 @@ void SpekWindow::on_close(wxCommandEvent& event)
+     self->Layout();
+ }
+ 
++#ifdef SPEK_CHECK_VERSION
+ static void * check_version(void *p)
+ {
+-    /* Spek-X do not support check_update */
+-    return NULL;
+-
+     // Does the user want to check for updates?
+     SpekPreferences& prefs = SpekPreferences::get();
+     if (!prefs.get_check_update()) {
+@@ -405,4 +407,5 @@ static void * check_version(void *p)
+     prefs.set_check_update(true);
+     prefs.set_last_update(days);
+     return NULL;
+-}
+\ No newline at end of file
++}
++#endif
