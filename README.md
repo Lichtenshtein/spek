@@ -110,7 +110,6 @@ The latest version of *Spek* may be downloaded from <https://www.spek.cc>.
  * Bigger font and bigger window size, change window size using .ini
  * Change upper limit in dBFS on pressing 'U' works
  * Minimal ffmpeg version, .exe can be additionally shrinked to 5mb using UPX
- * Somehow broke translations, sorry :( Spek just ignores 5 translated entries from main menu (even new added lines for them). 
 
 (original)
 

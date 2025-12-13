@@ -12,7 +12,7 @@ MAKE=make
 ZIP=zip
 
 HOST=x86_64-w64-mingw32.static
-LANGUAGES="ru"
+LANGUAGES="bs ca cs da de el eo es fi fr gl he hr hu id it ja ko lv nb nl nn pl pt_BR ru sk sr@latin sv th tr uk vi zh_CN zh_TW"
 PATH="$MXE"/bin:$PATH
 WX_CONFIG="$MXE"/"$HOST"/bin/wx-config
 STRIP="$HOST"-strip
