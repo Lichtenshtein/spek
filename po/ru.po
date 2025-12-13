@@ -64,13 +64,18 @@ msgstr[1] "%d канала"
 msgstr[2] "%d каналов"
 msgstr[3] "%d каналов"
 
+#: src/spek-pipeline.cc:207
+#, c-format
+msgid "channel %d / %d"
+msgstr "канал %d / %d"
+
 #: src/spek-pipeline.cc:250
 msgid "Cannot open input file"
-msgstr "Не могу открыть входной файл"
+msgstr "Не удалось открыть файл"
 
 #: src/spek-pipeline.cc:253
 msgid "Cannot find stream info"
-msgstr "Не могу найти информацию о потоке"
+msgstr "Информация о потоке не найдена"
 
 #: src/spek-pipeline.cc:256
 msgid "The file contains no audio streams"
@@ -78,11 +83,11 @@ msgstr "Файл не содержит аудио потоков"
 
 #: src/spek-pipeline.cc:259
 msgid "Cannot find decoder"
-msgstr "Не могу найти декодер"
+msgstr "Декодер не найден"
 
 #: src/spek-pipeline.cc:262
 msgid "Unknown duration"
-msgstr "Неизвестная продолжительность"
+msgstr "Продолжительность неизвестна"
 
 #: src/spek-pipeline.cc:265
 msgid "No audio channels"
@@ -90,7 +95,7 @@ msgstr "Нет аудио каналов"
 
 #: src/spek-pipeline.cc:268
 msgid "Cannot open decoder"
-msgstr "Не удается открыть декодер"
+msgstr "Не удалось открыть декодер"
 
 #: src/spek-pipeline.cc:271
 msgid "Unsupported sample format"
@@ -145,8 +150,8 @@ msgstr "%d кГц"
 
 #: src/spek-spectrogram.cc:251
 #, c-format
-msgid "%d dB"
-msgstr "%d дБ"
+msgid "%3d dB"
+msgstr "%3d дБ"
 
 #. TRANSLATORS: keep "00" unchanged, it's used to calc the text width
 #: src/spek-spectrogram.cc:346
